@@ -147,7 +147,7 @@ ul.kids>li.n::before{content:"";position:absolute;right:-18px;top:18px;width:16p
 </style></head>
 <body>
 <header>
- <div class="top"><h1>الخارطة المفاهيمية — مقدمة في الحاسوب</h1><span class="by">إعداد: سارة حرب</span></div>
+ <div class="top"><h1>الخارطة المفاهيمية — مقدمة في الحاسوب</h1><span class="by">إعداد: سارة حرب</span><span id="ubox"></span></div>
  <div class="tools">
   <button id="vMap">🗺 خارطة</button><button id="vList">☰ قائمة</button><span class="sep"></span>
   <button id="all">افتح الكل</button><button id="none">سكّر الكل</button><button id="defs" class="on">التعريفات: ظاهرة</button><button id="clear">بدون تضوية</button>
@@ -341,14 +341,14 @@ function openPop(n) {
   const t = document.getElementById("ptitle"); t.textContent = clean(n.t);
   pop.style.setProperty("--c", "#" + n.cc); document.querySelector(".pbox").style.setProperty("--c", "#" + n.cc);
   document.getElementById("popen").style.display = n.c.length ? "" : "none";
-  pop.classList.add("show"); drawTab();
+  pop.classList.add("show"); drawTab(); window.track && track.view(clean(n.t), "exp");
 }
 function closePop() { pop.classList.remove("show"); pn = null; }
 document.getElementById("pclose").onclick = closePop;
 pop.addEventListener("click", (e) => { if (e.target === pop) closePop(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !document.getElementById("full").classList.contains("show")) closePop(); }, true);
 document.getElementById("popen").onclick = () => { const n = pn; closePop(); n.open = true; for (let p = n.p; p; p = p.p) p.open = true; render(); requestAnimationFrame(() => { if (view === "map" && n.el) fitRect(canvasRect([n.el, ...n.c.map((k) => k.el).filter(Boolean)]), 1.3); }); };
-document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => { ptab = b.dataset.t; drawTab(); }));
+document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => { ptab = b.dataset.t; drawTab(); window.track && pn && track.view(clean(pn.t), ptab); }));
 function itemsHTML(k) {
   let h = `<div class="pcard ${k.f && !k.c.length ? "f" : ""}" style="--c:#${k.cc}"><h3>${esc(clean(k.t))}</h3>`;
   if (k.d) h += `<div class="pd">تعريف: ${esc(k.d)}</div>`;
@@ -385,6 +385,7 @@ function drawTab() {
     q.classList.add("done"); q.querySelectorAll(".opts button").forEach((x) => { if (+x.dataset.j === a) x.classList.add("ok"); });
     if (+b.dataset.j !== a) b.classList.add("no");
     q.querySelector(".why").textContent = (+b.dataset.j === a ? "✅ صح! " : "❌ مش هيك. ") + (q.querySelector(".why").textContent || "");
+    window.track && track.answer({ concept: clean(n.t), question: q.querySelector(".qt").textContent.replace(/^\d+\.\s*/, ""), answer: b.textContent, correct_answer: q.querySelector(`.opts button[data-j="${a}"]`).textContent, is_correct: +b.dataset.j === a });
   }));
   if (ptab === "exp") {
     const L = slidesFor(n); let si = 0;
@@ -399,7 +400,7 @@ function drawTab() {
     slideKeys = (e) => { if (e.key === "ArrowLeft") document.getElementById("snext").click(); if (e.key === "ArrowRight") document.getElementById("sprev").click(); };
     show();
   } else slideKeys = null;
-  pbody.querySelectorAll(".reveal").forEach((b) => (b.onclick = () => b.nextElementSibling.classList.toggle("show")));
+  pbody.querySelectorAll(".reveal").forEach((b) => (b.onclick = () => { b.nextElementSibling.classList.toggle("show"); window.track && track.view(clean(n.t), "reveal"); }));
 }
 let slideKeys = null;
 const FULL = document.getElementById("full");
@@ -411,4 +412,8 @@ function isUnder(x, n) { for (let p = x.p; p; p = p.p) if (p === n) return true;
 render();
 if (view === "map") requestAnimationFrame(fitAll);
 window.addEventListener("resize", () => { if (view === "map" && cur < 0) fitAll(); });
-</script></body></html>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+</body></html>

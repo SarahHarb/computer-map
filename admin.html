@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة متابعة الطلاب — مقدمة في الحاسوب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo,Tahoma,sans-serif;background:#F7F8FB;color:#1F2937}
+header{background:#16213E;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;flex:1}
+header a,header button{font-family:inherit;color:#16213E;background:#F1C40F;border:none;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;text-decoration:none;font-size:14px}
+header .ghost{background:transparent;color:#fff;border:1px solid #fff6}
+main{padding:18px 20px;max-width:1400px;margin:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.card{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.card .n{font-size:30px;font-weight:800;color:#16213E}.card .l{color:#6B7280;font-size:14px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.tabs button{font-family:inherit;border:1px solid #D1D5DB;background:#fff;border-radius:999px;padding:6px 16px;font-size:15px;cursor:pointer;font-weight:600}
+.tabs button.on{background:#16213E;color:#fff;border-color:#16213E}
+.tabs input{font-family:inherit;font-size:15px;padding:6px 12px;border:1px solid #D1D5DB;border-radius:999px;min-width:220px;margin-inline-start:auto}
+.panel{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{background:#F3F4F6;text-align:right;padding:9px 12px;font-weight:700;position:sticky;top:0;cursor:pointer;white-space:nowrap}
+td{padding:8px 12px;border-top:1px solid #F0F0F0;vertical-align:top}
+tr.click{cursor:pointer}tr.click:hover td{background:#FFFBEA}
+.pct{display:inline-block;min-width:48px;text-align:center;border-radius:999px;padding:1px 8px;font-weight:700}
+.g{background:#E8F8EF;color:#1E8449}.m{background:#FEF5E7;color:#B9770E}.b{background:#FDEDEC;color:#C0392B}.z{background:#F3F4F6;color:#6B7280}
+.ok{color:#1E8449;font-weight:700}.no{color:#C0392B;font-weight:700}
+.muted{color:#6B7280;font-size:13px}
+#det{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:2vh 2vw;z-index:20}
+#det.show{display:flex}
+#det .box{background:#fff;border-radius:16px;width:min(1100px,96vw);max-height:94vh;display:flex;flex-direction:column;overflow:hidden}
+#det .hd{padding:14px 18px;border-bottom:1px solid #E5E7EB;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#det .hd h2{margin:0;font-size:21px;flex:1}
+#det .bd{overflow:auto;padding:12px 18px 20px}
+#det h3{margin:14px 0 6px;font-size:17px}
+.chips span{display:inline-block;background:#EEF2FF;border-radius:999px;padding:2px 10px;margin:3px;font-size:13px}
+.x{font-family:inherit;border:1px solid #D1D5DB;background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer}
+.bar{height:8px;background:#F3F4F6;border-radius:4px;overflow:hidden;min-width:80px}.bar i{display:block;height:100%;background:#2F5D9B}
+#gate{max-width:420px;margin:12vh auto;background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+</style></head><body>
+<header><h1>📊 لوحة متابعة الطلاب — مقدمة في الحاسوب</h1>
+ <button id="csv">⬇️ تنزيل Excel (CSV)</button><button id="reload" class="ghost">🔄 تحديث</button><a href="./" class="ghost" style="color:#fff">← الخارطة</a></header>
+<div id="gate">لحظة… <span class="muted">بتأكد من الدخول</span></div>
+<main id="app" style="display:none">
+ <div class="cards" id="cards"></div>
+ <div class="tabs"><button data-v="st" class="on">👥 الطلاب</button><button data-v="cn">🧩 المفاهيم</button><button data-v="log">🕒 آخر النشاط</button><input id="q" placeholder="🔍 ابحثي باسم الطالب أو رقمه أو المفهوم"></div>
+ <div class="panel" id="panel"></div>
+</main>
+<div id="det"><div class="box"><div class="hd"><h2 id="dname"></h2><button class="x" id="dreset" title="يحذف كل إجابات ونشاط هاد الطالب">🗑️ تصفير نتائجه</button><button class="x" id="dclose">✕ إغلاق</button></div><div class="bd" id="dbody"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const C = window.APP_CONFIG || {};
+const gate = document.getElementById("gate");
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (d) => d ? new Date(d).toLocaleString("ar-EG-u-nu-latn", { dateStyle: "medium", timeStyle: "short" }) : "—";
+const pc = (ok, all) => all ? Math.round((100 * ok) / all) : null;
+const pill = (p) => p == null ? `<span class="pct z">—</span>` : `<span class="pct ${p >= 75 ? "g" : p >= 50 ? "m" : "b"}">${p}%</span>`;
+let sb, P = [], A = [], V = [], view = "st", sortK = null, sortD = -1, cur = null;
+
+if (!C.SUPABASE_URL || !window.supabase) gate.innerHTML = "لسا ما انحطّت إعدادات Supabase في config.js";
+else {
+  sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+  sb.auth.getSession().then(async ({ data }) => {
+    if (!data.session) { gate.innerHTML = `لازم تسجّلي دخول أول.<br><br><a href="./"><button class="x">اذهبي لصفحة الدخول</button></a>`; return; }
+    const { data: me } = await sb.from("profiles").select("role").eq("id", data.session.user.id).maybeSingle();
+    if (!me || me.role !== "admin") { gate.innerHTML = "هاي الصفحة للمعلمة بس 🙂"; return; }
+    gate.style.display = "none"; document.getElementById("app").style.display = "";
+    load();
+  });
+}
+async function all(table, cols) {
+  const out = []; for (let from = 0; ; from += 1000) {
+    const { data, error } = await sb.from(table).select(cols).order("created_at", { ascending: true }).range(from, from + 999);
+    if (error) { alert(error.message); break; } out.push(...data); if (data.length < 1000) break;
+  } return out;
+}
+async function load() {
+  document.getElementById("panel").innerHTML = `<p style="padding:16px">لحظة… بجيب البيانات</p>`;
+  [P, A, V] = await Promise.all([all("profiles", "*"), all("attempts", "*"), all("views", "*")]);
+  draw();
+}
+function students() {
+  const by = {}; P.filter((p) => p.role !== "admin").forEach((p) => (by[p.id] = { ...p, ok: 0, all: 0, cs: new Set(), last: null, qs: new Set() }));
+  A.forEach((a) => { const s = by[a.user_id]; if (!s) return; s.all++; if (a.is_correct) s.ok++; s.qs.add(a.concept); if (!s.last || a.created_at > s.last) s.last = a.created_at; });
+  V.forEach((v) => { const s = by[v.user_id]; if (!s) return; s.cs.add(v.concept); if (!s.last || v.created_at > s.last) s.last = v.created_at; });
+  return Object.values(by).map((s) => ({ ...s, p: pc(s.ok, s.all), nc: s.cs.size }));
+}
+function concepts() {
+  const by = {}; const g = (c) => (by[c] ||= { c, ok: 0, all: 0, opens: 0, stu: new Set(), wrong: {} });
+  A.forEach((a) => { const x = g(a.concept); x.all++; if (a.is_correct) x.ok++; else { const k = a.question; x.wrong[k] = (x.wrong[k] || 0) + 1; } x.stu.add(a.user_id); });
+  V.forEach((v) => { const x = g(v.concept); x.opens++; x.stu.add(v.user_id); });
+  return Object.values(by).map((x) => ({ ...x, p: pc(x.ok, x.all), ns: x.stu.size }));
+}
+const name = (id) => { const p = P.find((x) => x.id === id); return p ? p.full_name || p.email : "؟"; };
+function draw() {
+  const S = students(), q = document.getElementById("q").value.trim();
+  const active = S.filter((s) => s.all || s.nc).length, tot = A.length, okAll = A.filter((a) => a.is_correct).length;
+  document.getElementById("cards").innerHTML = [
+    [S.length, "طالب مسجّل"], [active, "طالب استخدم الموقع"], [tot, "إجابة على الأسئلة"], [pc(okAll, tot) == null ? "—" : pc(okAll, tot) + "%", "متوسط الإجابات الصحيحة"],
+  ].map(([n, l]) => `<div class="card"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+  const panel = document.getElementById("panel"); let rows, head;
+  const sorter = (arr, def) => { const k = sortK || def; return arr.sort((a, b) => { const x = a[k] ?? -1, y = b[k] ?? -1; return (x > y ? 1 : x < y ? -1 : 0) * (sortK ? sortD : -1); }); };
+  if (view === "st") {
+    rows = sorter(S.filter((s) => !q || [s.full_name, s.student_no, s.email].join(" ").includes(q)), "last");
+    head = [["full_name", "الاسم"], ["student_no", "الرقم الجامعي"], ["email", "الإيميل"], ["nc", "مفاهيم فتحها"], ["all", "عدد الإجابات"], ["ok", "الصحيحة"], ["p", "النسبة"], ["last", "آخر نشاط"]];
+    panel.innerHTML = tbl(head, rows.map((s) => `<tr class="click" data-id="${s.id}"><td><b>${esc(s.full_name)}</b></td><td>${esc(s.student_no)}</td><td class="muted" dir="ltr" style="text-align:right">${esc(s.email)}</td><td>${s.nc}</td><td>${s.all}</td><td>${s.ok}</td><td>${pill(s.p)}</td><td class="muted">${fmt(s.last)}</td></tr>`), "لسا ما في طلاب سجّلوا.");
+    panel.querySelectorAll("tr.click").forEach((tr) => (tr.onclick = () => detail(tr.dataset.id)));
+  } else if (view === "cn") {
+    rows = sorter(concepts().filter((x) => !q || x.c.includes(q)), "all");
+    head = [["c", "المفهوم"], ["ns", "عدد الطلاب"], ["opens", "مرات الفتح"], ["all", "عدد الإجابات"], ["p", "نسبة الصح"], ["w", "أكثر سؤال غلطوا فيه"]];
+    panel.innerHTML = tbl(head, rows.map((x) => { const w = Object.entries(x.wrong).sort((a, b) => b[1] - a[1])[0]; return `<tr><td><b>${esc(x.c)}</b></td><td>${x.ns}</td><td>${x.opens}</td><td>${x.all}</td><td>${pill(x.p)}</td><td class="muted">${w ? esc(w[0]) + ` <b>(${w[1]}×)</b>` : "—"}</td></tr>`; }), "لسا ما في نشاط.");
+  } else {
+    const L = [...A.map((a) => ({ ...a, k: "a" })), ...V.map((v) => ({ ...v, k: "v" }))].sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).filter((x) => !q || (name(x.user_id) + " " + x.concept).includes(q)).slice(0, 400);
+    panel.innerHTML = tbl([["", "الوقت"], ["", "الطالب"], ["", "المفهوم"], ["", "شو عمل"]], L.map((x) => `<tr><td class="muted">${fmt(x.created_at)}</td><td>${esc(name(x.user_id))}</td><td>${esc(x.concept)}</td><td>${x.k === "a" ? `${x.is_correct ? '<span class="ok">✅</span>' : '<span class="no">❌</span>'} ${esc(x.question)} ← <b>${esc(x.answer)}</b>` : ({ exp: "📘 فتح الشرح", vid: "▶️ فتح الفيديو", qs: "❓ فتح الأسئلة", reveal: "👁️ كشف جواب «اذكر»" }[x.tab] || x.tab)}</td></tr>`), "لسا ما في نشاط.");
+  }
+  panel.querySelectorAll("th[data-k]").forEach((th) => (th.onclick = () => { const k = th.dataset.k; if (!k) return; sortD = sortK === k ? -sortD : -1; sortK = k; draw(); }));
+}
+function tbl(head, rows, empty) {
+  return `<table><tr>${head.map(([k, t]) => `<th data-k="${k}">${t}${sortK === k && k ? (sortD > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr>${rows.join("") || `<tr><td colspan="${head.length}" style="padding:20px;text-align:center" class="muted">${empty}</td></tr>`}</table>`;
+}
+function detail(id) {
+  cur = id; const p = P.find((x) => x.id === id), a = A.filter((x) => x.user_id === id), v = V.filter((x) => x.user_id === id);
+  const ok = a.filter((x) => x.is_correct).length;
+  document.getElementById("dname").innerHTML = `${esc(p.full_name)} <span class="muted">${esc(p.student_no || "")}</span> ${pill(pc(ok, a.length))}`;
+  const byC = {}; a.forEach((x) => { const c = (byC[x.concept] ||= { ok: 0, all: 0 }); c.all++; if (x.is_correct) c.ok++; });
+  const opened = {}; v.forEach((x) => (opened[x.concept] = (opened[x.concept] || 0) + 1));
+  let h = `<div class="muted">الإيميل: <span dir="ltr">${esc(p.email)}</span> • سجّل بتاريخ ${fmt(p.created_at)} • ${ok} صح من ${a.length}</div>`;
+  h += `<h3>🧩 نتيجته في كل مفهوم</h3>` + (Object.keys(byC).length ? `<table><tr><th>المفهوم</th><th>صح / الكل</th><th>النسبة</th></tr>${Object.entries(byC).map(([c, x]) => `<tr><td>${esc(c)}</td><td>${x.ok} / ${x.all}</td><td>${pill(pc(x.ok, x.all))}</td></tr>`).join("")}</table>` : `<p class="muted">ما جاوب على أسئلة لسا.</p>`);
+  h += `<h3>📖 المفاهيم اللي فتحها (${Object.keys(opened).length})</h3><div class="chips">${Object.entries(opened).map(([c, n]) => `<span>${esc(c)} ×${n}</span>`).join("") || '<span class="muted">ولا واحد</span>'}</div>`;
+  h += `<h3>📝 كل إجاباته</h3>` + (a.length ? `<table><tr><th>الوقت</th><th>المفهوم</th><th>السؤال</th><th>جوابه</th><th>الجواب الصح</th></tr>${a.slice().reverse().map((x) => `<tr><td class="muted">${fmt(x.created_at)}</td><td>${esc(x.concept)}</td><td>${esc(x.question)}</td><td class="${x.is_correct ? "ok" : "no"}">${x.is_correct ? "✅" : "❌"} ${esc(x.answer)}</td><td>${esc(x.correct_answer)}</td></tr>`).join("")}</table>` : `<p class="muted">—</p>`);
+  document.getElementById("dbody").innerHTML = h; document.getElementById("det").classList.add("show");
+}
+document.getElementById("dclose").onclick = () => document.getElementById("det").classList.remove("show");
+document.getElementById("det").onclick = (e) => { if (e.target.id === "det") e.target.classList.remove("show"); };
+document.getElementById("dreset").onclick = async () => {
+  if (!cur || !confirm("متأكدة؟ رح تنحذف كل إجابات ونشاط هاد الطالب (حسابه بيضل).")) return;
+  await sb.from("attempts").delete().eq("user_id", cur); await sb.from("views").delete().eq("user_id", cur);
+  document.getElementById("det").classList.remove("show"); load();
+};
+document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => { view = b.dataset.v; sortK = null; document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b)); draw(); }));
+document.getElementById("q").oninput = draw;
+document.getElementById("reload").onclick = load;
+document.getElementById("csv").onclick = () => {
+  const S = students(), rows = [["الاسم", "الرقم الجامعي", "الإيميل", "مفاهيم فتحها", "عدد الإجابات", "الصحيحة", "النسبة %", "آخر نشاط"]];
+  S.forEach((s) => rows.push([s.full_name, s.student_no, s.email, s.nc, s.all, s.ok, s.p ?? "", s.last ? new Date(s.last).toLocaleString("en-GB") : ""]));
+  rows.push([]); rows.push(["الوقت", "الطالب", "الرقم الجامعي", "المفهوم", "السؤال", "جوابه", "الجواب الصح", "صح؟"]);
+  A.forEach((a) => { const p = P.find((x) => x.id === a.user_id) || {}; rows.push([new Date(a.created_at).toLocaleString("en-GB"), p.full_name, p.student_no, a.concept, a.question, a.answer, a.correct_answer, a.is_correct ? "صح" : "غلط"]); });
+  const csv = "﻿" + rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+  const u = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  Object.assign(document.createElement("a"), { href: u, download: "نتائج_الطلاب.csv" }).click();
+};
+</script></body></html>
