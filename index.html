@@ -45,6 +45,11 @@ body.nodef .def{display:none}
 .rel{display:inline-block;font-size:12px;font-style:italic;font-weight:700;color:var(--c);padding:0 4px;background:var(--bg)}
 body.focus .n{opacity:.25}
 body.focus .n.ctx,body.focus .n.lit{opacity:1}
+body.build .n{opacity:.6}body.build .n.lit,body.build .n.ctx{opacity:1}
+body.build .n.lit>.box,body.build .n.lit>.row{animation:grow .6s ease-out}
+@keyframes grow{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.forest{display:flex;gap:60px;align-items:flex-start}
+#build.on{background:#1E8449;border-color:#1E8449;color:#fff}
 .lit>.row .card,.lit>.box .card{box-shadow:0 0 0 4px var(--gold),0 0 18px rgba(241,196,15,.85)}
 /* ---------- LIST view ---------- */
 #list{overflow:auto;flex:1;padding:14px 10px 80px}
@@ -150,7 +155,7 @@ ul.kids>li.n::before{content:"";position:absolute;right:-18px;top:18px;width:16p
  <div class="top"><h1>الخارطة المفاهيمية — مقدمة في الحاسوب</h1><span class="by">إعداد: سارة حرب</span><span id="ubox"></span></div>
  <div class="tools">
   <button id="vMap">🗺 خارطة</button><button id="vList">☰ قائمة</button><span class="sep"></span>
-  <button id="all">افتح الكل</button><button id="none">سكّر الكل</button><button id="defs" class="on">التعريفات: ظاهرة</button><button id="clear">بدون تضوية</button>
+  <button id="all">افتح الكل</button><button id="none">سكّر الكل</button><button id="defs" class="on">التعريفات: ظاهرة</button><button id="clear">بدون تضوية</button><button id="build" class="on" title="الخارطة بتنبني درس ورا درس متل السلايدات">🧱 تتركّب حسب الدرس</button>
   <span class="sep"></span><button id="prev">→ السابق</button><button id="next">التالي ←</button><span id="pos">اختاري موضوع:</span>
  </div>
  <div class="lessons" id="lessons"></div>
@@ -185,9 +190,11 @@ const ALL = []; (function w(n) { ALL.push(n); n.c.forEach(w); })(DATA.root);
 const byTitle = new Map(); ALL.forEach((n) => { if (!byTitle.has(n.t)) byTitle.set(n.t, n); });
 let view = "map";
 const focus = { lit: new Set(), ctx: new Set(), on: false };
+let buildOn = true, VIS = null; // VIS: Set of nodes visible in build mode (null = all)
+const kids = (n) => (VIS ? n.c.filter((k) => VIS.has(k)) : n.c);
 
 function cardEl(n) {
-  const has = n.c.length;
+  const has = kids(n).length;
   const card = document.createElement("span");
   card.className = "card " + (n.depth === 0 ? "lvl0" : n.f ? "f" : n.depth === 1 ? "lvl1" : n.depth === 2 ? "lvl2" : has ? "lvl3" : "leaf") + (has ? " has" : "");
   card.style.setProperty("--c", "#" + n.cc);
@@ -198,7 +205,7 @@ function cardEl(n) {
   return card;
 }
 function defEl(n) { const d = document.createElement("span"); d.className = "def"; d.innerHTML = "<b>تعريف:</b> "; d.appendChild(document.createTextNode(n.d)); return d; }
-function stateCls(el, n) { el.classList.add("n"); if (!n.open && n.c.length) el.classList.add("closed"); if (focus.lit.has(n)) el.classList.add("lit"); if (focus.ctx.has(n)) el.classList.add("ctx"); n.el = el; }
+function stateCls(el, n) { el.classList.add("n"); if (!n.open && kids(n).length) el.classList.add("closed"); if (focus.lit.has(n)) el.classList.add("lit"); if (focus.ctx.has(n)) el.classList.add("ctx"); n.el = el; }
 
 // ---------- list view ----------
 function buildList(n) {
@@ -206,10 +213,10 @@ function buildList(n) {
   const row = document.createElement("div"); row.className = "row";
   if (n.edge) { const e = document.createElement("span"); e.className = "edge"; e.textContent = n.edge; row.appendChild(e); }
   row.appendChild(cardEl(n)); if (n.d) row.appendChild(defEl(n)); li.appendChild(row);
-  if (n.c.length) {
+  if (kids(n).length) {
     if (n.rel) { const r = document.createElement("div"); r.className = "rel"; r.textContent = n.rel; r.style.setProperty("--c", "#" + n.cc); li.appendChild(r); }
     const ul = document.createElement("ul"); ul.className = "kids"; ul.style.setProperty("--c", "#" + n.cc);
-    n.c.forEach((k) => ul.appendChild(buildList(k))); li.appendChild(ul);
+    kids(n).forEach((k) => ul.appendChild(buildList(k))); li.appendChild(ul);
   }
   return li;
 }
@@ -217,27 +224,27 @@ function buildList(n) {
 function buildVItem(n) {
   const li = document.createElement("li"); li.className = "vn"; li.style.setProperty("--c", "#" + n.cc); stateCls(li, n);
   const row = document.createElement("div"); row.className = "row"; row.appendChild(cardEl(n)); if (n.d) row.appendChild(defEl(n)); li.appendChild(row);
-  if (n.c.length) li.appendChild(buildVList(n));
+  if (kids(n).length) li.appendChild(buildVList(n));
   return li;
 }
 function buildVList(n) {
   const ul = document.createElement("ul"); ul.className = "vlist"; ul.style.setProperty("--c", "#" + n.cc);
   if (n.rel) { const r = document.createElement("div"); r.className = "rel"; r.style.setProperty("--c", "#" + n.cc); r.textContent = n.rel; r.style.marginRight = "-6px"; ul.appendChild(r); }
-  n.c.forEach((k) => ul.appendChild(buildVItem(k)));
+  kids(n).forEach((k) => ul.appendChild(buildVItem(k)));
   return ul;
 }
 function buildMap(n) {
   const wrap = document.createElement("div"); wrap.className = "mnode"; wrap.style.setProperty("--c", "#" + n.cc); stateCls(wrap, n);
   const box = document.createElement("div"); box.className = "box";
-  if (n.edge && n.depth > 0) { const e = document.createElement("span"); e.className = "edge"; e.textContent = n.edge; box.appendChild(e); }
+  if (n.edge && n.depth > 0 && !(VIS && !VIS.has(n.p))) { const e = document.createElement("span"); e.className = "edge"; e.textContent = n.edge; box.appendChild(e); }
   box.appendChild(cardEl(n)); if (n.d) box.appendChild(defEl(n)); wrap.appendChild(box);
-  if (n.c.length) {
+  if (kids(n).length) {
     if (n.h) {
       const down = document.createElement("div"); down.className = "down"; down.style.setProperty("--c", "#" + n.cc);
       if (n.rel) { const r = document.createElement("span"); r.className = "rel"; r.style.setProperty("--c", "#" + n.cc); r.textContent = n.rel; down.appendChild(r); down.style.height = "40px"; }
       wrap.appendChild(down);
       const row = document.createElement("div"); row.className = "hrow";
-      n.c.forEach((k) => { const m = buildMap(k); m.style.setProperty("--pc", "#" + n.cc); row.appendChild(m); });
+      kids(n).forEach((k) => { const m = buildMap(k); m.style.setProperty("--pc", "#" + n.cc); row.appendChild(m); });
       wrap.appendChild(row);
     } else {
       const down = document.createElement("div"); down.className = "down"; down.style.height = "10px"; down.style.setProperty("--c", "#" + n.cc); wrap.appendChild(down);
@@ -283,28 +290,23 @@ function render() {
   document.getElementById("map").style.display = view === "map" ? "block" : "none";
   document.getElementById("list").style.display = view === "list" ? "block" : "none";
   document.body.classList.toggle("focus", focus.on);
-  if (view === "list") { const t = document.getElementById("tree"); t.innerHTML = ""; t.appendChild(buildList(DATA.root)); }
-  else { canvas.innerHTML = ""; canvas.appendChild(buildMap(DATA.root)); }
+  document.body.classList.toggle("build", !!VIS);
+  const tops = VIS ? ALL.filter((n) => VIS.has(n) && !(n.p && VIS.has(n.p))) : [DATA.root];
+  if (view === "list") { const t = document.getElementById("tree"); t.innerHTML = ""; tops.forEach((n) => t.appendChild(buildList(n))); }
+  else { canvas.innerHTML = ""; const f = document.createElement("div"); f.className = "forest"; tops.forEach((n) => f.appendChild(buildMap(n))); canvas.appendChild(f); }
 }
 document.getElementById("vMap").onclick = () => { view = "map"; render(); requestAnimationFrame(() => (cur >= 0 ? frameLesson() : fitAll())); };
 document.getElementById("vList").onclick = () => { view = "list"; render(); if (cur >= 0) frameLesson(); };
-document.getElementById("all").onclick = () => { ALL.forEach((n) => (n.open = true)); render(); if (view === "map") requestAnimationFrame(fitAll);
-// re-fit once the web font has loaded (text width changes the map size)
-const refit = () => { if (view === "map" && cur < 0) fitAll(); };
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
-window.addEventListener("load", () => setTimeout(refit, 100)); };
-document.getElementById("none").onclick = () => { ALL.forEach((n) => (n.open = n.depth < 1)); render(); if (view === "map") requestAnimationFrame(fitAll);
-// re-fit once the web font has loaded (text width changes the map size)
-const refit = () => { if (view === "map" && cur < 0) fitAll(); };
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
-window.addEventListener("load", () => setTimeout(refit, 100)); };
+document.getElementById("all").onclick = () => { ALL.forEach((n) => (n.open = true)); render(); if (view === "map") requestAnimationFrame(fitAll); };
+document.getElementById("none").onclick = () => { ALL.forEach((n) => (n.open = n.depth < 1)); render(); if (view === "map") requestAnimationFrame(fitAll); };
+document.getElementById("build").onclick = (e) => { buildOn = !buildOn; e.currentTarget.classList.toggle("on", buildOn); if (cur >= 0) focusLesson(cur); else { VIS = null; render(); } };
 const defsBtn = document.getElementById("defs");
 defsBtn.onclick = () => { const off = document.body.classList.toggle("nodef"); defsBtn.textContent = off ? "التعريفات: مخفية" : "التعريفات: ظاهرة"; defsBtn.classList.toggle("on", !off); };
 // ---------- lessons ----------
 let cur = -1;
 const lesBox = document.getElementById("lessons");
 LESSONS.forEach(([name], i) => { const b = document.createElement("button"); b.textContent = (i + 1) + ". " + name; b.onclick = () => focusLesson(i); lesBox.appendChild(b); });
-function clearFocus() { focus.on = false; focus.lit.clear(); focus.ctx.clear(); [...lesBox.children].forEach((b) => b.classList.remove("cur")); cur = -1; document.getElementById("pos").textContent = "اختاري موضوع:"; }
+function clearFocus() { VIS = null; focus.on = false; focus.lit.clear(); focus.ctx.clear(); [...lesBox.children].forEach((b) => b.classList.remove("cur")); cur = -1; document.getElementById("pos").textContent = "اختاري موضوع:"; }
 document.getElementById("clear").onclick = () => { clearFocus(); render(); };
 let firstLit = [];
 function focusLesson(i) {
@@ -320,6 +322,18 @@ function focusLesson(i) {
     for (let p = n.p; p; p = p.p) { focus.ctx.add(p); p.open = true; }
     if (mode === "node") { n.open = true; n.c.forEach((k) => focus.ctx.add(k)); }
   });
+  if (buildOn) {
+    VIS = new Set();
+    for (let j = 0; j <= i; j++) LESSONS[j][1].forEach(([t, mode]) => {
+      const n = byTitle.get(t); if (!n) return;
+      const add = (x) => { VIS.add(x); if (mode === "tree") x.c.forEach(add); };
+      add(n);
+    });
+    // fill gaps between a taught node and its nearest taught ancestor
+    [...VIS].forEach((n) => { const gap = []; for (let p = n.p; p; p = p.p) { if (VIS.has(p)) { gap.forEach((g) => VIS.add(g)); break; } gap.push(p); } });
+    ALL.forEach((n) => (n.open = true));
+    focus.ctx.forEach((x) => { if (!VIS.has(x)) focus.ctx.delete(x); });
+  }
   render();
   lesBox.children[i].classList.add("cur"); lesBox.children[i].scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   document.getElementById("pos").textContent = (i + 1) + " / " + LESSONS.length + " — " + name;
@@ -329,6 +343,7 @@ function frameLesson() {
   requestAnimationFrame(() => {
     const els = [...focus.lit].map((n) => n.el).filter(Boolean);
     if (!els.length) return;
+    if (VIS && view === "map") { const all = [...canvas.querySelectorAll(".mnode,.vn")]; const r = canvasRect(all); const W = mapEl.clientWidth - 80, H = mapEl.clientHeight - 80; if (Math.min(W / r.w, H / r.h) >= 0.55) { fitRect(r, 1.3); return; } }
     if (view === "map") fitRect(canvasRect(els), 1.3);
     else { const r = firstLit[0].el.getBoundingClientRect(), L = document.getElementById("list"); L.scrollTo({ top: L.scrollTop + r.top - L.getBoundingClientRect().top - 20, behavior: "smooth" }); }
   });
@@ -348,7 +363,7 @@ function openPop(n) {
   document.getElementById("pcrumb").textContent = path.join(" ‹ ");
   const t = document.getElementById("ptitle"); t.textContent = clean(n.t);
   pop.style.setProperty("--c", "#" + n.cc); document.querySelector(".pbox").style.setProperty("--c", "#" + n.cc);
-  document.getElementById("popen").style.display = n.c.length ? "" : "none";
+  document.getElementById("popen").style.display = kids(n).length ? "" : "none";
   pop.classList.add("show"); drawTab(); window.track && track.view(clean(n.t), "exp");
 }
 function closePop() { pop.classList.remove("show"); pn = null; }
@@ -420,7 +435,7 @@ function isUnder(x, n) { for (let p = x.p; p; p = p.p) if (p === n) return true;
 render();
 if (view === "map") requestAnimationFrame(fitAll);
 // re-fit once the web font has loaded (text width changes the map size)
-const refit = () => { if (view === "map" && cur < 0) fitAll(); };
+var refit = () => { if (view === "map") (cur >= 0 ? frameLesson() : fitAll()); };
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
 window.addEventListener("load", () => setTimeout(refit, 100));
 window.addEventListener("resize", () => { if (view === "map" && cur < 0) fitAll(); });
