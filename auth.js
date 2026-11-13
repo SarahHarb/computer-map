@@ -54,6 +54,7 @@
     if (/Invalid login/i.test(m)) return "الإيميل أو كلمة السر غلط.";
     if (/already registered/i.test(m)) return "هاد الإيميل إله حساب، اعمل تسجيل دخول.";
     if (/Email not confirmed/i.test(m)) return "لازم تأكّد إيميلك أول، افتح الرسالة اللي وصلتك.";
+    if (m === "PPU_ONLY" || /Database error saving new user/i.test(m)) return "التسجيل بس بالإيميل الجامعي اللي بينتهي بـ ‎@ppu.edu.ps";
     if (/at least 6/i.test(m)) return "كلمة السر لازم تكون 6 حروف أو أكثر.";
     return "صار خطأ: " + m;
   };
@@ -63,6 +64,7 @@
     try {
       const email = F.email.value.trim(), password = F.password.value;
       if (mode === "up") {
+        if (!/@ppu\.edu\.ps$/i.test(email)) throw new Error("PPU_ONLY");
         const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: F.full_name.value.trim(), student_no: email.split("@")[0] } } });
         if (error) throw error;
         if (!data.session) { say("تم إنشاء الحساب ✅ افتح إيميلك وأكّد الحساب، بعدين سجّل دخول.", true); setMode("in"); return; }

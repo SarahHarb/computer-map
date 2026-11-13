@@ -50,6 +50,19 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
 
+-- 4ب) التسجيل مسموح بس بإيميل الجامعة
+create or replace function public.only_ppu_emails()
+returns trigger language plpgsql as $$
+begin
+  if new.email is null or new.email !~* '@ppu\.edu\.ps$' then
+    raise exception 'Only @ppu.edu.ps emails are allowed';
+  end if;
+  return new;
+end $$;
+drop trigger if exists only_ppu_emails on auth.users;
+create trigger only_ppu_emails before insert on auth.users
+  for each row execute function public.only_ppu_emails();
+
 -- 5) هل المستخدم الحالي أدمن؟
 create or replace function public.is_admin()
 returns boolean language sql stable security definer set search_path = public as $$
