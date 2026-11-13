@@ -91,6 +91,7 @@
     stats = { ok: (at || []).filter((x) => x.is_correct).length, all: (at || []).length };
     L.style.display = "none";
     drawBox();
+    try { if (typeof refit === "function") setTimeout(refit, 50); } catch (e) {}
   }
   function drawBox() {
     const box = document.getElementById("ubox"); if (!box) return;

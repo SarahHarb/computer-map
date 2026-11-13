@@ -288,8 +288,16 @@ function render() {
 }
 document.getElementById("vMap").onclick = () => { view = "map"; render(); requestAnimationFrame(() => (cur >= 0 ? frameLesson() : fitAll())); };
 document.getElementById("vList").onclick = () => { view = "list"; render(); if (cur >= 0) frameLesson(); };
-document.getElementById("all").onclick = () => { ALL.forEach((n) => (n.open = true)); render(); if (view === "map") requestAnimationFrame(fitAll); };
-document.getElementById("none").onclick = () => { ALL.forEach((n) => (n.open = n.depth < 1)); render(); if (view === "map") requestAnimationFrame(fitAll); };
+document.getElementById("all").onclick = () => { ALL.forEach((n) => (n.open = true)); render(); if (view === "map") requestAnimationFrame(fitAll);
+// re-fit once the web font has loaded (text width changes the map size)
+const refit = () => { if (view === "map" && cur < 0) fitAll(); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
+window.addEventListener("load", () => setTimeout(refit, 100)); };
+document.getElementById("none").onclick = () => { ALL.forEach((n) => (n.open = n.depth < 1)); render(); if (view === "map") requestAnimationFrame(fitAll);
+// re-fit once the web font has loaded (text width changes the map size)
+const refit = () => { if (view === "map" && cur < 0) fitAll(); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
+window.addEventListener("load", () => setTimeout(refit, 100)); };
 const defsBtn = document.getElementById("defs");
 defsBtn.onclick = () => { const off = document.body.classList.toggle("nodef"); defsBtn.textContent = off ? "التعريفات: مخفية" : "التعريفات: ظاهرة"; defsBtn.classList.toggle("on", !off); };
 // ---------- lessons ----------
@@ -411,6 +419,10 @@ document.addEventListener("keydown", (e) => { if (FULL.classList.contains("show"
 function isUnder(x, n) { for (let p = x.p; p; p = p.p) if (p === n) return true; return false; }
 render();
 if (view === "map") requestAnimationFrame(fitAll);
+// re-fit once the web font has loaded (text width changes the map size)
+const refit = () => { if (view === "map" && cur < 0) fitAll(); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
+window.addEventListener("load", () => setTimeout(refit, 100));
 window.addEventListener("resize", () => { if (view === "map" && cur < 0) fitAll(); });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
