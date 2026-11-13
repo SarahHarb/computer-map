@@ -28,8 +28,8 @@
   <h2>الخارطة المفاهيمية — مقدمة في الحاسوب</h2><div class="sub">إعداد: سارة حرب</div>
   <div class="lt"><button type="button" data-m="in" class="on">تسجيل الدخول</button><button type="button" data-m="up">حساب جديد</button></div>
   <div class="up"><label>الاسم الكامل</label><input name="full_name" autocomplete="name">
-  <label>الرقم الجامعي</label><input name="student_no" inputmode="numeric"></div>
-  <label>الإيميل</label><input name="email" type="email" autocomplete="email" required dir="ltr">
+  </div>
+  <label>الإيميل الجامعي</label><input name="email" type="email" placeholder="…@ppu.edu.ps" autocomplete="email" required dir="ltr">
   <label>كلمة السر</label><input name="password" type="password" autocomplete="current-password" required minlength="6" dir="ltr">
   <button class="go" type="submit">دخول</button>
   <button type="button" class="link" id="forgot">نسيت كلمة السر؟</button>
@@ -41,7 +41,7 @@
     mode = m;
     L.querySelectorAll(".lt button").forEach((b) => b.classList.toggle("on", b.dataset.m === m));
     L.querySelector(".up").style.display = m === "up" ? "" : "none";
-    F.full_name.required = F.student_no.required = m === "up";
+    F.full_name.required = m === "up";
     F.password.autocomplete = m === "up" ? "new-password" : "current-password";
     L.querySelector(".go").textContent = m === "up" ? "إنشاء الحساب" : "دخول";
     say("");
@@ -63,7 +63,7 @@
     try {
       const email = F.email.value.trim(), password = F.password.value;
       if (mode === "up") {
-        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: F.full_name.value.trim(), student_no: F.student_no.value.trim() } } });
+        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: F.full_name.value.trim(), student_no: email.split("@")[0] } } });
         if (error) throw error;
         if (!data.session) { say("تم إنشاء الحساب ✅ افتح إيميلك وأكّد الحساب، بعدين سجّل دخول.", true); setMode("in"); return; }
         await start(data.session.user);
