@@ -207,7 +207,7 @@ body.focus #canvas .n.lit,body.focus #canvas .n.ctx{opacity:1}
 .s-dfn dt{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;color:var(--c)}
 .s-dfn dt .ic{width:28px;height:28px}
 .s-dfn dd{margin:0;font-size:20px;line-height:1.7}
-#lessonMap .card{font-size:17px}
+#lessonMap .card,.lmap .card{font-size:17px}
 #lessonMap .card .ic{width:20px;height:20px}
 .s-topo{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px}
 .s-topo figure{margin:0;border:2px solid color-mix(in srgb,var(--c) 30%,#fff);border-radius:16px;padding:20px;text-align:center;color:var(--c)}
@@ -386,6 +386,88 @@ body.ui4.hub-map #unitbar{top:60px}
 .st-nav .next:disabled{opacity:.4}
 .st-nav .end{font-weight:800;font-size:18px}
 @media (max-width:900px){.hub-head{grid-template-columns:1fr}.hub-where{display:none}.pc{grid-template-columns:1fr}.story{grid-template-columns:1fr}.st-pic{height:120px}.match{grid-template-columns:1fr}body.ui4 #hub{padding:14px 12px 110px}}
+
+/* ---------- course site (ui4) ---------- */
+body.ui4 aside,body.ui4 .dock,body.ui4 header .seg,body.ui4 header .opts,body.ui4 #menu{display:none!important}
+body.ui4.hub-map .dock{display:none!important}
+.crumbs{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 0 14px;color:var(--muted);flex-wrap:wrap}
+.crumbs a{color:var(--ink);text-decoration:none;font-weight:700}
+.crumbs a:hover{text-decoration:underline}
+.crumbs b{color:#B9C5D4}
+.home-hero{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:center;background:var(--ink);color:#fff;border-radius:22px;padding:30px 34px;position:relative;overflow:hidden}
+.home-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.08) 1.2px,transparent 1.4px) 0 0/22px 22px;pointer-events:none}
+.home-hero small{color:var(--gold);font-weight:700}
+.home-hero h2{font-size:44px;margin:4px 0 8px;font-weight:800}
+.home-hero p{font-size:18px;line-height:1.7;color:#D5DEEA;margin:0 0 16px}
+.hero-prog{display:flex;align-items:center;gap:12px;font-size:14px;color:#B8C4D6;margin-bottom:16px}
+.hero-prog .bar{flex:0 0 220px;height:8px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden}
+.hero-prog .bar i{display:block;height:100%;background:var(--gold)}
+.btn-gold{display:inline-block;background:var(--gold);color:var(--ink);font-weight:800;font-size:17px;padding:10px 22px;border-radius:12px;text-decoration:none;position:relative;z-index:1}
+.hero-ways{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1}
+.hero-ways span{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-weight:700;font-size:15px}
+.hero-ways .ic{width:20px;height:20px;padding:7px;border-radius:9px;background:var(--tc);color:#fff;box-sizing:content-box}
+.sec-title{font-size:20px;margin:26px 0 12px}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.unit-card{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-top:6px solid var(--c);border-radius:16px;padding:18px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.unit-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(20,33,61,.12)}
+.u-ic{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c);margin-bottom:6px}
+.u-ic .ic{width:28px;height:28px}
+.unit-card small{color:var(--muted);font-weight:700}
+.unit-card b{font-size:19px}
+.u-meta{font-size:13px;color:var(--muted)}
+.u-bar{height:5px;background:#EEF1F5;border-radius:3px;overflow:hidden;margin-top:6px}
+.u-bar i{display:block;height:100%;background:var(--c)}
+.tools-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.tool{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;text-align:right;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--ink);font-family:inherit}
+.tool .ic{grid-row:span 2;width:24px;height:24px;padding:10px;border-radius:12px;background:var(--tc);color:#fff;box-sizing:content-box}
+.tool b{font-size:16px}.tool span{font-size:13px;color:var(--muted)}
+.tool:hover{box-shadow:0 8px 20px rgba(20,33,61,.1);background:#fff}
+.unit-head{display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);border-top:8px solid var(--c);border-radius:18px;padding:20px 24px}
+.unit-head .u-ic{width:70px;height:70px;margin:0}.unit-head .u-ic .ic{width:38px;height:38px}
+.unit-head small{color:#D35400;font-weight:700}
+.unit-head h2{margin:2px 0;font-size:32px}
+.unit-head p{margin:0;color:var(--muted)}
+.lesson-list{display:grid;gap:10px;margin-top:16px}
+.lesson-row{display:grid;grid-template-columns:44px 48px 1fr 34px;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;text-decoration:none;color:var(--ink);transition:box-shadow .15s,border-color .15s}
+.lesson-row:hover{border-color:var(--c);box-shadow:0 8px 20px rgba(20,33,61,.08)}
+.l-num{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--c);color:#fff;font-weight:800}
+.l-ic{color:var(--c)}.l-ic .ic{width:30px;height:30px}
+.l-txt b{display:block;font-size:18px}
+.l-txt span{font-size:14px;color:var(--muted)}
+.l-go{font-size:20px;color:var(--c);font-weight:800;text-align:center}
+.lesson-row.seen .l-go{color:var(--done)}
+.unit-nav{display:flex;justify-content:space-between;margin:22px 0 10px}
+.unit-nav a{color:var(--ink);font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.unit-nav a:hover{border-color:var(--c)}
+.btn-line{font-weight:700;font-size:15px;padding:8px 16px}
+.mini .card.hl{box-shadow:0 0 0 4px var(--gold),0 0 16px rgba(242,183,5,.8)}
+body.ui4 .hub-head{display:block}
+@media (max-width:900px){.home-hero{grid-template-columns:1fr;padding:22px}.home-hero h2{font-size:32px}.lesson-row{grid-template-columns:36px 1fr 24px}.l-ic{display:none}}
+
+.slides-stack{display:grid;gap:18px}
+.slide-wrap{position:relative;width:100%}
+.slide.static .s-body{flex:none}.slide.static .fit{max-width:100%}
+.slide.static{position:relative;top:auto;left:auto;margin:0;height:auto;min-height:0;padding-bottom:6px;box-shadow:0 6px 22px rgba(20,33,61,.12);border:1px solid var(--line);border-radius:14px}
+.slide.static .lmap .card{font-size:17px;cursor:pointer}
+.slide.static .lmap .card .ic{width:20px;height:20px}
+.sec-title{display:flex;align-items:center;gap:10px}
+.sec-title .ic{width:24px;height:24px;color:#C0392B}
+
+.slide.static.narrow{width:100%;border-radius:12px;overflow:hidden}
+.narrow .s-idea,.narrow .s-dfn,.narrow .s-tip{max-width:100%;white-space:normal}
+.narrow .lmap{overflow-x:auto}
+.narrow .s-head{padding:14px 14px 6px}.narrow .s-head h2{font-size:23px}.narrow .s-head h2 .ic{width:28px;height:28px}
+.narrow .s-body{padding:6px 14px 0}.narrow .s-foot{padding:8px 14px 10px;font-size:12px}
+.narrow .s-idea{font-size:18px;padding:10px 14px}
+.narrow .s-flow{gap:6px}.narrow .s-flow span{font-size:15px;padding:8px 10px}.narrow .s-flow span .ic{width:18px;height:18px}.narrow .s-flow b{font-size:20px}
+.narrow .s-dfn{grid-template-columns:1fr;gap:4px;padding:10px 12px}.narrow .s-dfn dt{font-size:18px}.narrow .s-dfn dd{font-size:16px}
+.narrow .fit{padding:0;width:auto;max-width:100%;overflow-x:auto}
+.narrow .s-table{width:auto;min-width:100%;font-size:14px}.narrow .s-table th{font-size:14px;padding:8px}.narrow .s-table td{padding:8px}
+.narrow .s-topo{grid-template-columns:1fr}.narrow .s-topo svg{height:110px}.narrow .s-topo figcaption{font-size:18px}
+.narrow .s-tl{grid-template-columns:1fr 1fr}.narrow .s-tl b{font-size:20px}.narrow .s-tl li{font-size:14px}
+.narrow .s-pts{font-size:17px}
+.narrow .s-tip{font-size:17px;padding:12px}.narrow .s-tip .ic{width:28px;height:28px}
+.narrow .s-cards{grid-template-columns:1fr 1fr;gap:8px}.narrow .s-cards .flip{height:110px}.narrow .s-cards .flip .fa{font-size:17px}.narrow .s-cards .flip .fb{font-size:14px}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -503,7 +585,7 @@ body.ui4.hub-map #unitbar{top:60px}
 </div></div>
 <div id="map">
  <div id="canvas"></div>
- <button id="hubBack">→ رجوع لأيقونات الدرس</button>
+ <button id="hubBack">→ رجوع</button>
  <div id="unitbar"></div>
  <div class="legend" id="mapkey"><span><i class="sw"></i>مفهوم</span><span><i class="sw f"></i>وظيفة / صفة</span><span><i class="sw d"></i>تعريف</span></div>
  <div class="zoom"><button id="zin" title="تكبير">+</button><button id="zout" title="تصغير">−</button><button id="zfit" title="ملاءمة" style="font-size:13px">كامل</button></div>
@@ -710,7 +792,7 @@ function focusLesson(i) {
   lesBtns.forEach((b, j) => b.classList.toggle("done", j < i)); lesBtns[i].classList.add("cur"); lesBtns[i].scrollIntoView({ block: "nearest", behavior: "smooth" }); document.getElementById("lslide").style.display = "";
   document.getElementById("pos").innerHTML = `<b>${esc(LESSONS[i][4])}</b><small>${esc(LESSONS[i][2])} — الدرس ${i + 1} من ${LESSONS.length}</small>`; document.getElementById("next").textContent = i === LESSONS.length - 1 ? "النهاية ✓" : "التالي ←"; document.getElementById("clear").classList.remove("on"); setProg(i + 1);
   frameLesson();
-  if (UI === 4) { document.body.classList.remove("hub-map"); hubLesson(i); }
+  if (UI === 4) { hubLesson(i); if (location.hash !== "#/l/" + (i + 1)) history.replaceState(null, "", "#/l/" + (i + 1)); }
   else if (UI) { openLesson(i, true); if (UI === 2) frameLesson(); }
 }
 function frameLesson() {
@@ -900,6 +982,7 @@ function fitInside(el) {
   if (!el) return; const p = el.parentElement; el.style.zoom = 1;
   const w = el.offsetWidth, h = el.offsetHeight, W = p.clientWidth - 8;
   let H = p.clientHeight - 6; [...p.children].forEach((x) => { if (x !== el) H -= x.offsetHeight + 12; });
+  if (el.closest(".static")) H = Infinity;
   el.style.zoom = Math.min(1.4, W / w, H / h);
 }
 function renderSlide() {
@@ -997,32 +1080,83 @@ const TILES = [
   { id: "cards", t: "بطاقات الحفظ", d: "اقلب البطاقة واحفظ", i: "FaClone", c: "#B7950B" },
 ];
 const svgI = (n) => `<i class="ic">${ICONS.svg[n] || ""}</i>`;
+const VISITED = new Set((() => { try { return JSON.parse(localStorage.getItem("visited") || "[]"); } catch (e) { return []; } })());
+function markVisited(i) { VISITED.add(i); try { localStorage.setItem("visited", JSON.stringify([...VISITED])); } catch (e) {} }
+const unitLessons = (u) => LESSONS.map((l, i) => i).filter((i) => unitOfLesson[i] === u);
+const unitName = (u) => { const [a, b] = UNITS[u].split(":"); return { n: a.trim(), t: (b || a).trim() }; };
+const unitColor = (u) => "#" + colorOf(unitLessons(u)[0]);
+function crumbs(parts) { return `<nav class="crumbs">${parts.map(([t, h]) => (h ? `<a href="${h}">${esc(t)}</a>` : `<span>${esc(t)}</span>`)).join("<b>‹</b>")}</nav>`; }
 function hubHome() {
-  HUB.mode = null;
-  hubEl.innerHTML = `<div class="hub-wrap"><div class="hub-hero"><h2>${svgI("FaSitemap")} الخارطة العامة للمادة</h2><p>اختار درس من القائمة، أو اكبس على أي قسم بالخارطة.</p></div>${ovStaticBig(-1)}</div>`;
-  bindOv();
+  HUB.mode = null; document.body.classList.remove("hub-map");
+  const done = VISITED.size;
+  let h = `<div class="hub-wrap"><section class="home-hero"><div><small>إعداد: سارة حرب</small><h2>مقدمة في الحاسوب</h2><p>الجزء النظري كامل: 9 وحدات و 28 درس. اختار وحدة وابدأ، وكل درس فيه أكثر من طريقة للشرح.</p><div class="hero-prog"><span class="bar"><i style="width:${(100 * done) / LESSONS.length}%"></i></span><span>فتحت ${done} من ${LESSONS.length} درس</span></div>${done ? `<a class="btn-gold" href="#/l/${Math.max(...VISITED) + 1}">كمّل من آخر درس ←</a>` : `<a class="btn-gold" href="#/l/1">ابدأ الدرس الأول ←</a>`}</div><div class="hero-ways">${TILES.filter((t) => t.id !== "pc" && t.id !== "story").slice(0, 6).map((t) => `<span style="--tc:${t.c}">${svgI(t.i)}${t.t}</span>`).join("")}</div></section>`;
+  h += `<h3 class="sec-title">الوحدات</h3><div class="units">${UNITS.map((u, k) => { const N = unitName(k), ls = unitLessons(k), dn = ls.filter((i) => VISITED.has(i)).length; return `<a class="unit-card" href="#/u/${k + 1}" style="--c:${unitColor(k)}"><span class="u-ic">${ico(N.t) || svgI("FaBookOpen")}</span><small>${esc(N.n)}</small><b>${esc(N.t)}</b><span class="u-meta">${ls.length} ${ls.length > 2 ? "دروس" : "درس"}</span><span class="u-bar"><i style="width:${(100 * dn) / ls.length}%"></i></span></a>`; }).join("")}</div>`;
+  h += `<h3 class="sec-title">أدوات المراجعة</h3><div class="tools-row"><button class="tool" id="toolMap" style="--tc:#2F5D9B">${svgI("FaSitemap")}<b>الخارطة العامة للمادة</b><span>شوف كيف المواضيع مرتبطة ببعض</span></button><a class="tool" href="#/l/1" style="--tc:#0E7C7B">${svgI("FaDesktop")}<b>ندخل جوّا الحاسوب</b><span>من درس «ما هو الحاسوب؟»</span></a><button class="tool" id="toolExam" style="--tc:#16213E">${svgI("FaClipboardCheck")}<b>امتحان شامل</b><span>أسئلة من كل الدروس</span></button></div></div>`;
+  hubEl.innerHTML = h; hubEl.scrollTop = 0;
+  document.getElementById("toolMap").onclick = () => { MODE = "ov"; clearFocus(); document.body.classList.add("hub-map"); render(); requestAnimationFrame(fitAll); };
+  document.getElementById("toolExam").onclick = () => { const all = shuffle(LC.flatMap((c, i) => (c.qs || []).map((q) => q))).slice(0, 15); hubEl.querySelector(".hub-wrap").insertAdjacentHTML("beforeend", `<section class="hub-mode" id="bigExam"><h3>امتحان شامل (15 سؤال)</h3><div class="qwrap">${mcqHTML(all)}</div></section>`); const bx = document.getElementById("bigExam"); bindMCQ(bx, "امتحان شامل"); bx.scrollIntoView({ behavior: "smooth" }); };
+}
+function hubUnit(u) {
+  HUB.mode = null; document.body.classList.remove("hub-map");
+  const N = unitName(u), ls = unitLessons(u);
+  let h = `<div class="hub-wrap" style="--c:${unitColor(u)}">${crumbs([["الرئيسية", "#/"], [N.n + ": " + N.t]])}<section class="unit-head"><span class="u-ic">${ico(N.t) || svgI("FaBookOpen")}</span><div><small>${esc(N.n)}</small><h2>${esc(N.t)}</h2><p>${ls.length} ${ls.length > 2 ? "دروس" : "درس"} — اختار الدرس</p></div></section>`;
+  h += `<div class="lesson-list">${ls.map((i) => `<a class="lesson-row ${VISITED.has(i) ? "seen" : ""}" href="#/l/${i + 1}"><span class="l-num">${i + 1}</span><span class="l-ic">${ico(LESSONS[i][4]) || svgI("FaBookOpen")}</span><span class="l-txt"><b>${esc(LESSONS[i][4])}</b><span>${esc((LC[i] || {}).idea || "")}</span></span><span class="l-go">${VISITED.has(i) ? "✓" : "←"}</span></a>`).join("")}</div>`;
+  h += `<div class="unit-nav">${u > 0 ? `<a href="#/u/${u}">→ ${esc(unitName(u - 1).t)}</a>` : "<span></span>"}${u < UNITS.length - 1 ? `<a href="#/u/${u + 2}">${esc(unitName(u + 1).t)} ←</a>` : ""}</div></div>`;
+  hubEl.innerHTML = h; hubEl.scrollTop = 0;
 }
 function ovStaticBig(i) { return `<div class="hub-ov">${ovStatic(i).replace('class="ovstatic"', 'class="ovstatic big"')}</div>`; }
-function bindOv() { hubEl.querySelectorAll(".ovstatic .card").forEach((c) => (c.onclick = () => { const k = OVALL.find((x) => x.t === c.dataset.t); if (k) focusLesson(cur >= 0 && k.L.includes(cur) ? cur : k.L[0]); })); }
+function bindOv() { hubEl.querySelectorAll(".ovstatic .card").forEach((c) => (c.onclick = () => { const k = OVALL.find((x) => x.t === c.dataset.t); if (k) location.hash = "#/l/" + ((cur >= 0 && k.L.includes(cur) ? cur : k.L[0]) + 1); })); }
 function hubLesson(i, mode) {
-  const L = LESSONS[i], C = LC[i] || {}, col = "#" + colorOf(i);
+  const L = LESSONS[i], C = LC[i] || {}, u = unitOfLesson[i], N = unitName(u);
   const tiles = TILES.filter((t) => !t.when || t.when(i));
-  HUB.mode = mode || null;
-  let h = `<div class="hub-wrap" style="--c:${col}"><div class="hub-head"><div class="hub-title"><small>${esc(L[2])} — الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2><p>${esc(C.idea || "")}</p></div><div class="hub-where" title="وين إحنا بالخارطة؟">${ovStatic(i)}</div></div>`;
-  h += `<nav class="tiles ${mode ? "mini" : ""}">${tiles.map((t) => `<button class="tile ${t.id === mode ? "on" : ""}" data-m="${t.id}" style="--tc:${t.c}">${svgI(t.i)}<b>${t.t}</b><span>${t.d}</span></button>`).join("")}</nav>`;
-  h += `<section class="hub-mode" id="hubMode"></section></div>`;
+  HUB.mode = mode || null; markVisited(i); document.body.classList.remove("hub-map");
+  let h = `<div class="hub-wrap" style="--c:${unitColor(u)}">${crumbs([["الرئيسية", "#/"], [N.n + ": " + N.t, "#/u/" + (u + 1)], [L[4]]])}<div class="hub-head"><div class="hub-title"><small>الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2><p>${esc(C.idea || "")}</p></div></div>`;
+  if (!mode) h += `<h3 class="sec-title">${svgI("FaChalkboardTeacher")} الشرح</h3><section class="slides-stack" id="stack"></section>`;
+  h += `<h3 class="sec-title">${mode ? "طرق ثانية للتعلّم" : "جرّب الدرس بطرق ثانية"}</h3><nav class="tiles ${mode ? "mini" : ""}">${tiles.map((t) => `<button class="tile ${t.id === mode ? "on" : ""}" data-m="${t.id}" style="--tc:${t.c}">${svgI(t.i)}<b>${t.t}</b><span>${t.d}</span></button>`).join("")}</nav>`;
+  h += `<section class="hub-mode" id="hubMode"></section><div class="unit-nav">${i > 0 ? `<a href="#/l/${i}">→ ${esc(LESSONS[i - 1][4])}</a>` : "<span></span>"}${i < LESSONS.length - 1 ? `<a href="#/l/${i + 2}">${esc(LESSONS[i + 1][4])} ←</a>` : ""}</div></div>`;
   hubEl.innerHTML = h; hubEl.scrollTop = 0;
   hubEl.querySelectorAll(".tile").forEach((b) => (b.onclick = () => openMode(b.dataset.m)));
-  bindOv();
+  if (!mode) renderStack(i);
   if (mode) openMode(mode, true);
 }
+function renderStack(i) {
+  const box = document.getElementById("stack"); if (!box) return;
+  const W = box.clientWidth, narrow = W < 860, z = narrow ? 1 : Math.min(1, W / 1280);
+  buildSlides(i).filter((sl) => sl.k !== "where").forEach((sl) => {
+    const wrap = document.createElement("div"); wrap.className = "slide-wrap"; wrap.style.height = 720 * z + "px";
+    const el = document.createElement("div"); el.className = "slide static" + (narrow ? " narrow" : ""); el.style.zoom = z; el.style.setProperty("--c", "#" + colorOf(i));
+    el.innerHTML = slideHTML(i, sl); wrap.appendChild(el); box.appendChild(wrap);
+    const host = el.querySelector("#lessonMap"); if (host) { host.removeAttribute("id"); host.classList.add("lmap"); host.appendChild(mapHTML(lessonNodes[i])); }
+    el.querySelectorAll(".fit").forEach((f) => { if (narrow && f.querySelector("table")) return; fitInside(f); });
+    wrap.style.height = el.offsetHeight * z + "px";
+    el.querySelectorAll(".flip").forEach((b) => (b.onclick = () => b.classList.toggle("on")));
+    el.querySelectorAll(".lmap .card").forEach((c) => (c.onclick = (e) => { e.stopPropagation(); const k = ALL.find((x) => x.t === c.dataset.t); if (k) openPop(k); }));
+  });
+}
+window.addEventListener("resize", () => { if (UI === 4 && cur >= 0 && !HUB.mode && document.getElementById("stack")) { const st = document.getElementById("stack"); st.innerHTML = ""; renderStack(cur); } });
+function route() {
+  if (UI !== 4) return;
+  const m = location.hash.match(/^#\/(u|l)\/(\d+)/);
+  if (!m) { clearFocus(); hubHome(); return; }
+  const n = +m[2] - 1;
+  if (m[1] === "u" && n >= 0 && n < UNITS.length) { clearFocus(); hubUnit(n); return; }
+  if (m[1] === "l" && n >= 0 && n < LESSONS.length) { if (cur !== n) focusLesson(n); else hubLesson(n); return; }
+  hubHome();
+}
+window.addEventListener("hashchange", route);
 function openMode(m, keep) {
   const i = cur; if (i < 0) return;
   if (m === "show") { openShow(i); return; }
-  if (m === "map") { document.body.classList.add("hub-map"); MODE = "unit"; UNIT = unitOfLesson[i]; render(); requestAnimationFrame(frameLesson); window.track && track.view("درس: " + LESSONS[i][4], "map"); return; }
+
   if (!keep) { hubLesson(i, m); return; }
   const box = document.getElementById("hubMode"), C = LC[i] || {}, label = LESSONS[i][4];
   window.track && track.view("درس: " + label, m);
+  if (m === "map") {
+    box.innerHTML = `<p class="howto">خارطة الدرس: المفاهيم وعلاقتها ببعض. الأجزاء الملوّنة بالأصفر هي هاد الدرس، والباقي من دروس الوحدة.</p>${miniMap(unitSet(unitOfLesson[i]))}<div class="center" style="margin-top:12px"><button class="btn-line" id="openFullMap">🔍 افتح الخارطة التفاعلية للوحدة</button></div>`;
+    const mine = new Set([...lessonNodes[i]].map((n) => n.t));
+    box.querySelectorAll(".mini .card").forEach((c) => { c.classList.toggle("hl", mine.has(c.dataset.t)); c.onclick = (e) => { e.stopPropagation(); const k = ALL.find((x) => x.t === c.dataset.t); if (k) openPop(k); }; });
+    box.querySelector("#openFullMap").onclick = () => { document.body.classList.add("hub-map"); MODE = "unit"; UNIT = unitOfLesson[i]; render(); requestAnimationFrame(frameLesson); };
+  }
   if (m === "video") box.innerHTML = `<div class="vid"><div style="font-size:22px;font-weight:700">فيديوهات شرح عن: «${esc(label)}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent("شرح " + label + " مقدمة في الحاسوب")}" target="_blank" rel="noopener">▶ افتح الفيديوهات على يوتيوب</a><div class="muted">بتنفتح بصفحة جديدة. ابعتيلي روابط فيديوهات بتحبيها، وبتنحط هون مباشرة.</div></div>`;
   if (m === "exam") { box.innerHTML = `<div class="qwrap">${mcqHTML(C.qs || [])}</div>`; bindMCQ(box, label); }
   if (m === "cards") { box.innerHTML = `<div class="flips big">${(C.cards || []).map(([a, b]) => `<button class="flip"><span class="in"><span class="fa">${ico(a)}${esc(a)}</span><span class="fb">${esc(b)}</span></span></button>`).join("")}</div><p class="muted center">اكبس على البطاقة لتقلبها</p>`; box.querySelectorAll(".flip").forEach((b) => (b.onclick = () => b.classList.toggle("on"))); }
@@ -1031,7 +1165,7 @@ function openMode(m, keep) {
   if (m === "story") storyMode(box, i, 0);
   box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-document.getElementById("hubBack").onclick = () => { document.body.classList.remove("hub-map"); };
+document.getElementById("hubBack").onclick = () => { document.body.classList.remove("hub-map"); if (cur < 0) route(); };
 // ---------- exam questions ----------
 function mcqHTML(qs) { return qs.map((q, k) => { const order = shuffle(q.o.map((o, j) => j)); return `<div class="q" data-a="${q.a}"><div class="qt">${k + 1}. ${esc(q.q)}</div><div class="opts">${order.map((j) => `<button data-j="${j}">${esc(q.o[j])}</button>`).join("")}</div><div class="why">${esc(q.w || "")}</div></div>`; }).join("") || "<p>ما في أسئلة لهاد الدرس.</p>"; }
 function bindMCQ(box, label) {
@@ -1165,7 +1299,7 @@ function isUnder(x, n) { for (let p = x.p; p; p = p.p) if (p === n) return true;
 clearFocus();
 render();
 if (view === "map") requestAnimationFrame(fitAll);
-if (UI === 4) hubHome(); else if (UI) setTimeout(() => focusLesson(0), 0);
+if (UI === 4) route(); else if (UI) setTimeout(() => focusLesson(0), 0);
 // re-fit once the web font has loaded (text width changes the map size)
 var refit = () => { if (view === "map") (cur >= 0 ? frameLesson() : fitAll()); };
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
