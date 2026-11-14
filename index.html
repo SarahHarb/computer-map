@@ -237,6 +237,48 @@ body.focus #canvas .n.lit,body.focus #canvas .n.ctx{opacity:1}
 .s-cards .flip .fb{font-size:20px}
 .s-hint{text-align:center;color:#8A97AA;margin:10px 0 0}
 @media (max-width:820px){.sh-top button{padding:6px 8px;font-size:12px}#shCrumb small{display:none}#shPos{display:none}}
+
+/* ---------- UI variants ---------- */
+#uiswitch{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);border-radius:10px;padding:3px 6px;font-size:13px;color:#B8C4D6}
+#uiswitch a{color:#DDE5F0;text-decoration:none;padding:4px 10px;border-radius:8px;white-space:nowrap}
+#uiswitch a.on{background:var(--gold);color:var(--ink);font-weight:800}
+#pane{display:none}
+body.ui1 #lslide,body.ui2 #lslide,body.ui3 #lslide{display:none!important}
+#pane .pbox{width:100%;height:100%;border-radius:0;box-shadow:none}
+#pane .pclose{display:none}
+/* 1: split */
+body.ui1 #map{left:auto;width:48%;border-right:1px solid var(--line)}
+body.ui1 #pane{display:flex;position:absolute;top:0;bottom:0;left:0;width:52%;background:#fff;z-index:4}
+body.ui1 #pane .ptitle h2{font-size:26px}
+body.ui1 .dock{left:auto;right:24%;transform:translateX(50%);max-width:46%}
+body.ui1 #pos,body.ui1 #mapkey{display:none}
+body.ui1 #unitbar{max-width:96%}
+body.ui1 .sheet .dfn{grid-template-columns:1fr;gap:4px}
+/* 2: side card on the map */
+body.ui2 #pane{position:absolute;top:66px;bottom:86px;left:14px;width:min(460px,46%);z-index:7;border-radius:16px;overflow:hidden;box-shadow:0 14px 40px rgba(20,33,61,.25);border:1px solid var(--line)}
+body.ui2 #pane.show{display:flex}
+body.ui2 #pane .pclose{display:grid;place-items:center}
+body.ui2 #pane .ptitle h2{font-size:22px}
+body.ui2 #pane .pbody{font-size:16px;padding:14px}
+body.ui2 #pane .idea{font-size:18px}
+body.ui2 .sheet .dfn{grid-template-columns:1fr;gap:4px}
+body.ui2 .sheet .topo{grid-template-columns:1fr 1fr 1fr}
+body.ui2 #pane #plprev,body.ui2 #pane #plnext,body.ui2 #pane #popen{font-size:12px;padding:4px 8px}
+/* 3: lesson page */
+body.ui3 #map{display:none!important}
+body.ui3 #pane{display:flex;position:absolute;inset:0;background:#fff}
+body.ui3 #pane .pbody{padding-bottom:110px}
+.ovstatic{border:1px solid var(--line);border-radius:14px;background:#fff radial-gradient(circle,#E1E7EF 1px,transparent 1.2px) 0 0/18px 18px;padding:14px;margin:0 auto 22px;max-width:1060px;overflow:auto}
+.ovs-in{zoom:.72;width:max-content;margin:0 auto;padding-left:150px}
+.ovstatic .card{flex-direction:column;gap:6px;min-width:120px;padding:10px 14px;font-size:16px;border-radius:14px;text-align:center;justify-content:center;cursor:pointer}
+.ovstatic .card .ic{width:30px;height:30px}
+.ovstatic .mnode>.box>.card{white-space:normal;max-width:170px}
+.ovstatic .vn>.row .card{flex-direction:row;min-width:0;padding:5px 10px;font-size:14px}
+.ovstatic .vn>.row .card .ic{width:18px;height:18px}
+.ovstatic .dimmed>.box,.ovstatic .dimmed>.row{opacity:.3}
+.ovstatic .lit>.box .card,.ovstatic .lit>.row .card{box-shadow:0 0 0 5px var(--gold),0 0 22px rgba(242,183,5,.9)}
+@media (max-width:1100px){#uiswitch span{display:none}#uiswitch a{padding:4px 6px}}
+@media (max-width:820px){body.ui1 #map{display:none!important}body.ui1 #pane{width:100%}body.ui1 .dock{left:10px;right:10px;transform:none;max-width:none}body.ui2 #pane{left:8px;right:8px;width:auto}}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -338,6 +380,7 @@ body.focus #canvas .n.lit,body.focus #canvas .n.ctx{opacity:1}
  <div class="grow"></div>
  <div class="seg"><button id="vOv">الخارطة العامة</button><button id="vUnit">خارطة الوحدة</button><button id="vFull">الخارطة الكاملة</button></div><span id="vMap" hidden></span><span id="vList" hidden></span>
  <div class="opts"><button id="build" class="on" title="الخارطة بتنبني درس ورا درس متل السلايدات">تتركّب حسب الدرس</button><button id="defs" class="on">التعريفات: ظاهرة</button></div>
+ <div id="uiswitch"><span>جرّبي:</span><a data-u="1" href="?ui=1">١ الشاشة نصّين</a><a data-u="2" href="?ui=2">٢ الخارطة بتكبر</a><a data-u="3" href="?ui=3">٣ صفحة الدرس</a></div>
  <span id="ubox"></span>
 </header>
 <div class="main">
@@ -358,6 +401,7 @@ body.focus #canvas .n.lit,body.focus #canvas .n.ctx{opacity:1}
  <div class="zoom"><button id="zin" title="تكبير">+</button><button id="zout" title="تصغير">−</button><button id="zfit" title="ملاءمة" style="font-size:13px">كامل</button></div>
  <div class="hint"></div>
 </div>
+<div id="pane"></div>
 <div class="dock"><button id="prev" title="الدرس السابق (السهم →)">→ السابق</button><span id="pos"><b>اختار درس من القائمة</b><small>أو اكبس «ابدأ»</small></span><button id="lslide" title="اعرض الدرس (مفتاح S)">▶ اعرض الدرس</button><button id="next" title="الدرس التالي (السهم ←)">ابدأ ←</button></div>
 </div>
 </div>
@@ -482,9 +526,10 @@ let Z = 1, TX = 0, TY = 0, moved = false;
 const apply = () => { canvas.style.transform = `translate(${TX}px,${TY}px) scale(${Z})`; };
 function zoomAt(f, cx, cy) { const nz = Math.min(2.5, Math.max(0.08, Z * f)); TX = cx - (cx - TX) * (nz / Z); TY = cy - (cy - TY) * (nz / Z); Z = nz; apply(); }
 function fitRect(r, maxZ) { // r in canvas coords
-  const W = mapEl.clientWidth, H = mapEl.clientHeight - 70, pad = 40;
+  const offL = typeof UI !== "undefined" && UI === 2 && paneEl.classList.contains("show") ? paneEl.offsetWidth + 24 : 0;
+  const W = mapEl.clientWidth - offL, H = mapEl.clientHeight - 70, pad = 40;
   Z = Math.min(maxZ || 1.4, (W - pad * 2) / r.w, (H - pad * 2) / r.h);
-  TX = (W - r.w * Z) / 2 - r.x * Z; TY = Math.max(pad, (H - r.h * Z) / 2) - r.y * Z; apply();
+  TX = offL + (W - r.w * Z) / 2 - r.x * Z; TY = Math.max(pad, (H - r.h * Z) / 2) - r.y * Z; apply();
 }
 function canvasRect(els) {
   const cr = canvas.getBoundingClientRect(); let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9;
@@ -556,10 +601,11 @@ function focusLesson(i) {
   lesBtns.forEach((b, j) => b.classList.toggle("done", j < i)); lesBtns[i].classList.add("cur"); lesBtns[i].scrollIntoView({ block: "nearest", behavior: "smooth" }); document.getElementById("lslide").style.display = "";
   document.getElementById("pos").innerHTML = `<b>${esc(LESSONS[i][4])}</b><small>${esc(LESSONS[i][2])} — الدرس ${i + 1} من ${LESSONS.length}</small>`; document.getElementById("next").textContent = i === LESSONS.length - 1 ? "النهاية ✓" : "التالي ←"; document.getElementById("clear").classList.remove("on"); setProg(i + 1);
   frameLesson();
+  if (UI) { openLesson(i, true); if (UI === 2) frameLesson(); }
 }
 function frameLesson() {
   requestAnimationFrame(() => {
-    const els = [...focus.lit].map((n) => n.el).filter(Boolean);
+    const els = [...focus.lit].map((n) => n.el).filter((e) => e && e.isConnected);
     if (!els.length) return;
     if (MODE === "ov") { fitAll(); return; }
     if (VIS && view === "map") { const all = [...canvas.querySelectorAll(".mnode,.vn")]; const r = canvasRect(all); const W = mapEl.clientWidth - 80, H = mapEl.clientHeight - 80; if (Math.min(W / r.w, H / r.h) >= 0.55) { fitRect(r, 1.3); return; } }
@@ -569,10 +615,22 @@ function frameLesson() {
 }
 document.getElementById("next").onclick = () => focusLesson(Math.min(LESSONS.length - 1, cur + 1));
 document.getElementById("prev").onclick = () => focusLesson(Math.max(0, cur - 1));
-document.addEventListener("keydown", (e) => { if (SHOW.on || pn) return; if (e.key === "ArrowLeft") document.getElementById("next").click(); if (e.key === "ArrowRight") document.getElementById("prev").click(); });
+document.addEventListener("keydown", (e) => { if (SHOW.on || (pn && UI !== 1 && UI !== 3)) return; if (e.key === "ArrowLeft") document.getElementById("next").click(); if (e.key === "ArrowRight") document.getElementById("prev").click(); });
 
+// ---------- UI variants (?ui=1 split, ?ui=2 zoom + side card, ?ui=3 lesson page) ----------
+const UI = +(new URLSearchParams(location.search).get("ui") || 0);
+const paneEl = document.getElementById("pane");
+document.body.classList.add("ui" + UI);
+document.querySelectorAll("#uiswitch a").forEach((a) => a.classList.toggle("on", +a.dataset.u === UI));
+function boxShow() { if (UI) paneEl.classList.add("show"); else pop.classList.add("show"); }
+function ovStatic(i) {
+  const el = mapHTML(null, true);
+  el.querySelectorAll(".card").forEach((c) => { const n = OVALL.find((x) => x.t === c.dataset.t); const host = c.closest(".mnode,.vn"); if (n && n.L.includes(i)) host.classList.add("lit"); else host.classList.add("dimmed"); });
+  return `<div class="ovstatic"><div class="ovs-in">${el.outerHTML}</div></div>`;
+}
 // ---------- popup: lesson sheets and concept cards ----------
 const pop = document.getElementById("pop"), pbody = document.getElementById("pbody");
+if (UI) paneEl.appendChild(document.querySelector(".pbox"));
 let pn = null, ptab = "exp", plesson = -1; // plesson >= 0: a whole lesson is open
 const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 // nodes introduced by each lesson, and the first lesson of each node
@@ -628,15 +686,18 @@ function head(n, i) {
   document.getElementById("popen").style.display = i < 0 && n && kids(n).length ? "" : "none";
   document.getElementById("plprev").style.display = document.getElementById("plnext").style.display = i >= 0 ? "" : "none";
 }
-function openPop(n) { if (n.ov) { openShow(cur >= 0 && n.L.includes(cur) ? cur : n.L[0]); return; } pn = n; plesson = -1; ptab = "exp"; head(n, -1); pop.classList.add("show"); drawTab(); window.track && track.view(clean(n.t), "exp"); }
-function openLesson(i) { plesson = i; pn = firstNodeOf(i); ptab = "exp"; head(pn, i); pop.classList.add("show"); drawTab(); window.track && track.view("درس: " + LESSONS[i][4], "exp"); }
+function openPop(n) {
+  if (n.ov) { const l = cur >= 0 && n.L.includes(cur) ? cur : n.L[0]; if (UI === 0) openShow(l); else if (UI === 2) { MODE = "unit"; UNIT = unitOfLesson[l]; focusLesson(l); } else focusLesson(l); return; }
+  pn = n; plesson = -1; ptab = "exp"; head(n, -1); boxShow();
+  if (UI === 2 && n.el && n.el.isConnected) requestAnimationFrame(() => fitRect(canvasRect([n.el, ...kids(n).map((k) => k.el).filter((e) => e && e.isConnected)]), 1.3)); drawTab(); window.track && track.view(clean(n.t), "exp"); }
+function openLesson(i, keepTab) { plesson = i; pn = firstNodeOf(i); if (!keepTab) ptab = "exp"; head(pn, i); boxShow(); drawTab(); window.track && track.view("درس: " + LESSONS[i][4], "exp"); }
 function firstNodeOf(i) { const t = LESSONS[i][1][0]; return (t && byTitle.get(t[0])) || DATA.root; }
-function closePop() { pop.classList.remove("show"); pn = null; plesson = -1; }
+function closePop() { if (UI === 1 || UI === 3) { if (plesson < 0 && cur >= 0) openLesson(cur); return; } pop.classList.remove("show"); paneEl.classList.remove("show"); pn = null; plesson = -1; }
 document.getElementById("pclose").onclick = closePop;
 document.getElementById("plprev").onclick = () => { if (plesson > 0) { focusLesson(plesson - 1); openLesson(plesson - 1); } };
 document.getElementById("plnext").onclick = () => { if (plesson < LESSONS.length - 1) { focusLesson(plesson + 1); openLesson(plesson + 1); } };
 pop.addEventListener("click", (e) => { if (e.target === pop) closePop(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && pn) { closePop(); e.stopImmediatePropagation(); } }, true);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && pn && (UI === 0 || UI === 2)) { closePop(); e.stopImmediatePropagation(); } }, true);
 document.getElementById("popen").onclick = () => { const n = pn; closePop(); n.open = true; for (let p = n.p; p; p = p.p) p.open = true; render(); requestAnimationFrame(() => { if (view === "map" && n.el) fitRect(canvasRect([n.el, ...kids(n).map((k) => k.el).filter(Boolean)]), 1.3); }); };
 document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => { ptab = b.dataset.t; drawTab(); window.track && pn && track.view(plesson >= 0 ? "درس: " + LESSONS[plesson][4] : clean(pn.t), ptab); }));
 function questionsFor() {
@@ -656,7 +717,7 @@ function drawTab() {
   const n = pn, label = plesson >= 0 ? LESSONS[plesson][4] : clean(n.t);
   document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.t === ptab));
   let h = "";
-  if (ptab === "exp") h = plesson >= 0 ? sheetHTML(plesson) : conceptHTML(n);
+  if (ptab === "exp") h = plesson >= 0 ? (UI === 3 ? ovStatic(plesson) : "") + sheetHTML(plesson) : conceptHTML(n);
   else if (ptab === "vid") {
     const q = (plesson < 0 && (CONTENT[n.t] || {}).video) || ("شرح " + label + " مقدمة في الحاسوب");
     h = `<div class="vid"><div style="font-size:22px;font-weight:700">فيديوهات شرح عن: «${esc(label)}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" rel="noopener">▶ افتح الفيديوهات على يوتيوب</a><div style="color:#6B7280;font-size:15px">بتنفتح بصفحة جديدة، اختار الفيديو المناسب وارجع للموقع</div></div>`;
@@ -679,6 +740,7 @@ function drawTab() {
   pbody.querySelectorAll(".flip").forEach((b) => (b.onclick = () => b.classList.toggle("on")));
   pbody.querySelectorAll(".go-qs").forEach((b) => (b.onclick = () => { ptab = "qs"; drawTab(); }));
   pbody.querySelectorAll(".go-lesson").forEach((b) => (b.onclick = () => { const i = +b.dataset.i; focusLesson(i); openLesson(i); }));
+  pbody.querySelectorAll(".ovstatic .card").forEach((c) => (c.onclick = (e) => { e.stopPropagation(); const k = OVALL.find((x) => x.t === c.dataset.t); if (k) focusLesson(k.L[0]); }));
   pbody.querySelectorAll(".mini .card").forEach((c) => (c.onclick = (e) => { e.stopPropagation(); const t = c.dataset.t, k = ALL.find((x) => x.t === t); if (k) openPop(k); }));
 }
 // ---------- presentation mode: each lesson as slides in the PowerPoint style ----------
@@ -790,6 +852,7 @@ function isUnder(x, n) { for (let p = x.p; p; p = p.p) if (p === n) return true;
 clearFocus();
 render();
 if (view === "map") requestAnimationFrame(fitAll);
+if (UI) setTimeout(() => focusLesson(0), 0);
 // re-fit once the web font has loaded (text width changes the map size)
 var refit = () => { if (view === "map") (cur >= 0 ? frameLesson() : fitAll()); };
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(refit, 50));
