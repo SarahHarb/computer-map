@@ -2015,13 +2015,13 @@ function scLesson(i) {
   requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : 70));
   document.querySelectorAll("#scStrip .stops button").forEach((b) => { const k = +b.dataset.i; b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
   const on = document.querySelector("#scStrip .stops button.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-  SC.tab = "map"; if (window.speechSynthesis) speechSynthesis.cancel(); scPanel();
+  SC.tab = "exp"; if (window.speechSynthesis) speechSynthesis.cancel(); scPanel();
   window.track && track.view("درس: " + LESSONS[i][4], "الحاسوب");
 }
 function scPanel() {
   const i = SC.i, L = LESSONS[i], C = LC[i] || {}, col = unitColor(unitOfLesson[i]);
-  const tabs = [["map", "الخارطة", "FaProjectDiagram"], ["exp", "بصري", "FaEye"], ["read", "كتابة", "FaFileAlt"], ["listen", "سمعي", "FaHeadphones"], ["vid", "يوتيوب", "FaYoutube"], ["do", "تفاعلي", "FaHandPaper"], ["qs", "أسئلة", "FaClipboardCheck"], ["cards", "بطاقات", "FaClone"], ["ai", "ذكاء اصطناعي", "FaRobot"]];
-  if (!tabs.some((t) => t[0] === SC.tab)) SC.tab = "map";
+  const tabs = [["exp", "بصري", "FaEye"], ["read", "كتابة", "FaFileAlt"], ["map", "الخارطة", "FaProjectDiagram"], ["vid", "يوتيوب", "FaYoutube"], ["do", "تفاعلي", "FaHandPaper"], ["qs", "أسئلة", "FaClipboardCheck"], ["cards", "بطاقات", "FaClone"], ["ai", "ذكاء اصطناعي", "FaRobot"]];
+  if (!tabs.some((t) => t[0] === SC.tab)) SC.tab = "exp";
   let b = "";
   if (SC.tab === "exp") {
     b += `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div>`;
