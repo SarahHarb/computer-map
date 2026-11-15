@@ -546,6 +546,7 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .scene .spin{animation:spin 2.4s linear infinite;transform-box:fill-box;transform-origin:center}.scene .spin.f{animation-duration:1.3s}
 @keyframes spin{to{transform:rotate(360deg)}}
 .scene .blink{animation:blink 1.6s ease-in-out infinite}@keyframes blink{50%{opacity:.3}}
+.scene.has-focus g[data-p]:not(.tg) .spin,.scene.has-focus g[data-p]:not(.tg) .blink,.scene.has-focus g[data-p]:not(.tg) .wifi{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.scene .spin,.scene .blink,.scene .wifi{animation:none}}
 @keyframes wifi{50%{opacity:.25}}
 .sc-panel{background:#fff;border-right:1px solid var(--line);overflow-y:auto;padding:20px 22px 30px;display:flex;flex-direction:column}
@@ -2015,14 +2016,35 @@ const SCENE_SVG = `<svg viewBox="0 0 1600 900" class="scene" id="scene" xmlns="h
 <g data-p="cloud"><path d="M1340 170 a46 46 0 0 1 40 -70 a62 62 0 0 1 116 10 a42 42 0 0 1 20 80 z" fill="#ffffff" stroke="#1f7a8c" stroke-width="4" class="pt"/><g fill="#1f7a8c" opacity=".85"><rect x="1394" y="120" width="44" height="30" rx="4"/><rect x="1400" y="126" width="32" height="5" fill="#fff"/><rect x="1400" y="136" width="32" height="5" fill="#fff"/></g><text x="1430" y="172" class="pl s" style="fill:#1f7a8c;stroke:#fff">السحابة</text></g>
 <path d="M1420 194 v52" stroke="#1f7a8c" stroke-width="3" stroke-dasharray="6 6"/>
 </svg>`;
-const LT = { // lesson -> parts to zoom on (+ screen content)
-  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"] }, 1: { t: ["case", "mon", "user"] }, 2: { t: ["all"], z: true },
-  3: { t: ["cpu"] }, 4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn"] }, 5: { t: ["mb", "ports", "gpu", "psu"] },
-  6: { t: ["ram", "rom", "hdd", "ssd", "odd"] }, 7: { t: ["ram", "rom", "cpu"] }, 8: { t: ["hdd", "ssd", "odd", "cloud"] }, 9: { t: ["hdd", "ssd"] },
-  10: { t: ["mon"], s: "desk" }, 11: { t: ["mon"], s: "apps" }, 12: { t: ["mon"], s: "code" }, 13: { t: ["mon"], s: "os" },
-  14: { t: ["user", "mon"] }, 15: { t: ["router", "case"], flow: ["ports", "router", "cloud"] }, 16: { t: ["router", "case", "mon"] }, 17: { t: ["router"], flow: ["ports", "router", "cloud"] }, 18: { t: ["router", "switch"], flow: ["ports", "router"] },
-  19: { t: ["cloud", "router"], flow: ["router", "cloud"] }, 20: { t: ["cloud"] }, 21: { t: ["mon"], s: "shield" }, 22: { t: ["mon"], s: "hacker" }, 23: { t: ["mon"], s: "virus" },
-  24: { t: ["mon", "router"], s: "shield" }, 25: { t: ["mon"], s: "ai" }, 26: { t: ["mon"], s: "ai" }, 27: { t: ["mon"], s: "ai" },
+const LT = { // lesson -> parts the lens highlights (+ screen content, + data flow)
+  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"] },
+  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os" },
+  2: { t: ["all"], z: true },
+  3: { t: ["cpu"] },
+  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn"] },
+  5: { t: ["mb", "ports", "gpu", "psu"] },
+  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud"] },
+  7: { t: ["ram", "rom", "cpu"] },
+  8: { t: ["hdd", "ssd", "odd", "cloud"] },
+  9: { t: ["ram", "hdd", "ssd"] },
+  10: { t: ["mon", "rom"], s: "os" },
+  11: { t: ["mon"], s: "apps" },
+  12: { t: ["mon", "user"], s: "code" },
+  13: { t: ["mon", "kb", "mouse", "prn"], s: "os" },
+  14: { t: ["user", "mon"] },
+  15: { t: ["router", "switch", "case", "cloud"], flow: ["ports", "router", "cloud"] },
+  16: { t: ["switch", "router", "case"], flow: ["ports", "switch"] },
+  17: { t: ["router", "ports", "cloud"], flow: ["ports", "router", "cloud"] },
+  18: { t: ["router", "switch", "ports"], flow: ["ports", "router", "switch"] },
+  19: { t: ["cloud", "router"], flow: ["router", "cloud"] },
+  20: { t: ["cloud"] },
+  21: { t: ["mon", "hdd"], s: "shield" },
+  22: { t: ["mon", "router"], s: "hacker" },
+  23: { t: ["mon", "hdd"], s: "virus" },
+  24: { t: ["mon", "router"], s: "shield" },
+  25: { t: ["mon"], s: "ai" },
+  26: { t: ["mon"], s: "ai" },
+  27: { t: ["mon", "cam", "mic"], s: "ai" },
 };
 const PART_LESSON = { odd: 8, cam: 4, mic: 4, scan: 4, switch: 18, cpu: 3, ram: 7, rom: 7, mb: 5, hdd: 8, ssd: 8, psu: 5, gpu: 5, ports: 5, mon: 4, kb: 4, mouse: 4, spk: 4, prn: 4, router: 15, cloud: 19, user: 1 };
 const EXTRA_PARTS = { router: ["router", "الموجّه Router", "خارج الصندوق", "شبكات", "يربط الشبكات ببعضها ويحدّد أفضل مسار للبيانات، ومن خلاله يصل الإنترنت إلى جهازك."], cloud: ["cloud", "السحابة", "على الإنترنت", "حوسبة سحابية", "موارد حوسبة وتخزين تستأجرها عبر الإنترنت وتدفع حسب الاستخدام."], user: ["user", "المستخدم", "الكيان البشري", "إنسان", "الإنسان الذي يستخدم الحاسوب، ويشكّل مع المبرمج الكيان البشري."],
@@ -2118,11 +2140,11 @@ function defChips(d) {
   const parts = d.split(/[،.؛]|\sثم\s/).map(clean2).filter((x) => x.length > 3).slice(0, 5);
   return `<div class="dchips">${parts.map((x, k) => (k ? '<i class="dc-ar">↓</i>' : "") + `<span class="dchip">${ico(x) || svgI("FaCheck")}<b>${esc(x)}</b></span>`).join("")}</div>`;
 }
-function centerOf(id) { const b = bboxOf(groupsOf([id])); return [b.x + b.w / 2, b.y + b.h / 2]; }
+function centerOf(id) { const b = bboxOf(groupsOf([id]).slice(0, 1)); return [b.x + b.w / 2, b.y + b.h / 2]; }
 function drawMarkers() {
   const svg = document.getElementById("scene"), NS = "http://www.w3.org/2000/svg", g = document.createElementNS(NS, "g"); g.id = "markers";
   const byPart = {}; Object.entries(LT).forEach(([i, v]) => v.t.forEach((p) => { if (p !== "all" && p !== "case") (byPart[p] ||= []).push(+i); }));
-  ["cpu", "ram", "mb", "hdd", "mon", "kb", "prn", "router", "cloud", "user"].forEach((p) => { if (!byPart[p]) return; const [x, y] = centerOf(p); const m = document.createElementNS(NS, "g"); m.setAttribute("class", "mk"); m.dataset.p = p; m.innerHTML = `<circle cx="${x}" cy="${y}" r="22" class="mk-pulse"/><circle cx="${x}" cy="${y}" r="15" class="mk-dot"/><text x="${x}" y="${y + 5}" class="mk-n">${byPart[p].length}</text>`; m.onclick = (e) => { e.stopPropagation(); scPart(p); }; g.appendChild(m); });
+  ["cpu", "ram", "mb", "ports", "hdd", "odd", "mon", "kb", "prn", "router", "switch", "cloud", "user"].forEach((p) => { if (!byPart[p]) return; const [x, y] = centerOf(p); const m = document.createElementNS(NS, "g"); m.setAttribute("class", "mk"); m.dataset.p = p; m.innerHTML = `<circle cx="${x}" cy="${y}" r="22" class="mk-pulse"/><circle cx="${x}" cy="${y}" r="15" class="mk-dot"/><text x="${x}" y="${y + 5}" class="mk-n">${byPart[p].length}</text>`; m.onclick = (e) => { e.stopPropagation(); scPart(p); }; g.appendChild(m); });
   svg.appendChild(g);
 }
 function showFlow(ids) {
