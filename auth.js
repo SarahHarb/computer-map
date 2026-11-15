@@ -18,6 +18,9 @@
 #login .go{width:100%;margin-top:16px;background:#16213E;color:#fff;border:none;border-radius:10px;padding:11px;font-size:17px;font-weight:700}
 #login .msg{min-height:22px;margin-top:10px;font-size:14px;text-align:center}#login .msg.err{color:#C0392B}#login .msg.ok{color:#1E8449}
 #login .link{background:none;border:none;color:#2F5D9B;font-size:13px;text-decoration:underline;padding:0;margin-top:6px}
+#login .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:2px solid #D1D5DB;border-radius:12px;padding:12px;font-size:17px;font-weight:800;font-family:inherit;color:#14213D;cursor:pointer;margin:4px 0 6px}
+#login .gbtn:hover{border-color:#4285F4;background:#F5F9FF}
+#login .or{display:flex;align-items:center;gap:8px;color:#9CA3AF;font-size:13px;margin:10px 0}#login .or::before,#login .or::after{content:"";flex:1;border-top:1px solid #E5E7EB}
 #ubox{display:flex;align-items:center;gap:6px;font-size:13px}
 #ubox .sc{background:#E8F8EF;color:#1E8449;border-radius:999px;padding:2px 10px;font-weight:700}`;
   document.head.appendChild(css);
@@ -26,6 +29,8 @@
   L.id = "login";
   L.innerHTML = `<form class="lbox" autocomplete="on">
   <h2>الخارطة المفاهيمية — مقدمة في الحاسوب</h2><div class="sub">إعداد: سارة حرب</div>
+  <button type="button" class="gbtn" id="gbtn"><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>ادخل بحساب الجامعة (Google)</span></button>
+  <div class="or"><span>أو بالإيميل وكلمة السر</span></div>
   <div class="lt"><button type="button" data-m="in" class="on">تسجيل الدخول</button><button type="button" data-m="up">حساب جديد</button></div>
   <div class="up"><label>الاسم الكامل</label><input name="full_name" autocomplete="name">
   </div>
@@ -116,5 +121,14 @@
       if (p) sb.auth.updateUser({ password: p }).then(({ error }) => alert(error ? AR(error) : "تم تغيير كلمة السر ✅"));
     }
   });
+  L.querySelector("#gbtn").onclick = async () => {
+    say("لحظة…", true);
+    const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname, queryParams: { hd: "ppu.edu.ps", prompt: "select_account" } } });
+    if (error) say(/not enabled|Unsupported provider/i.test(error.message) ? "الدخول بحساب Google لسا مش جاهز. ادخل بالإيميل وكلمة السر." : AR(error));
+  };
+  { // رجوع من Google بخطأ (مثلاً حساب مش جامعي)
+    const q = new URLSearchParams(location.hash.slice(1) + "&" + location.search.slice(1)), ed = q.get("error_description");
+    if (ed) { say(/Database error|signup/i.test(ed) ? "لازم تختار حساب الجامعة اللي بينتهي بـ ‎@ppu.edu.ps" : "ما زبط الدخول: " + ed.replace(/\+/g, " ")); history.replaceState(null, "", location.pathname); }
+  }
   sb.auth.getSession().then(({ data }) => { if (data.session) start(data.session.user); });
 })();
