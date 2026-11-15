@@ -22,7 +22,16 @@
 #login .gbtn:hover{border-color:#4285F4;background:#F5F9FF}
 #login .or{display:flex;align-items:center;gap:8px;color:#9CA3AF;font-size:13px;margin:10px 0}#login .or::before,#login .or::after{content:"";flex:1;border-top:1px solid #E5E7EB}
 #login .gnote{color:#4B5563;font-size:14px;line-height:1.8;text-align:center;margin:10px 0 0}
-#ubox{display:flex;align-items:center;gap:6px;font-size:13px}
+#ubox{display:flex;align-items:center;gap:10px;font-size:13px;margin-inline-start:auto}
+#ubox .uchip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 14px 4px 4px}
+#ubox .uav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#F2B705,#E08E0B);color:#14213D;display:grid;place-items:center;font-weight:900;font-size:15px;overflow:hidden;box-shadow:0 0 0 2px #F2B705}
+#ubox .uav img{width:100%;height:100%;object-fit:cover}
+#ubox .unm{display:flex;flex-direction:column;line-height:1.25}#ubox .unm b{font-size:16px;color:#fff;font-weight:800;white-space:nowrap}#ubox .unm small{font-size:11px;color:#B8C4D6}
+#ubox .urole{background:#F2B705;color:#14213D;font-weight:900;font-size:11px;border-radius:999px;padding:2px 9px}
+#ubox .uscore{display:flex;align-items:baseline;gap:4px;background:#E3F6EA;color:#1E8449;border-radius:12px;padding:5px 12px;font-weight:800}#ubox .uscore b{font-size:17px}#ubox .uscore i{font-style:normal;font-size:12px;opacity:.75}#ubox .uscore em{font-style:normal;font-size:12px;background:#1E8449;color:#fff;border-radius:99px;padding:0 7px;margin-inline-start:4px}
+#ubox .uadm{background:#F2B705;color:#14213D;font-weight:800;border-radius:12px;padding:8px 14px;text-decoration:none;white-space:nowrap}
+#ubox .uout{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:12px;padding:7px 12px;font-family:inherit;font-weight:700;cursor:pointer}#ubox .uout:hover{background:rgba(255,255,255,.1)}
+@media (max-width:700px){#ubox .unm small,#ubox .uscore i,#ubox .uscore em{display:none}#ubox .unm b{font-size:14px}}
 #ubox .sc{background:#E8F8EF;color:#1E8449;border-radius:999px;padding:2px 10px;font-weight:700}`;
   document.head.appendChild(css);
 
@@ -50,8 +59,13 @@
   }
   function drawBox() {
     const box = document.getElementById("ubox"); if (!box) return;
-    box.innerHTML = `<span>👤 ${esc(profile.full_name || "")}</span><span class="sc" title="إجاباتك الصحيحة">✅ ${stats.ok} / ${stats.all}</span>` +
-      (profile.role === "admin" ? `<a href="admin.html"><button>📊 لوحة المتابعة</button></a>` : "") + `<button id="logout">خروج</button>`;
+    const md = (user && user.user_metadata) || {}, name = (profile.full_name || md.full_name || md.name || (user && user.email) || "").trim();
+    const ini = name.split(/\s+/).slice(0, 2).map((w) => w[0]).join(""), pic = md.avatar_url || md.picture;
+    const p = stats.all ? Math.round((100 * stats.ok) / stats.all) : null;
+    box.innerHTML = `<div class="uchip"><span class="uav">${pic ? `<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">` : esc(ini)}</span><span class="unm"><b>${esc(name)}</b><small dir="ltr">${esc((user && user.email) || "")}</small></span>${profile.role === "admin" ? `<span class="urole">المعلمة</span>` : ""}</div>` +
+      `<span class="uscore" title="إجاباتك الصحيحة"><b>${stats.ok}</b><i>/ ${stats.all}</i>${p != null ? `<em>${p}%</em>` : ""}</span>` +
+      (profile.role === "admin" ? `<a class="uadm" href="admin.html">📊 لوحة المتابعة</a>` : "") + `<button id="logout" class="uout" title="تسجيل الخروج">⎋ خروج</button>`;
+    const im = box.querySelector(".uav img"); if (im) im.onerror = () => (im.parentElement.textContent = ini);
     box.querySelector("#logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
   }
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
