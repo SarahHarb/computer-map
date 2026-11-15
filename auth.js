@@ -71,8 +71,7 @@
     const ini = name.split(/\s+/).slice(0, 2).map((w) => w[0]).join(""), pic = md.avatar_url || md.picture;
     const p = stats.all ? Math.round((100 * stats.ok) / stats.all) : null;
     const av = (cls) => `<span class="${cls}">${pic ? `<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">` : esc(ini)}</span>`;
-    box.innerHTML = `<span class="uscore" title="إجاباتك الصحيحة"><b>${stats.ok}</b><i>/ ${stats.all}</i>${p != null ? `<em>${p}%</em>` : ""}</span>
-      <div class="uwrap"><button class="uchip" id="uchip" aria-haspopup="true" aria-expanded="false">${av("uav")}<span class="unm"><b>${esc(name)}</b>${profile.role === "admin" ? `<small>المعلمة</small>` : `<small>طالب</small>`}</span><span class="ucar">▾</span></button>
+    box.innerHTML = `<div class="uwrap"><button class="uchip" id="uchip" aria-haspopup="true" aria-expanded="false">${av("uav")}<span class="unm"><b>${esc(name)}</b>${profile.role === "admin" ? `<small>المعلمة</small>` : `<small>طالب</small>`}</span><span class="ucar">▾</span></button>
       <div class="umenu" id="umenu" hidden>${av("uav big")}<b class="um-n">${esc(name)}</b><small class="um-e" dir="ltr">${esc((user && user.email) || "")}</small>${profile.role === "admin" ? `<span class="urole">المعلمة</span>` : ""}
         <div class="um-s"><div><b>${stats.ok}</b><span>إجابة صحيحة</span></div><div><b>${stats.all}</b><span>كل الإجابات</span></div><div><b>${p != null ? p + "%" : "—"}</b><span>النسبة</span></div></div>
         ${profile.role === "admin" ? `<a class="um-b gold" href="admin.html">📊 لوحة المتابعة</a>` : ""}<button class="um-b" id="logout">⎋ تسجيل الخروج</button></div></div>`;
