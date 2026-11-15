@@ -656,6 +656,14 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .v-pic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--c) 12%,#fff);flex:none}
 .v-pts .v-pic .ic{width:20px;height:20px;margin:0}
 @media (max-width:900px){#sc.lesson{grid-template-columns:1fr;grid-template-rows:34vh 1fr}#sc.lesson .sp-cards{grid-template-columns:1fr 1fr}#sc.lesson .v-tl{grid-template-columns:1fr 1fr}#sc.lesson .sp-q .q .opts{grid-template-columns:1fr}}
+
+.dmap .def{white-space:normal;max-width:260px;font-size:14px;font-style:normal;line-height:1.6;color:#1F2937;background:#fff;border-color:color-mix(in srgb,var(--c) 40%,#fff)}
+.dmap .def b{color:var(--c)}
+.dmap .v-map-in{padding-left:20px}
+.dmap .card.lvl0{font-size:20px}
+.pts-t td{font-size:15px;line-height:1.7}
+.pt-n{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c);font-weight:800}
+.pt-n .ic{width:20px;height:20px}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -1726,12 +1734,14 @@ function scPanel() {
   let b = "";
   if (SC.tab === "exp") {
     b += `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div>`;
-    if (C.flow) b += `<div class="v-flow">${C.flow.map((x, k) => `<div><span>${ico(x) || svgI("FaArrowLeft")}</span><b>${esc(x)}</b></div>`).join('<i class="v-arr">←</i>')}</div>`;
+    if (C.defs) b += `<h4 class="v-h">${svgI("FaProjectDiagram")} خارطة المفاهيم والتعريفات</h4><div class="v-map dmap" id="vDefs"></div>`;
+    if (C.flow) b += `<h4 class="v-h">${svgI("FaSyncAlt")} الخطوات</h4><div class="v-flow">${C.flow.map((x, k) => `<div><span>${ico(x) || svgI("FaArrowLeft")}</span><b>${esc(x)}</b></div>`).join('<i class="v-arr">←</i>')}</div>`;
     (C.tables || []).forEach((t) => { b += `<h4 class="v-h">${svgI("FaTable")} ${esc(t.title || "جدول المقارنة")}</h4><div class="tw"><table class="s-table sp-t"><tr>${t.h.map((x) => `<th>${x ? ico(x) : ""}${esc(x)}</th>`).join("")}</tr>${t.r.map((r) => "<tr>" + r.map((x, c) => `<td>${c === 0 && x ? ico(x) : ""}${esc(x)}</td>`).join("") + "</tr>").join("")}</table></div>`; });
     if (C.topo) b += `<h4 class="v-h">${svgI("FaShapes")} أشكال الشبكات</h4><div class="v-topo">${Object.entries(TOPO).map(([k, sv]) => `<figure>${sv}<figcaption>${esc(k)}</figcaption></figure>`).join("")}</div>`;
-    if (C.timeline) b += `<h4 class="v-h">${svgI("FaHistory")} الخط الزمني</h4><div class="v-tl">${C.timeline.map(([y, t]) => `<div><b>${y}</b><span>${esc(t)}</span></div>`).join("")}</div>`;
-    if (C.defs) b += `<h4 class="v-h">${svgI("FaBookOpen")} التعريفات</h4><div class="v-dcards">${C.defs.map(([t, d]) => `<div class="v-dc"><span class="v-dic">${ico(t) || svgI("FaTag")}</span><b>${esc(t)}</b><p>${esc(d)}</p></div>`).join("")}</div>`;
-    if (C.points) b += `<h4 class="v-h">${svgI("FaCheck")} نقاط مهمة</h4><div class="v-pts">${C.points.map((x) => `<div><span class="v-pic">${ico(x) || svgI("FaCheck")}</span><span>${esc(x)}</span></div>`).join("")}</div>`;
+    if (C.timeline) b += `<h4 class="v-h">${svgI("FaHistory")} الخط الزمني</h4><div class="tw"><table class="s-table sp-t"><tr><th>${svgI("FaCalendarAlt")} السنة</th><th>${svgI("FaInfoCircle")} شو صار؟</th></tr>${C.timeline.map(([y, t]) => `<tr><td>${y}</td><td>${esc(t)}</td></tr>`).join("")}</table></div>`;
+    if (C.points) b += `<h4 class="v-h">${svgI("FaListOl")} أهم المعلومات</h4><div class="tw"><table class="s-table sp-t pts-t"><tr><th style="width:70px">#</th><th>${svgI("FaInfoCircle")} المعلومة</th></tr>${C.points.map((x, k) => `<tr><td><span class="pt-n">${ico(x) || k + 1}</span></td><td>${esc(x)}</td></tr>`).join("")}</table></div>`;
+
+
     if (C.tip) b += `<div class="sp-tip">${svgI("FaLightbulb")}<span><b>طريقة حفظ:</b> ${esc(C.tip)}</span></div>`;
     b += `<button class="btn-line full" id="spShow">⛶ اعرض الدرس بشاشة كاملة</button>`;
   } else if (SC.tab === "map") {
@@ -1747,6 +1757,14 @@ function scPanel() {
   const sh = panel.querySelector("#spShow"); if (sh) sh.onclick = () => openShow(i);
   const vm = panel.querySelector("#vMap");
   if (vm) { const f = mapHTML(lessonNodes[i]); const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(f); vm.appendChild(inn); inn.style.zoom = Math.max(0.6, Math.min(1.25, (vm.clientWidth - 24) / inn.scrollWidth)); vm.querySelectorAll(".card").forEach((c) => (c.onclick = () => { const k = ALL.find((x) => x.t === c.dataset.t); if (k) openPop(k); })); }
+  const vd = panel.querySelector("#vDefs");
+  if (vd) {
+    const root = { t: L[4], cc: col.replace("#", ""), h: true, rel: C.defs.length > 1 ? "من مفاهيمه" : null, d: null, f: false, open: true, ov: true, p: null, depth: 0, c: [] };
+    root.c = C.defs.map(([t, d]) => ({ t, d, cc: root.cc, h: false, rel: null, f: false, open: true, ov: true, p: root, depth: 1, c: [] }));
+    const one = C.defs.length === 1 ? root.c[0] : root; if (one !== root) one.p = null;
+    const saveV = VIS; VIS = null; MINI = true; const f = document.createElement("div"); f.className = "forest"; f.appendChild(buildMap(one)); VIS = saveV; MINI = false;
+    const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(f); vd.appendChild(inn); inn.style.zoom = Math.max(0.6, Math.min(1.15, (vd.clientWidth - 24) / inn.scrollWidth));
+  }
   const mb = panel.querySelector("#mapBig"); if (mb) mb.onclick = () => { openShow(i); SHOW.k = SHOW.slides.findIndex((x) => x.k === "map"); renderSlide(); SHOW.step = SHOW.max; applyStep(); };
   if (SC.tab === "qs") bindMCQ(panel, L[4]);
   const mq = panel.querySelector("#moreQs"); if (mq) mq.onclick = () => { SC.tab = "qs"; scPanel(); };
