@@ -707,6 +707,34 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .rd-note:focus{outline:none;border-color:var(--c)}
 .do-pick{margin-bottom:12px}
 #doIn .pc{grid-template-columns:1fr}
+
+/* ---------- clean diagram look (pastel boxes, title + subtitle) ---------- */
+.fd{display:flex;flex-direction:column;align-items:center;gap:6px;margin:6px 0 18px;padding:18px 10px;background:#FBFAF7;border-radius:16px}
+.fd-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.fd-row.wrap{flex-wrap:wrap}
+.fd-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:140px;padding:12px 18px;border-radius:14px;border:1.5px solid;text-align:center}
+.fd-box b{font-size:18px}.fd-box small{font-size:13px;opacity:.85}
+.fd-ic .ic{width:24px;height:24px;margin-bottom:2px}
+.fd-box.lav{background:#EEEDFE;border-color:#8E86E0;color:#3C3489}
+.fd-box.mint{background:#E1F5EE;border-color:#3FA383;color:#0F5A45}
+.fd-box.sand{background:#F1EFE8;border-color:#A8A498;color:#3F3D38}
+.fd-ar{font-style:normal;font-size:24px;color:#8A8A85;font-weight:700}
+.fd-vert{display:flex;gap:26px;color:#8A8A85;font-size:24px;font-weight:700}
+.fd-vert i{font-style:normal}
+/* concept maps in the lesson panel and popups */
+.v-map,.mini,.dmap{background:#FBFAF7!important}
+.v-map .mnode>.box,.mini .mnode>.box,.dmap .mnode>.box{background:color-mix(in srgb,var(--cc,#16213E) 9%,#fff);border:1.5px solid color-mix(in srgb,var(--cc,#16213E) 45%,#fff);border-radius:14px;padding:10px 16px;gap:2px;max-width:280px}
+.v-map .mnode>.box>.card,.mini .mnode>.box>.card,.dmap .mnode>.box>.card{background:none!important;border:none!important;box-shadow:none!important;padding:0;min-height:0;font-size:17px;font-weight:800;color:color-mix(in srgb,var(--cc,#16213E) 80%,#000)!important}
+.v-map .mnode>.box>.card.lvl0,.mini .mnode>.box>.card.lvl0,.dmap .mnode>.box>.card.lvl0{font-size:20px}
+.v-map .mnode>.box>.def,.mini .mnode>.box>.def,.dmap .mnode>.box>.def{border:none;background:none;padding:0;margin:2px 0 0;font-style:normal;font-size:13px;line-height:1.55;color:color-mix(in srgb,var(--cc,#16213E) 60%,#555);text-align:center;white-space:normal}
+.v-map .def b,.mini .def b,.dmap .def b{display:none}
+.v-map .vlist .card,.mini .vlist .card,.dmap .vlist .card{background:#F1EFE8!important;border:1.5px solid #B9B5AA!important;border-radius:12px!important;color:#3F3D38!important;box-shadow:none!important;font-weight:600}
+.v-map .vlist .card.leaf.f,.mini .vlist .card.leaf.f{background:#FFF6DC!important;border-color:#E0C063!important}
+.v-map .down,.mini .down,.dmap .down{border-left-color:#9A9890!important}
+.v-map .hrow>.mnode::before,.v-map .hrow>.mnode::after,.mini .hrow>.mnode::before,.mini .hrow>.mnode::after,.dmap .hrow>.mnode::before,.dmap .hrow>.mnode::after{border-color:#9A9890!important}
+.v-map .rel,.mini .rel,.dmap .rel{background:#FBFAF7;color:#77746C}
+.v-map .vlist,.mini .vlist{border-color:#9A9890!important}
+.v-map .ic,.mini .ic,.dmap .ic{color:inherit}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -952,7 +980,7 @@ function buildMap(n) {
   const wrap = document.createElement("div"); wrap.className = "mnode"; wrap.style.setProperty("--c", "#" + n.cc); stateCls(wrap, n);
   const box = document.createElement("div"); box.className = "box";
   if (n.edge && n.depth > 0 && !(VIS && !VIS.has(n.p))) { const e = document.createElement("span"); e.className = "edge"; e.textContent = n.edge; box.appendChild(e); }
-  box.appendChild(cardEl(n)); if (n.d) box.appendChild(defEl(n)); wrap.appendChild(box);
+  box.style.setProperty("--cc", "#" + n.cc); box.appendChild(cardEl(n)); if (n.d) box.appendChild(defEl(n)); wrap.appendChild(box);
   if (kids(n).length) {
     if (n.h) {
       const down = document.createElement("div"); down.className = "down"; down.style.setProperty("--c", "#" + n.cc);
@@ -1747,6 +1775,15 @@ function bindListen(panel, i) {
   panel.querySelector("#lsStop").onclick = () => { playing = false; speechSynthesis.cancel(); k = 0; mark(); };
   panel.querySelectorAll(".ls-text p").forEach((p) => (p.onclick = () => { speechSynthesis.cancel(); k = +p.dataset.k; playing = true; speak(); }));
 }
+const FLOW_SUB = { "إدخال البيانات": "بيانات خام", "معالجة": "المعالج CPU", "إخراج المعلومات": "معلومات مفيدة", "تخزين": "ذاكرة وقرص", "Bit": "0 أو 1", "Byte": "8 Bit", "KB": "1024 Byte", "MB": "1024 KB", "GB": "1024 MB", "TB": "1024 GB", "الاستطلاع": "جمع معلومات", "الاختراق": "استغلال الثغرات", "حجب الخدمة": "طلبات تعطّل الجهاز" };
+const FLOW_TONE = ["lav", "mint", "lav", "sand", "mint", "lav"];
+function flowBox(x, k) { return `<div class="fd-box ${FLOW_TONE[k % FLOW_TONE.length]}"><span class="fd-ic">${ico(x) || ""}</span><b>${esc(x)}</b>${FLOW_SUB[x] ? `<small>${esc(FLOW_SUB[x])}</small>` : ""}</div>`; }
+function flowDiagram(steps) {
+  if (steps.length === 4 && /تخزين|حفظ/.test(steps[3])) {
+    return `<div class="fd fd-ipo"><div class="fd-row">${flowBox(steps[0], 0)}<i class="fd-ar">←</i>${flowBox(steps[1], 1)}<i class="fd-ar">←</i>${flowBox(steps[2], 2)}</div><div class="fd-vert"><i>↓</i><i>↑</i></div><div class="fd-row c">${flowBox(steps[3], 3)}</div></div>`;
+  }
+  return `<div class="fd"><div class="fd-row wrap">${steps.map((x, k) => (k ? '<i class="fd-ar">←</i>' : "") + flowBox(x, k)).join("")}</div></div>`;
+}
 function centerOf(id) { const b = bboxOf(groupsOf([id])); return [b.x + b.w / 2, b.y + b.h / 2]; }
 function drawMarkers() {
   const svg = document.getElementById("scene"), NS = "http://www.w3.org/2000/svg", g = document.createElementNS(NS, "g"); g.id = "markers";
@@ -1838,7 +1875,7 @@ function scPanel() {
   if (SC.tab === "exp") {
     b += `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div>`;
     if (C.defs) b += `<h4 class="v-h">${svgI("FaProjectDiagram")} خارطة المفاهيم والتعريفات</h4><div class="v-map dmap" id="vDefs"></div>`;
-    if (C.flow) b += `<h4 class="v-h">${svgI("FaSyncAlt")} الخطوات</h4><div class="v-flow">${C.flow.map((x, k) => `<div><span>${ico(x) || svgI("FaArrowLeft")}</span><b>${esc(x)}</b></div>`).join('<i class="v-arr">←</i>')}</div>`;
+    if (C.flow) b += `<h4 class="v-h">${svgI("FaSyncAlt")} الخطوات</h4>${flowDiagram(C.flow)}`;
     (C.tables || []).forEach((t) => { b += `<h4 class="v-h">${svgI("FaTable")} ${esc(t.title || "جدول المقارنة")}</h4><div class="tw"><table class="s-table sp-t"><tr>${t.h.map((x) => `<th>${x ? ico(x) : ""}${esc(x)}</th>`).join("")}</tr>${t.r.map((r) => "<tr>" + r.map((x, c) => `<td>${c === 0 && x ? ico(x) : ""}${esc(x)}</td>`).join("") + "</tr>").join("")}</table></div>`; });
     if (C.topo) b += `<h4 class="v-h">${svgI("FaShapes")} أشكال الشبكات</h4><div class="v-topo">${Object.entries(TOPO).map(([k, sv]) => `<figure>${sv}<figcaption>${esc(k)}</figcaption></figure>`).join("")}</div>`;
     if (C.timeline) b += `<h4 class="v-h">${svgI("FaHistory")} الخط الزمني</h4><div class="tw"><table class="s-table sp-t"><tr><th>${svgI("FaCalendarAlt")} السنة</th><th>${svgI("FaInfoCircle")} شو صار؟</th></tr>${C.timeline.map(([y, t]) => `<tr><td>${y}</td><td>${esc(t)}</td></tr>`).join("")}</table></div>`;
