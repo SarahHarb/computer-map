@@ -8,80 +8,85 @@
 
   const css = document.createElement("style");
   css.textContent = `
-#login{position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#16213E,#2F5D9B);display:flex;align-items:center;justify-content:center;padding:16px}
-#login .lbox{background:#fff;border-radius:18px;width:min(440px,100%);padding:26px 26px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-#login h2{margin:0 0 4px;font-size:22px;color:#16213E}#login .sub{color:#6B7280;font-size:14px;margin-bottom:14px}
-#login .lt{display:flex;gap:6px;margin-bottom:14px}#login .lt button{flex:1;border-radius:10px;padding:8px;font-size:15px;font-weight:700}
-#login label{display:block;font-size:14px;font-weight:600;margin:8px 0 3px}
-#login input{width:100%;font-family:inherit;font-size:16px;padding:9px 12px;border:1px solid #D1D5DB;border-radius:10px}
-#login input:focus{outline:2px solid #F1C40F;border-color:#B7950B}
-#login .go{width:100%;margin-top:16px;background:#16213E;color:#fff;border:none;border-radius:10px;padding:11px;font-size:17px;font-weight:700}
-#login .msg{min-height:22px;margin-top:10px;font-size:14px;text-align:center}#login .msg.err{color:#C0392B}#login .msg.ok{color:#1E8449}
-#login .link{background:none;border:none;color:#2F5D9B;font-size:13px;text-decoration:underline;padding:0;margin-top:6px}
+#login{position:fixed;inset:0;z-index:200;background:#14213D radial-gradient(circle at 20% 20%,#2F5D9B 0,transparent 55%);display:flex;align-items:center;justify-content:center;padding:16px}
+#login .lbox{background:#fff;border-radius:20px;width:min(420px,100%);padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login .lhead{display:flex;align-items:center;gap:12px;margin-bottom:18px}#login .llogo{width:52px;height:52px;border-radius:14px;background:#F2B705;display:grid;place-items:center;font-size:26px}
+#login h2{margin:0;font-size:22px;color:#14213D}#login .sub{color:#6B7280;font-size:14px}
+#login label{display:block;font-size:15px;font-weight:700;margin:8px 0 6px;color:#14213D}
+#login input{width:100%;font-family:inherit;font-size:18px;padding:12px 14px;border:2px solid #D1D5DB;border-radius:12px;box-sizing:border-box}
+#login input:focus{outline:none;border-color:#F2B705}
+#login input.code{font-size:30px;letter-spacing:10px;text-align:center;font-weight:800}
+#login .go{width:100%;margin-top:14px;background:#14213D;color:#fff;border:none;border-radius:12px;padding:13px;font-size:18px;font-weight:800;font-family:inherit;cursor:pointer}#login .go:disabled{opacity:.6}
+#login .hint{color:#6B7280;font-size:13px;margin:10px 0 0;text-align:center}
+#login .sent{background:#EEF6FF;border-radius:12px;padding:10px;text-align:center;margin:0 0 6px;font-size:15px}
+#login .row2{display:flex;justify-content:space-between;margin-top:10px}
+#login .msg{min-height:22px;margin-top:10px;font-size:15px;text-align:center;font-weight:600}#login .msg.err{color:#C0392B}#login .msg.ok{color:#1E8449}
+#login .link{background:none;border:none;color:#2F5D9B;font-size:14px;text-decoration:underline;padding:0;font-family:inherit;cursor:pointer}#login .link:disabled{color:#9CA3AF;text-decoration:none;cursor:default}
 #ubox{display:flex;align-items:center;gap:6px;font-size:13px}
 #ubox .sc{background:#E8F8EF;color:#1E8449;border-radius:999px;padding:2px 10px;font-weight:700}`;
   document.head.appendChild(css);
 
   const L = document.createElement("div");
   L.id = "login";
-  L.innerHTML = `<form class="lbox" autocomplete="on">
-  <h2>الخارطة المفاهيمية — مقدمة في الحاسوب</h2><div class="sub">إعداد: سارة حرب</div>
-  <div class="lt"><button type="button" data-m="in" class="on">تسجيل الدخول</button><button type="button" data-m="up">حساب جديد</button></div>
-  <div class="up"><label>الاسم الكامل</label><input name="full_name" autocomplete="name">
-  </div>
-  <label>الإيميل الجامعي</label><input name="email" type="email" placeholder="…@ppu.edu.ps" autocomplete="email" required dir="ltr">
-  <label>كلمة السر</label><input name="password" type="password" autocomplete="current-password" required minlength="6" dir="ltr">
-  <button class="go" type="submit">دخول</button>
-  <button type="button" class="link" id="forgot">نسيت كلمة السر؟</button>
+  L.innerHTML = `<form class="lbox" autocomplete="on" novalidate>
+  <div class="lhead"><span class="llogo">🖥️</span><div><h2>مقدمة في الحاسوب</h2><div class="sub">إعداد: سارة حرب</div></div></div>
+  <div class="step s1"><label>إيميلك الجامعي</label><input name="email" type="email" placeholder="name@ppu.edu.ps" autocomplete="email" dir="ltr" inputmode="email">
+    <button class="go" type="submit">ابعتلي كود الدخول</button><p class="hint">رح يوصلك كود أرقام على إيميل الجامعة (Gmail).</p></div>
+  <div class="step s2" hidden><p class="sent">بعتنا كود على<br><b dir="ltr" class="em"></b></p><label>اكتب الكود</label>
+    <input name="code" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" placeholder="••••••">
+    <button class="go" type="submit">دخول</button>
+    <div class="row2"><button type="button" class="link" id="back">← غيّر الإيميل</button><button type="button" class="link" id="resend">ابعت الكود مرة ثانية</button></div>
+    <p class="hint">ما وصلك؟ شوف مجلد الـ Spam أو «جميع الرسائل».</p></div>
+  <div class="step s3" hidden><p class="sent">أهلاً فيك 👋 أول مرة بتدخل.</p><label>اسمك الكامل</label><input name="full_name" autocomplete="name">
+    <button class="go" type="submit">يلّا نبلّش</button></div>
   <div class="msg"></div></form>`;
   document.body.appendChild(L);
   const F = L.querySelector("form"), msg = L.querySelector(".msg");
-  let mode = "in";
-  const setMode = (m) => {
-    mode = m;
-    L.querySelectorAll(".lt button").forEach((b) => b.classList.toggle("on", b.dataset.m === m));
-    L.querySelector(".up").style.display = m === "up" ? "" : "none";
-    F.full_name.required = m === "up";
-    F.password.autocomplete = m === "up" ? "new-password" : "current-password";
-    L.querySelector(".go").textContent = m === "up" ? "إنشاء الحساب" : "دخول";
-    say("");
-  };
+  let step = 1, email = "", wait = 0, tmr = 0;
   const say = (t, ok) => { msg.textContent = t; msg.className = "msg " + (ok ? "ok" : "err"); };
-  L.querySelectorAll(".lt button").forEach((b) => (b.onclick = () => setMode(b.dataset.m)));
-  setMode("in");
+  const show = (n) => { step = n; L.querySelectorAll(".step").forEach((x, k) => (x.hidden = k + 1 !== n)); say(""); const f = L.querySelector(".s" + n + " input"); if (f) setTimeout(() => f.focus(), 50); };
   const AR = (e) => {
     const m = (e && e.message) || String(e);
-    if (/Invalid login/i.test(m)) return "الإيميل أو كلمة السر غلط.";
-    if (/already registered/i.test(m)) return "هاد الإيميل إله حساب، اعمل تسجيل دخول.";
-    if (/Email not confirmed/i.test(m)) return "لازم تأكّد إيميلك أول، افتح الرسالة اللي وصلتك.";
-    if (m === "PPU_ONLY" || /Database error saving new user/i.test(m)) return "التسجيل بس بالإيميل الجامعي اللي بينتهي بـ ‎@ppu.edu.ps";
-    if (/at least 6/i.test(m)) return "كلمة السر لازم تكون 6 حروف أو أكثر.";
+    if (m === "PPU_ONLY" || /Database error saving new user|signups not allowed/i.test(m)) return "الدخول بس بالإيميل الجامعي اللي بينتهي بـ ‎@ppu.edu.ps";
+    if (/expired|invalid/i.test(m)) return "الكود غلط أو خلص وقته. تأكّد منه أو اطلب كود جديد.";
+    if (/after (\d+) seconds/i.test(m)) return `استنى ${m.match(/after (\d+) seconds/i)[1]} ثانية وبعدين اطلب كود جديد.`;
+    if (/rate limit|too many/i.test(m)) return "انبعتت رسائل كتير هلّق. جرّب بعد شوي.";
+    if (/Error sending|smtp/i.test(m)) return "ما قدرنا نبعت الإيميل هلّق. خبّر المعلمة.";
     return "صار خطأ: " + m;
+  };
+  const tick = () => { const r = L.querySelector("#resend"); clearInterval(tmr); wait = 60; const f = () => { r.disabled = wait > 0; r.textContent = wait > 0 ? `ابعت الكود مرة ثانية (${wait})` : "ابعت الكود مرة ثانية"; if (wait-- <= 0) clearInterval(tmr); }; f(); tmr = setInterval(f, 1000); };
+  const send = async () => {
+    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, data: { student_no: email.split("@")[0] } } });
+    if (error) throw error;
   };
   F.onsubmit = async (e) => {
     e.preventDefault();
-    const go = L.querySelector(".go"); go.disabled = true; say("لحظة…", true);
+    const go = L.querySelector(".s" + step + " .go"); go.disabled = true; say("لحظة…", true);
     try {
-      const email = F.email.value.trim(), password = F.password.value;
-      if (mode === "up") {
-        if (!/@ppu\.edu\.ps$/i.test(email)) throw new Error("PPU_ONLY");
-        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: F.full_name.value.trim(), student_no: email.split("@")[0] } } });
-        if (error) throw error;
-        if (!data.session) { say("تم إنشاء الحساب ✅ افتح إيميلك وأكّد الحساب، بعدين سجّل دخول.", true); setMode("in"); return; }
-        await start(data.session.user);
-      } else {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (step === 1) {
+        email = F.email.value.trim().toLowerCase();
+        if (!/^[^@\s]+@ppu\.edu\.ps$/i.test(email)) throw new Error("PPU_ONLY");
+        await send(); L.querySelector(".em").textContent = email; F.code.value = ""; show(2); tick();
+      } else if (step === 2) {
+        const token = F.code.value.replace(/\D/g, "");
+        if (token.length < 6) return say("الكود لازم يكون 6 أرقام أو أكثر.");
+        const { data, error } = await sb.auth.verifyOtp({ email, token, type: "email" });
         if (error) throw error;
         await start(data.user);
+      } else {
+        const n = F.full_name.value.trim();
+        if (n.split(/\s+/).length < 2) return say("اكتب اسمك الأول واسم العائلة.");
+        await sb.auth.updateUser({ data: { full_name: n } });
+        const { error } = await sb.rpc("set_my_name", { n });
+        if (error) console.warn(error);
+        profile.full_name = n; finish();
       }
     } catch (err) { say(AR(err)); } finally { go.disabled = false; }
   };
-  L.querySelector("#forgot").onclick = async () => {
-    const email = F.email.value.trim();
-    if (!email) return say("اكتب إيميلك أول، بعدين اكبس نسيت كلمة السر.");
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
-    say(error ? AR(error) : "بعتنالك رابط على الإيميل لتغيير كلمة السر.", !error);
-  };
+  F.code.addEventListener("input", () => { F.code.value = F.code.value.replace(/\D/g, ""); if (F.code.value.length >= 6 && F.code.value.length === (+F.code.dataset.len || 8)) F.requestSubmit(); });
+  L.querySelector("#back").onclick = () => { clearInterval(tmr); show(1); };
+  L.querySelector("#resend").onclick = async () => { try { say("لحظة…", true); await send(); say("بعتنا كود جديد ✅", true); tick(); } catch (err) { say(AR(err)); } };
+  show(1);
 
   async function start(u) {
     user = u;
@@ -89,6 +94,13 @@
     profile = data || { full_name: (u.user_metadata || {}).full_name || u.email, role: "student" };
     const { data: at } = await sb.from("attempts").select("is_correct").eq("user_id", u.id);
     stats = { ok: (at || []).filter((x) => x.is_correct).length, all: (at || []).length };
+    if (!profile.full_name || profile.full_name === u.email) {
+      const meta = (u.user_metadata || {}).full_name;
+      if (meta) profile.full_name = meta; else { show(3); return; }
+    }
+    finish();
+  }
+  function finish() {
     L.style.display = "none";
     drawBox();
     try { if (typeof refit === "function") setTimeout(refit, 50); } catch (e) {}
@@ -110,11 +122,5 @@
     },
   };
 
-  sb.auth.onAuthStateChange((ev, session) => {
-    if (ev === "PASSWORD_RECOVERY") {
-      const p = prompt("اكتب كلمة السر الجديدة (6 حروف أو أكثر):");
-      if (p) sb.auth.updateUser({ password: p }).then(({ error }) => alert(error ? AR(error) : "تم تغيير كلمة السر ✅"));
-    }
-  });
   sb.auth.getSession().then(({ data }) => { if (data.session) start(data.session.user); });
 })();
