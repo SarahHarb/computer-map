@@ -741,6 +741,36 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .sp-tabs button .ic{width:22px;height:22px;color:var(--c)}
 .sp-tabs button.on{background:var(--c);border-color:var(--c);color:#fff}
 .sp-tabs button.on .ic{color:#fff}
+
+.vlist.spx{border:none!important;padding:6px 0 0!important;margin:0!important;list-style:none}
+.vlist.spx::before{display:none}
+.mini-fd{margin:4px 0 0;padding:12px 8px}
+.mini-fd .fd-box{min-width:120px;padding:10px 12px;position:relative}
+.mini-fd .fd-box b{font-size:15px}.mini-fd .fd-box small{font-size:12px}
+.fd-num{position:absolute;top:-10px;right:-8px;width:22px;height:22px;border-radius:50%;background:#14213D;color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center}
+.mini-tl{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:6px;max-width:620px}
+.mini-tl div{border-top:4px solid var(--c);background:#fff;border-radius:8px;padding:6px 8px;font-size:13px;line-height:1.5}
+.mini-tl b{display:block;color:var(--c);font-size:16px}
+.mini-t{min-width:360px;font-size:14px}
+.mini-t th{font-size:14px;padding:8px}.mini-t td{padding:7px 10px;font-size:14px}
+.mini-t td .ic,.mini-t th .ic{width:18px;height:18px}
+
+.dchips{display:flex;flex-direction:column;align-items:stretch;gap:2px;margin-top:6px;min-width:200px;max-width:260px}
+.dchip{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid color-mix(in srgb,var(--cc,#16213E) 30%,#fff);border-radius:10px;padding:6px 10px;text-align:right}
+.dchip .ic{width:20px;height:20px;flex:none;color:color-mix(in srgb,var(--cc,#16213E) 80%,#000)}
+.dchip b{font-size:13px;font-weight:600;line-height:1.5;color:#2C2C2A}
+.dc-ar{font-style:normal;text-align:center;color:#9A9890;font-size:14px;line-height:1}
+
+.rd{font-size:17px;line-height:1.95;max-width:780px}
+.rd section{margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.rd h3{font-size:19px;color:var(--c);margin:0 0 6px}
+.rd p{margin:0 0 6px}
+.rd .rd-lead{font-size:19px;font-weight:600}
+.rd ul,.rd ol{margin:0 0 6px;padding-right:22px}
+.rd li{margin-bottom:2px}
+.rd .rd-row{margin:10px 0 0}
+.rd .rd-k{color:var(--muted)}
+.rd .rd-tip{background:#FFF8E1;border:none;border-radius:12px;padding:12px 16px}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -976,7 +1006,27 @@ function buildVItem(n) {
   if (kids(n).length) li.appendChild(buildVList(n));
   return li;
 }
+function specialKids(n) {
+  const K = kids(n); if (!MINI || K.length < 2 || K.some((k) => kids(k).length)) return null;
+  const T = K.map((k) => clean(k.t));
+  const box = document.createElement("div"); box.className = "vlist spx"; box.style.setProperty("--c", "#" + n.cc);
+  if (T.every((t) => /^\d+[.)]/.test(t))) { // ordered steps -> a drawing with arrows
+    box.innerHTML = `<div class="fd mini-fd"><div class="fd-row wrap">${T.map((t, k) => { const [a, b] = t.replace(/^\d+[.)]\s*/, "").split(/\s*←\s*/); return (k ? '<i class="fd-ar">←</i>' : "") + `<div class="fd-box ${FLOW_TONE[k % FLOW_TONE.length]}"><span class="fd-num">${k + 1}</span><span class="fd-ic">${ico(t) || ""}</span><b>${esc(a)}</b>${b ? `<small>${esc(b)}</small>` : ""}</div>`; }).join("")}</div></div>`;
+    return box;
+  }
+  if (T.every((t) => /^\d{4}/.test(t))) { // years -> timeline
+    box.innerHTML = `<div class="mini-tl">${T.map((t) => { const m = t.match(/^(\d{4})\s*[:\-–]?\s*(.*)$/); return `<div><b>${m[1]}</b><span>${esc(m[2])}</span></div>`; }).join("")}</div>`;
+    return box;
+  }
+  const kv = T.filter((t) => /\s←\s|:\s/.test(t)).length;
+  if (K.length >= 3 && kv / K.length >= 0.7) { // pairs -> a small table
+    box.innerHTML = `<table class="s-table sp-t mini-t"><tr><th>${ico(n.t)}${esc(clean(n.t))}</th><th>التفاصيل</th></tr>${T.map((t) => { const [a, ...b] = t.split(/\s*←\s*|:\s+/); return `<tr><td>${ico(t)}${esc(a)}</td><td>${esc(b.join(" — ") || "")}</td></tr>`; }).join("")}</table>`;
+    return box;
+  }
+  return null;
+}
 function buildVList(n) {
+  { const sp = specialKids(n); if (sp) return sp; }
   const ul = document.createElement("ul"); ul.className = "vlist"; ul.style.setProperty("--c", "#" + n.cc);
   if (n.rel) { const r = document.createElement("div"); r.className = "rel"; r.style.setProperty("--c", "#" + n.cc); r.textContent = n.rel; r.style.marginRight = "-6px"; ul.appendChild(r); }
   kids(n).forEach((k) => ul.appendChild(buildVItem(k)));
@@ -988,7 +1038,10 @@ function buildMap(n) {
   if (n.edge && n.depth > 0 && !(VIS && !VIS.has(n.p))) { const e = document.createElement("span"); e.className = "edge"; e.textContent = n.edge; box.appendChild(e); }
   box.style.setProperty("--cc", "#" + n.cc); box.appendChild(cardEl(n)); if (n.d) box.appendChild(defEl(n)); wrap.appendChild(box);
   if (kids(n).length) {
-    if (n.h) {
+    const spx = n.h ? specialKids(n) : null;
+    if (spx) {
+      const down = document.createElement("div"); down.className = "down"; down.style.height = "14px"; down.style.setProperty("--c", "#" + n.cc); wrap.appendChild(down); wrap.appendChild(spx);
+    } else if (n.h) {
       const down = document.createElement("div"); down.className = "down"; down.style.setProperty("--c", "#" + n.cc);
       if (n.rel) { const r = document.createElement("span"); r.className = "rel"; r.style.setProperty("--c", "#" + n.cc); r.textContent = n.rel; down.appendChild(r); down.style.height = "40px"; }
       wrap.appendChild(down);
@@ -1760,12 +1813,28 @@ function styleQuiz(panel) {
   };
   ask();
 }
+function readHTML(i) {
+  const C = LC[i] || {}; let h = "";
+  if (C.idea) h += `<section><h3>الفكرة الأساسية</h3><p class="rd-lead">${esc(C.idea)}</p></section>`;
+  if (C.flow) h += `<section><h3>الخطوات بالترتيب</h3><ol>${C.flow.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></section>`;
+  if (C.defs) h += `<section><h3>التعريفات</h3>${C.defs.map(([t, d]) => `<p><b>${esc(t)}:</b> ${esc(d)}</p>`).join("")}</section>`;
+  (C.tables || []).forEach((t) => {
+    h += `<section><h3>${esc(t.title || "مقارنة")}</h3>`;
+    if (t.h.length === 2) h += `<ul>${t.r.filter((r) => r[0] || r[1]).map((r) => `<li>${r[0] ? `<b>${esc(r[0])}:</b> ` : ""}${esc(r[1])}</li>`).join("")}</ul>`;
+    else h += t.r.map((r) => `<p class="rd-row"><b>${esc(r[0] || "")}</b></p><ul>${r.slice(1).map((x, k) => (x && x !== "—" ? `<li>${t.h[k + 1] ? `<span class="rd-k">${esc(t.h[k + 1])}:</span> ` : ""}${esc(x)}</li>` : "")).join("")}</ul>`).join("");
+    h += `</section>`;
+  });
+  if (C.timeline) h += `<section><h3>الخط الزمني</h3><ul>${C.timeline.map(([y, t]) => `<li><b>${y}:</b> ${esc(t)}</li>`).join("")}</ul></section>`;
+  if (C.points) h += `<section><h3>نقاط مهمة</h3><ul>${C.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>`;
+  if (C.tip) h += `<section class="rd-tip"><h3>طريقة الحفظ</h3><p>${esc(C.tip)}</p></section>`;
+  return h;
+}
 function speechParts(i) {
   const L = LESSONS[i], C = LC[i] || {}, P = [`الدرس ${i + 1}: ${L[4]}.`];
   if (C.idea) P.push(C.idea);
   if (C.flow) P.push("الخطوات بالترتيب: " + C.flow.join("، ثم ") + ".");
   (C.defs || []).forEach(([t, d]) => P.push(`${t}: ${d}`));
-  (C.tables || []).forEach((t) => t.r.forEach((r) => { if (r[0]) P.push(r.filter(Boolean).map((x, k) => (k && t.h[k] ? t.h[k] + ": " : "") + x).join("، ") + "."); }));
+  (C.tables || []).forEach((t) => t.r.forEach((r) => { if (r[0]) P.push(r[0] + ": " + r.slice(1).map((x, k) => (x ? (t.h[k + 1] ? t.h[k + 1] + " " : "") + x : "")).filter(Boolean).join("، ") + "."); }));
   (C.timeline || []).forEach(([y, t]) => P.push(`سنة ${y}: ${t}.`));
   (C.points || []).forEach((x) => P.push(x));
   if (C.tip) P.push("طريقة الحفظ: " + C.tip);
@@ -1791,6 +1860,11 @@ function flowDiagram(steps) {
     return `<div class="fd fd-ipo"><div class="fd-row">${flowBox(steps[0], 0)}<i class="fd-ar">←</i>${flowBox(steps[1], 1)}<i class="fd-ar">←</i>${flowBox(steps[2], 2)}</div><div class="fd-vert"><i>↓</i><i>↑</i></div><div class="fd-row c">${flowBox(steps[3], 3)}</div></div>`;
   }
   return `<div class="fd"><div class="fd-row wrap">${steps.map((x, k) => (k ? '<i class="fd-ar">←</i>' : "") + flowBox(x, k)).join("")}</div></div>`;
+}
+function defChips(d) {
+  const clean2 = (x) => x.replace(/^(و|ثم|ف)\s*/, "").replace(/مجموعة من |التي لها القدرة على |يتم |تعمل على |وهي |وهو |بعبارة أبسط: /g, "").trim();
+  const parts = d.split(/[،.؛]|\sثم\s/).map(clean2).filter((x) => x.length > 3).slice(0, 5);
+  return `<div class="dchips">${parts.map((x, k) => (k ? '<i class="dc-ar">↓</i>' : "") + `<span class="dchip">${ico(x) || svgI("FaCheck")}<b>${esc(x)}</b></span>`).join("")}</div>`;
 }
 function centerOf(id) { const b = bboxOf(groupsOf([id])); return [b.x + b.w / 2, b.y + b.h / 2]; }
 function drawMarkers() {
@@ -1897,7 +1971,7 @@ function scPanel() {
     b = `<div class="ls-box"><p class="muted">الموقع رح يقرألك الدرس بصوت، والجملة اللي بتنقرأ بتضوي.</p><div class="ls-ctl"><button id="lsPlay" class="big">${svgI("FaPlay")} شغّل</button><button id="lsPause">${svgI("FaPause")} وقّف مؤقت</button><button id="lsStop">${svgI("FaStop")} من الأول</button><label>السرعة <select id="lsRate"><option value="0.8">بطيء</option><option value="1" selected>عادي</option><option value="1.2">سريع</option></select></label></div><div class="ls-text">${speechParts(i).map((t, k) => `<p data-k="${k}">${esc(t)}</p>`).join("")}</div><p class="ls-msg muted" id="lsMsg"></p></div>`;
   }
   else if (SC.tab === "read") {
-    b = `<article class="rd">${speechParts(i).map((t) => `<p>${esc(t)}</p>`).join("")}</article><h4 class="v-h">${svgI("FaPenNib")} اكتب الدرس بكلماتك</h4><p class="muted">الكتابة بتثبّت المعلومة. اكتب ملخص قصير، وبينحفظ على جهازك.</p><textarea id="rdNote" class="rd-note" placeholder="مثلاً: الحاسوب بياخد بيانات، وبيعالجها…"></textarea><div class="rd-saved muted" id="rdSaved"></div>`;
+    b = `<article class="rd">${readHTML(i)}</article><h4 class="v-h">${svgI("FaPenNib")} اكتب الدرس بكلماتك</h4><p class="muted">الكتابة بتثبّت المعلومة. اكتب ملخص قصير، وبينحفظ على جهازك.</p><textarea id="rdNote" class="rd-note" placeholder="مثلاً: الحاسوب بياخد بيانات، وبيعالجها…"></textarea><div class="rd-saved muted" id="rdSaved"></div>`;
   }
   else if (SC.tab === "do") {
     b = `<div id="doBox"></div>`;
@@ -1933,6 +2007,7 @@ function scPanel() {
     root.c = C.defs.map(([t, d]) => ({ t, d, cc: root.cc, h: false, rel: null, f: false, open: true, ov: true, p: root, depth: 1, c: [] }));
     const one = C.defs.length === 1 ? root.c[0] : root; if (one !== root) one.p = null;
     const saveV = VIS; VIS = null; MINI = true; const f = document.createElement("div"); f.className = "forest"; f.appendChild(buildMap(one)); VIS = saveV; MINI = false;
+    f.querySelectorAll(".def").forEach((el, k) => { const node = (one === root ? root.c : [one])[k]; if (node && node.d) el.outerHTML = defChips(node.d); });
     const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(f); vd.appendChild(inn); inn.style.zoom = Math.max(0.6, Math.min(1.15, (vd.clientWidth - 24) / inn.scrollWidth));
   }
   const mb = panel.querySelector("#mapBig"); if (mb) mb.onclick = () => { openShow(i); SHOW.k = SHOW.slides.findIndex((x) => x.k === "map"); renderSlide(); SHOW.step = SHOW.max; applyStep(); };
