@@ -602,9 +602,16 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .scene .mk-pulse{fill:#F2B705;opacity:.5;transform-box:fill-box;transform-origin:center;animation:pulse 1.8s infinite}
 @keyframes pulse{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.8);opacity:0}}
 .scene:not(.home) #markers{display:none}
-.scene .fl-path{fill:none;stroke:#F2B705;stroke-width:6;stroke-dasharray:14 10;opacity:.9}
-.scene .fl-dot{fill:#F2B705;stroke:#14213D;stroke-width:3}
+.scene .fl-glow{fill:none;stroke:#F2B705;stroke-width:16;opacity:.18;stroke-linecap:round}
+.scene .fl-path{fill:none;stroke:#F2B705;stroke-width:5;stroke-dasharray:12 9;stroke-linecap:round;animation:flDash 1s linear infinite}
+@keyframes flDash{to{stroke-dashoffset:-21}}
+.scene .fl-ar{fill:none;stroke:#14213D;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.scene .fl-ring{fill:none;stroke:#F2B705;stroke-width:5}
 .scene .fl-stop{fill:#14213D;stroke:#F2B705;stroke-width:3}
+.scene .fl-lab rect{fill:#14213D;stroke:#F2B705;stroke-width:2}.scene .fl-lab text{font:800 15px Cairo,sans-serif;fill:#fff;text-anchor:middle}
+.scene .fl-pk-glow{fill:#F2B705;opacity:.35}.scene .fl-pk-b{fill:#F2B705;stroke:#14213D;stroke-width:2.5}.scene .fl-pk-t{font:900 14px Cairo,sans-serif;fill:#14213D;text-anchor:middle}
+.scene #flow.bad .fl-path{stroke:#E74C3C}.scene #flow.bad .fl-glow{stroke:#E74C3C}.scene #flow.bad .fl-ring{stroke:#E74C3C}.scene #flow.bad .fl-stop{stroke:#E74C3C}.scene #flow.bad .fl-lab rect{stroke:#E74C3C}.scene #flow.bad .fl-pk-b{fill:#E74C3C}.scene #flow.bad .fl-pk-t{fill:#fff}.scene #flow.bad .fl-pk-glow{fill:#E74C3C}
+@media (prefers-reduced-motion:reduce){.scene .fl-path{animation:none}.scene .fl-pk{display:none}}
 .scene .fl-n{font:900 16px Cairo,sans-serif;fill:#fff;text-anchor:middle}
 .v-idea{display:flex;align-items:center;gap:12px;background:var(--c);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px}
 .v-idea span .ic{width:34px;height:34px}
@@ -2017,35 +2024,35 @@ const SCENE_SVG = `<svg viewBox="0 0 1600 900" class="scene" id="scene" xmlns="h
 <g data-p="cloud"><path d="M1340 170 a46 46 0 0 1 40 -70 a62 62 0 0 1 116 10 a42 42 0 0 1 20 80 z" fill="#ffffff" stroke="#1f7a8c" stroke-width="4" class="pt"/><g fill="#1f7a8c" opacity=".85"><rect x="1394" y="120" width="44" height="30" rx="4"/><rect x="1400" y="126" width="32" height="5" fill="#fff"/><rect x="1400" y="136" width="32" height="5" fill="#fff"/></g><text x="1430" y="172" class="pl s" style="fill:#1f7a8c;stroke:#fff">السحابة Cloud</text></g>
 <path d="M1420 194 v52" stroke="#1f7a8c" stroke-width="3" stroke-dasharray="6 6"/>
 </svg>`;
-const LT = { // lesson -> parts the lens highlights (+ screen content, + data flow)
-  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"] },
-  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os" },
+const LT = { // lesson -> parts the lens highlights (+ screen content, + animated data flow with step labels)
+  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"], fl: ["إدخال", "معالجة", "إخراج", "تخزين"], pk: "بيانات" },
+  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "يُدخل الأمر", "الحاسوب يعالج", "يعرض النتيجة"], pk: "أمر" },
   2: { t: ["all"], z: true },
-  3: { t: ["cpu"] },
-  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn"] },
-  5: { t: ["mb", "ports", "gpu", "psu"] },
-  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud"] },
-  7: { t: ["ram", "rom", "cpu"] },
-  8: { t: ["hdd", "ssd", "odd", "cloud"] },
+  3: { t: ["cpu", "ram"], flow: ["ram", "cpu"], fl: ["التعليمة من RAM", "CU توجّه و ALU تنفّذ"], pk: "تعليمة" },
+  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], flow: ["scan", "kb", "cpu", "mon", "prn"], fl: ["إدخال: صورة", "إدخال: نص", "معالجة", "إخراج: عرض", "إخراج: طباعة"], pk: "بيانات" },
+  5: { t: ["mb", "ports", "gpu", "psu"], flow: ["psu", "mb", "gpu", "ports"], fl: ["الطاقة", "اللوحة الأم تربط الكل", "بطاقة توسعة", "المنافذ للأجهزة"], pk: "⚡" },
+  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], flow: ["ssd", "ram", "cpu"], fl: ["تخزين دائم", "ذاكرة رئيسية مؤقتة", "المعالج يعمل"], pk: "ملف" },
+  7: { t: ["ram", "rom", "cpu"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS", "المعالج (Cache بداخله)", "RAM: العمل المؤقت"], pk: "تشغيل" },
+  8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح", "حفظ دائم", "عبر الإنترنت", "نسخة في السحابة"], pk: "ملف" },
   9: { t: ["ram", "hdd", "ssd"] },
-  10: { t: ["mon", "rom"], s: "os" },
+  10: { t: ["mon", "rom", "kb"], s: "os", flow: ["kb", "mon"], fl: ["المستخدم", "البرمجيات تخبر الحاسوب ماذا يفعل"], pk: "أمر" },
   11: { t: ["mon"], s: "apps" },
-  12: { t: ["mon", "user"], s: "code" },
-  13: { t: ["mon", "kb", "mouse", "prn"], s: "os" },
+  12: { t: ["mon", "user", "cpu"], s: "code", flow: ["user", "mon", "cpu"], fl: ["المبرمج يكتب", "المترجم يحوّل", "0 و 1 للمعالج"], pk: "كود" },
+  13: { t: ["mon", "kb", "mouse", "prn"], s: "os", flow: ["mouse", "mon", "prn"], fl: ["طلب طباعة", "نظام التشغيل يدير", "الطابعة"], pk: "طلب" },
   14: { t: ["user", "mon"] },
-  15: { t: ["router", "switch", "case", "cloud"], flow: ["ports", "router", "cloud"] },
-  16: { t: ["switch", "router", "case"], flow: ["ports", "switch"] },
-  17: { t: ["router", "ports", "cloud"], flow: ["ports", "router", "cloud"] },
-  18: { t: ["router", "switch", "ports"], flow: ["ports", "router", "switch"] },
-  19: { t: ["cloud", "router"], flow: ["router", "cloud"] },
-  20: { t: ["cloud"] },
+  15: { t: ["router", "switch", "case", "cloud", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "الموجّه", "الإنترنت"], pk: "رسالة" },
+  16: { t: ["switch", "router", "case", "ports"], flow: ["ports", "switch", "router"], fl: ["جهاز", "مركز النجمة Switch", "Router"], pk: "حزمة" },
+  17: { t: ["router", "ports", "cloud"], flow: ["ports", "router", "cloud"], fl: ["IP: 192.168.1.5", "Router", "خادم HTTP"], pk: "HTTP" },
+  18: { t: ["router", "switch", "ports", "cloud"], flow: ["ports", "switch", "router", "cloud"], fl: ["منفذ الشبكة", "Switch", "Router", "الإنترنت"], pk: "حزمة" },
+  19: { t: ["cloud", "router", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "عبر الإنترنت", "خدمة سحابية"], pk: "طلب" },
+  20: { t: ["cloud", "router"], flow: ["router", "cloud"], fl: ["العميل", "المزوّد CSP"], pk: "SLA" },
   21: { t: ["mon", "hdd"], s: "shield" },
-  22: { t: ["mon", "router"], s: "hacker" },
-  23: { t: ["mon", "hdd"], s: "virus" },
-  24: { t: ["mon", "router"], s: "shield" },
+  22: { t: ["mon", "router", "cloud", "hdd"], s: "hacker", flow: ["cloud", "router", "hdd"], fl: ["المخترق", "يستغل ثغرة", "يصل إلى البيانات"], pk: "هجوم", bad: true },
+  23: { t: ["mon", "hdd", "cloud", "router"], s: "virus", flow: ["cloud", "router", "hdd", "mon"], fl: ["موقع غير رسمي", "يدخل الجهاز", "يشفّر الملفات", "يطلب الفدية"], pk: "🦠", bad: true },
+  24: { t: ["mon", "router", "cloud"], s: "shield", flow: ["cloud", "router", "mon"], fl: ["تهديد خارجي", "جدار الحماية يصفّي", "الجهاز آمن"], pk: "فحص" },
   25: { t: ["mon"], s: "ai" },
   26: { t: ["mon"], s: "ai" },
-  27: { t: ["mon", "cam", "mic"], s: "ai" },
+  27: { t: ["mon", "cam", "mic", "cpu", "spk"], s: "ai", flow: ["cam", "cpu", "mon", "spk"], fl: ["رؤية حاسوبية", "تعلّم الآلة", "النتيجة", "لغة طبيعية"], pk: "AI" },
 };
 const PART_LESSON = { odd: 8, cam: 4, mic: 4, scan: 4, switch: 18, cpu: 3, ram: 7, rom: 7, mb: 5, hdd: 8, ssd: 8, psu: 5, gpu: 5, ports: 5, mon: 4, kb: 4, mouse: 4, spk: 4, prn: 4, router: 15, cloud: 19, user: 1 };
 const EXTRA_PARTS = { router: ["router", "الموجّه Router", "خارج الصندوق", "شبكات", "يربط الشبكات ببعضها ويحدّد أفضل مسار للبيانات، ومن خلاله يصل الإنترنت إلى جهازك."], cloud: ["cloud", "السحابة", "على الإنترنت", "حوسبة سحابية", "موارد حوسبة وتخزين تستأجرها عبر الإنترنت وتدفع حسب الاستخدام."], user: ["user", "المستخدم", "الكيان البشري", "إنسان", "الإنسان الذي يستخدم الحاسوب، ويشكّل مع المبرمج الكيان البشري."],
@@ -2148,12 +2155,31 @@ function drawMarkers() {
   ["cpu", "ram", "mb", "ports", "hdd", "odd", "mon", "kb", "prn", "router", "switch", "cloud", "user"].forEach((p) => { if (!byPart[p]) return; const [x, y] = centerOf(p); const m = document.createElementNS(NS, "g"); m.setAttribute("class", "mk"); m.dataset.p = p; m.innerHTML = `<circle cx="${x}" cy="${y}" r="22" class="mk-pulse"/><circle cx="${x}" cy="${y}" r="15" class="mk-dot"/><text x="${x}" y="${y + 5}" class="mk-n">${byPart[p].length}</text>`; m.onclick = (e) => { e.stopPropagation(); scPart(p); }; g.appendChild(m); });
   svg.appendChild(g);
 }
-function showFlow(ids) {
-  const svg = document.getElementById("scene"), old = svg.querySelector("#flow"); if (old) old.remove(); if (!ids) return;
-  const NS = "http://www.w3.org/2000/svg", pts = ids.map(centerOf), d = "M" + pts.map((p) => p.join(" ")).join(" L");
-  const g = document.createElementNS(NS, "g"); g.id = "flow";
-  g.innerHTML = `<path d="${d}" class="fl-path" id="flPath"/>` + [0, 0.8, 1.6].map((b) => `<circle r="9" class="fl-dot"><animateMotion dur="2.6s" begin="${b}s" repeatCount="indefinite" path="${d}"/></circle>`).join("") + pts.map((p, k) => `<circle cx="${p[0]}" cy="${p[1]}" r="17" class="fl-stop"/><text x="${p[0]}" y="${p[1] + 6}" class="fl-n">${k + 1}</text>`).join("");
-  svg.appendChild(g);
+function showFlow(T) {
+  const svg = document.getElementById("scene"), old = svg.querySelector("#flow"); if (old) old.remove();
+  const ids = T && T.flow; if (!ids) return;
+  const pts = ids.map(centerOf), n = pts.length;
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let k = 1; k < n; k++) { const [x0, y0] = pts[k - 1], [x1, y1] = pts[k], mx = (x0 + x1) / 2, my = (y0 + y1) / 2 - Math.min(80, Math.hypot(x1 - x0, y1 - y0) * 0.18); d += ` Q${mx} ${my} ${x1} ${y1}`; }
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.id = "flow"; if (T.bad) g.classList.add("bad");
+  g.innerHTML = `<path d="${d}" class="fl-glow"/><path d="${d}" class="fl-path" id="flPath"/>`; svg.appendChild(g);
+  const P = g.querySelector("#flPath"), L = P.getTotalLength(), dur = Math.max(3.2, n * 1.3);
+  // cumulative fraction at each stop
+  const fr = pts.map((p, k) => { if (!k) return 0; let best = 0, bd = 1e9; for (let t = 0; t <= 1; t += 0.005) { const q = P.getPointAtLength(t * L), dd = Math.hypot(q.x - p[0], q.y - p[1]); if (dd < bd) { bd = dd; best = t; } } return best; });
+  let h = ""; const placed = [];
+  // arrows along the path
+  for (let k = 1; k < 10; k++) { const t = k / 10, a = P.getPointAtLength(t * L), b2 = P.getPointAtLength(Math.min(L, t * L + 2)), ang = Math.atan2(b2.y - a.y, b2.x - a.x) * 180 / Math.PI; h += `<path d="M-7 -6 L5 0 L-7 6" class="fl-ar" transform="translate(${a.x} ${a.y}) rotate(${ang})"/>`; }
+  pts.forEach((p, k) => {
+    const f = fr[k], kt = [0, Math.max(0, f - 0.02), f, Math.min(1, f + 0.08), 1].map((x) => x.toFixed(3)).join(";");
+    h += `<circle cx="${p[0]}" cy="${p[1]}" r="20" class="fl-ring"><animate attributeName="r" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values="20;20;34;20;20"/><animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values=".0;.0;.9;.0;.0"/></circle>`;
+    h += `<circle cx="${p[0]}" cy="${p[1]}" r="16" class="fl-stop"/><text x="${p[0]}" y="${p[1] + 6}" class="fl-n">${k + 1}</text>`;
+    const lab = (T.fl || [])[k]; if (lab) { const w = lab.length * 9 + 26; let ly = p[1] - 46;
+      for (const off of [-46, 52, -88, 94, -130, 136]) { const y = p[1] + off, r = { x: p[0] - w / 2, y: y - 16, w, h: 28 }; const hit = placed.some((q) => r.x < q.x + q.w + 6 && q.x < r.x + r.w + 6 && r.y < q.y + q.h + 4 && q.y < r.y + r.h + 4) || pts.some((pp) => Math.abs(pp[0] - p[0]) < w / 2 + 16 && Math.abs(pp[1] - y) < 30); if (!hit) { ly = y; break; } }
+      placed.push({ x: p[0] - w / 2, y: ly - 16, w, h: 28 }); h += `<g class="fl-lab"><rect x="${p[0] - w / 2}" y="${ly - 16}" width="${w}" height="28" rx="14"/><text x="${p[0]}" y="${ly + 4}">${esc(lab)}</text></g>`; }
+  });
+  const pk = esc(T.pk || ""), pw = Math.max(38, pk.length * 10 + 24);
+  h += `<g class="fl-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1" keyTimes="0;1" calcMode="linear"/><circle r="22" class="fl-pk-glow"/><rect x="${-pw / 2}" y="-15" width="${pw}" height="30" rx="15" class="fl-pk-b"/><text y="6" class="fl-pk-t">${pk}</text></g>`;
+  g.insertAdjacentHTML("beforeend", h);
 }
 function sceneInit() {
   { const br = document.querySelector("header .brand"); if (br) { br.style.cursor = "pointer"; br.title = "العودة إلى الصفحة الرئيسية"; br.onclick = () => (location.hash = "#/"); } }
@@ -2298,7 +2324,7 @@ function scLesson(i) {
   document.getElementById("sc").classList.remove("wide");
   { const L = document.getElementById("lensRing"); if (L) L.style.opacity = 0; }
   SC.i = i; cur = i; markVisited(i); document.getElementById("sc").classList.add("lesson");
-  const T = LT[i] || { t: ["all"] }, els = setFocus(T.t, T.s); document.getElementById("scene").classList.remove("home"); showFlow(T.flow);
+  const T = LT[i] || { t: ["all"] }, els = setFocus(T.t, T.s); document.getElementById("scene").classList.remove("home"); showFlow(T);
   requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : 70));
   document.querySelectorAll("#scStrip .stops button").forEach((b) => { const k = +b.dataset.i; b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
   const on = document.querySelector("#scStrip .stops button.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
