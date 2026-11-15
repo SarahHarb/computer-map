@@ -23,15 +23,23 @@
 #login .or{display:flex;align-items:center;gap:8px;color:#9CA3AF;font-size:13px;margin:10px 0}#login .or::before,#login .or::after{content:"";flex:1;border-top:1px solid #E5E7EB}
 #login .gnote{color:#4B5563;font-size:14px;line-height:1.8;text-align:center;margin:10px 0 0}
 #ubox{display:flex;align-items:center;gap:10px;font-size:13px;margin-inline-start:auto}
-#ubox .uchip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 14px 4px 4px}
-#ubox .uav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#F2B705,#E08E0B);color:#14213D;display:grid;place-items:center;font-weight:900;font-size:15px;overflow:hidden;box-shadow:0 0 0 2px #F2B705}
+#ubox .uwrap{position:relative}
+#ubox .uchip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 12px 4px 4px;cursor:pointer;font-family:inherit;color:#fff}
+#ubox .uchip:hover,#ubox .uchip[aria-expanded="true"]{background:rgba(255,255,255,.16)}
+#ubox .uav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#F2B705,#E08E0B);color:#14213D;display:grid;place-items:center;font-weight:900;font-size:15px;overflow:hidden;box-shadow:0 0 0 2px #F2B705;flex:none}
 #ubox .uav img{width:100%;height:100%;object-fit:cover}
-#ubox .unm{display:flex;flex-direction:column;line-height:1.25}#ubox .unm b{font-size:16px;color:#fff;font-weight:800;white-space:nowrap}#ubox .unm small{font-size:11px;color:#B8C4D6}
-#ubox .urole{background:#F2B705;color:#14213D;font-weight:900;font-size:11px;border-radius:999px;padding:2px 9px}
+#ubox .unm{display:flex;flex-direction:column;line-height:1.25;text-align:start}#ubox .unm b{font-size:16px;color:#fff;font-weight:800;white-space:nowrap}#ubox .unm small{font-size:11px;color:#F2B705;font-weight:700}
+#ubox .ucar{font-size:12px;color:#B8C4D6}
+#ubox .umenu{position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:300px;background:#fff;color:#14213D;border-radius:20px;box-shadow:0 18px 50px rgba(15,23,42,.35);padding:22px 18px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;z-index:300}
+#ubox .umenu[hidden]{display:none}
+#ubox .uav.big{width:76px;height:76px;font-size:28px;box-shadow:0 0 0 3px #F2B705;margin-bottom:6px}
+#ubox .um-n{font-size:19px;font-weight:900}#ubox .um-e{color:#6B7280;font-size:13px}
+#ubox .urole{background:#F2B705;color:#14213D;font-weight:900;font-size:12px;border-radius:999px;padding:2px 12px;margin-top:4px}
+#ubox .um-s{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;margin:12px 0 8px}#ubox .um-s div{background:#F4F6FA;border-radius:12px;padding:8px 4px;text-align:center}#ubox .um-s b{display:block;font-size:18px}#ubox .um-s span{font-size:11px;color:#6B7280;font-weight:700}
+#ubox .um-b{width:100%;text-align:center;border:1px solid #D1D5DB;background:#fff;color:#14213D;border-radius:12px;padding:10px;font-family:inherit;font-weight:800;font-size:15px;cursor:pointer;text-decoration:none;margin-top:6px}#ubox .um-b:hover{background:#F4F6FA}
+#ubox .um-b.gold{background:#F2B705;border-color:#F2B705}
 #ubox .uscore{display:flex;align-items:baseline;gap:4px;background:#E3F6EA;color:#1E8449;border-radius:12px;padding:5px 12px;font-weight:800}#ubox .uscore b{font-size:17px}#ubox .uscore i{font-style:normal;font-size:12px;opacity:.75}#ubox .uscore em{font-style:normal;font-size:12px;background:#1E8449;color:#fff;border-radius:99px;padding:0 7px;margin-inline-start:4px}
-#ubox .uadm{background:#F2B705;color:#14213D;font-weight:800;border-radius:12px;padding:8px 14px;text-decoration:none;white-space:nowrap}
-#ubox .uout{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:12px;padding:7px 12px;font-family:inherit;font-weight:700;cursor:pointer}#ubox .uout:hover{background:rgba(255,255,255,.1)}
-@media (max-width:700px){#ubox .unm small,#ubox .uscore i,#ubox .uscore em{display:none}#ubox .unm b{font-size:14px}}
+@media (max-width:700px){#ubox .unm,#ubox .ucar,#ubox .uscore{display:none}#ubox .uchip{padding:3px}}
 #ubox .sc{background:#E8F8EF;color:#1E8449;border-radius:999px;padding:2px 10px;font-weight:700}`;
   document.head.appendChild(css);
 
@@ -62,10 +70,19 @@
     const md = (user && user.user_metadata) || {}, name = (profile.full_name || md.full_name || md.name || (user && user.email) || "").trim();
     const ini = name.split(/\s+/).slice(0, 2).map((w) => w[0]).join(""), pic = md.avatar_url || md.picture;
     const p = stats.all ? Math.round((100 * stats.ok) / stats.all) : null;
-    box.innerHTML = `<div class="uchip"><span class="uav">${pic ? `<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">` : esc(ini)}</span><span class="unm"><b>${esc(name)}</b><small dir="ltr">${esc((user && user.email) || "")}</small></span>${profile.role === "admin" ? `<span class="urole">المعلمة</span>` : ""}</div>` +
-      `<span class="uscore" title="إجاباتك الصحيحة"><b>${stats.ok}</b><i>/ ${stats.all}</i>${p != null ? `<em>${p}%</em>` : ""}</span>` +
-      (profile.role === "admin" ? `<a class="uadm" href="admin.html">📊 لوحة المتابعة</a>` : "") + `<button id="logout" class="uout" title="تسجيل الخروج">⎋ خروج</button>`;
-    const im = box.querySelector(".uav img"); if (im) im.onerror = () => (im.parentElement.textContent = ini);
+    const av = (cls) => `<span class="${cls}">${pic ? `<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">` : esc(ini)}</span>`;
+    box.innerHTML = `<span class="uscore" title="إجاباتك الصحيحة"><b>${stats.ok}</b><i>/ ${stats.all}</i>${p != null ? `<em>${p}%</em>` : ""}</span>
+      <div class="uwrap"><button class="uchip" id="uchip" aria-haspopup="true" aria-expanded="false">${av("uav")}<span class="unm"><b>${esc(name)}</b>${profile.role === "admin" ? `<small>المعلمة</small>` : `<small>طالب</small>`}</span><span class="ucar">▾</span></button>
+      <div class="umenu" id="umenu" hidden>${av("uav big")}<b class="um-n">${esc(name)}</b><small class="um-e" dir="ltr">${esc((user && user.email) || "")}</small>${profile.role === "admin" ? `<span class="urole">المعلمة</span>` : ""}
+        <div class="um-s"><div><b>${stats.ok}</b><span>إجابة صحيحة</span></div><div><b>${stats.all}</b><span>كل الإجابات</span></div><div><b>${p != null ? p + "%" : "—"}</b><span>النسبة</span></div></div>
+        ${profile.role === "admin" ? `<a class="um-b gold" href="admin.html">📊 لوحة المتابعة</a>` : ""}<button class="um-b" id="logout">⎋ تسجيل الخروج</button></div></div>`;
+    box.querySelectorAll(".uav img").forEach((im) => (im.onerror = () => (im.parentElement.textContent = ini)));
+    const chip = box.querySelector("#uchip"), menu = box.querySelector("#umenu");
+    const toggle = (o) => { menu.hidden = !o; chip.setAttribute("aria-expanded", o); };
+    chip.onclick = (e) => { e.stopPropagation(); toggle(menu.hidden); };
+    menu.onclick = (e) => e.stopPropagation();
+    document.addEventListener("click", () => toggle(false));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") toggle(false); });
     box.querySelector("#logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
   }
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
