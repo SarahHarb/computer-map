@@ -31,8 +31,8 @@
   L.innerHTML = `<form class="lbox" autocomplete="on" novalidate>
   <div class="lhead"><span class="llogo">🖥️</span><div><h2>مقدمة في الحاسوب</h2><div class="sub">إعداد: سارة حرب</div></div></div>
   <div class="step s1"><label>إيميلك الجامعي</label><input name="email" type="email" placeholder="name@ppu.edu.ps" autocomplete="email" dir="ltr" inputmode="email">
-    <button class="go" type="submit">ابعتلي كود الدخول</button><p class="hint">رح يوصلك كود أرقام على إيميل الجامعة (Gmail).</p></div>
-  <div class="step s2" hidden><p class="sent">بعتنا كود على<br><b dir="ltr" class="em"></b></p><label>اكتب الكود</label>
+    <button class="go" type="submit">ابعتلي كود الدخول</button><p class="hint">رح يوصلك إيميل على إيميل الجامعة (Gmail): اضغط على الرابط اللي فيه، أو اكتب الكود إذا فيه كود.</p></div>
+  <div class="step s2" hidden><p class="sent">بعتنا إيميل على<br><b dir="ltr" class="em"></b><br>اضغط على الرابط اللي فيه وبتدخل مباشرة.</p><label>أو اكتب الكود (إذا وصلك كود)</label>
     <input name="code" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" dir="ltr" placeholder="••••••">
     <button class="go" type="submit">دخول</button>
     <div class="row2"><button type="button" class="link" id="back">← غيّر الإيميل</button><button type="button" class="link" id="resend">ابعت الكود مرة ثانية</button></div>
@@ -56,7 +56,7 @@
   };
   const tick = () => { const r = L.querySelector("#resend"); clearInterval(tmr); wait = 60; const f = () => { r.disabled = wait > 0; r.textContent = wait > 0 ? `ابعت الكود مرة ثانية (${wait})` : "ابعت الكود مرة ثانية"; if (wait-- <= 0) clearInterval(tmr); }; f(); tmr = setInterval(f, 1000); };
   const send = async () => {
-    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, data: { student_no: email.split("@")[0] } } });
+    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: location.origin + location.pathname, data: { student_no: email.split("@")[0] } } });
     if (error) throw error;
   };
   F.onsubmit = async (e) => {
