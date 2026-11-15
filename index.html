@@ -1068,7 +1068,7 @@ LESSONS.forEach(([name, , unit], i) => {
 });
 document.getElementById("lslide").style.display = "none";
 document.getElementById("lslide").onclick = () => openShow(cur >= 0 ? cur : 0);
-document.addEventListener("keydown", (e) => { if ((e.key === "s" || e.key === "S" || e.key === "س") && !SHOW.on && !pn && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) document.getElementById("lslide").click(); });
+document.addEventListener("keydown", (e) => { if (UI !== 5 && (e.key === "s" || e.key === "S" || e.key === "س") && !SHOW.on && !pn && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) document.getElementById("lslide").click(); });
 function clearFocus() { VIS = null; focus.on = false; focus.lit.clear(); focus.ctx.clear(); lesBtns.forEach((b) => b.classList.remove("cur", "done")); cur = -1; document.getElementById("pos").innerHTML = "<b>اختار درس من القائمة</b><small>أو اكبس «ابدأ» لتبني الخارطة خطوة خطوة</small>"; document.getElementById("lslide").style.display = "none"; document.getElementById("next").textContent = "ابدأ ←"; document.getElementById("clear").classList.add("on"); setProg(0); }
 document.getElementById("clear").onclick = () => { clearFocus(); render(); if (view === "map") requestAnimationFrame(fitAll); };
 let firstLit = [];
@@ -1170,6 +1170,7 @@ function head(n, i) {
   document.getElementById("plprev").style.display = document.getElementById("plnext").style.display = i >= 0 ? "" : "none";
 }
 function openPop(n) {
+  if (UI === 5) return;
   if (n.ov) { const l = cur >= 0 && n.L.includes(cur) ? cur : n.L[0]; if (UI === 0) openShow(l); else if (UI === 2) { MODE = "unit"; UNIT = unitOfLesson[l]; focusLesson(l); } else focusLesson(l); return; }
   pn = n; plesson = -1; ptab = "exp"; head(n, -1); boxShow();
   if (UI === 2 && n.el && n.el.isConnected) requestAnimationFrame(() => fitRect(canvasRect([n.el, ...kids(n).map((k) => k.el).filter((e) => e && e.isConnected)]), 1.3)); drawTab(); window.track && track.view(clean(n.t), "exp"); }
@@ -1300,6 +1301,7 @@ function applyStep() {
 function scaleSlide() { const st = document.getElementById("shStage"); const z = Math.min(st.clientWidth / 1280, st.clientHeight / 720); slideEl.style.transform = `scale(${z})`; }
 window.addEventListener("resize", () => { if (SHOW.on) scaleSlide(); });
 function openShow(i, atEnd) {
+  if (UI === 5) return;
   SHOW.on = true; SHOW.i = i; SHOW.slides = buildSlides(i); SHOW.k = atEnd ? SHOW.slides.length - 1 : 0; SHOW.step = 0;
   shEl.classList.add("show"); shEl.setAttribute("aria-hidden", "false"); if (cur !== i) focusLesson(i);
   renderSlide(); if (atEnd) { SHOW.step = SHOW.max; applyStep(); }
@@ -1887,9 +1889,8 @@ function scPanel() {
 
 
     if (C.tip) b += `<div class="sp-tip">${svgI("FaLightbulb")}<span><b>طريقة حفظ:</b> ${esc(C.tip)}</span></div>`;
-    b += `<button class="btn-line full" id="spShow">⛶ اعرض الدرس بشاشة كاملة</button>`;
   } else if (SC.tab === "map") {
-    b = `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div><div class="v-map big" id="vMap"></div><div class="center" style="margin-top:10px"><button class="btn-line" id="mapBig">⛶ اعرض الخارطة بشاشة كاملة</button></div><p class="muted center">اكبس على أي مفهوم بالخارطة لتعرف أكثر عنه</p>`;
+    b = `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div><div class="v-map big" id="vMap"></div>`;
   } else if (SC.tab === "cards") b = `<div class="flips sp-cards">${(C.cards || []).map(([a, c]) => `<button class="flip"><span class="in"><span class="fa">${ico(a)}${esc(a)}</span><span class="fb">${esc(c)}</span></span></button>`).join("")}</div><p class="muted center">اكبس على البطاقة لتقلبها</p>`;
   else if (SC.tab === "qs") b = `<div class="qwrap sp-q">${mcqHTML(C.qs || [])}</div>`;
   else if (SC.tab === "listen") {
@@ -1923,8 +1924,8 @@ function scPanel() {
   if (vm) {
     const f = mapHTML(lessonNodes[i]); const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(f); vm.appendChild(inn);
     const fit = () => { inn.style.zoom = 1; inn.style.zoom = Math.max(0.6, Math.min(1.25, (vm.clientWidth - 24) / inn.scrollWidth)); };
-    vm.querySelectorAll(".card").forEach((c) => (c.onclick = () => { const k = ALL.find((x) => x.t === c.dataset.t); if (k) openPop(k); }));
     makeCollapsible(inn, 1, fit); fit();
+    vm.querySelectorAll(".card").forEach((c) => (c.onclick = (e) => { const ch = c.querySelector(".chev"); if (ch) ch.click(); }));
   }
   const vd = panel.querySelector("#vDefs");
   if (vd) {
