@@ -2025,34 +2025,34 @@ const SCENE_SVG = `<svg viewBox="0 0 1600 900" class="scene" id="scene" xmlns="h
 <path d="M1420 194 v52" stroke="#1f7a8c" stroke-width="3" stroke-dasharray="6 6"/>
 </svg>`;
 const LT = { // lesson -> parts the lens highlights (+ screen content, + animated data flow with step labels)
-  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"], fl: ["إدخال", "معالجة", "إخراج", "تخزين"], pk: "بيانات" },
-  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "يُدخل الأمر", "الحاسوب يعالج", "يعرض النتيجة"], pk: "أمر" },
+  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon", "hdd"], fl: ["إدخال", "معالجة", "إخراج", "تخزين"], pk: ["بيانات", "معلومات", "معلومات"] },
+  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "الكيان المادي: إدخال", "الكيان البرمجي يشغّل المعالجة", "النتيجة"], pk: ["أمر", "بيانات", "معلومات"] },
   2: { t: ["all"], z: true },
-  3: { t: ["cpu", "ram"], flow: ["ram", "cpu"], fl: ["التعليمة من RAM", "CU توجّه و ALU تنفّذ"], pk: "تعليمة" },
-  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], flow: ["scan", "kb", "cpu", "mon", "prn"], fl: ["إدخال: صورة", "إدخال: نص", "معالجة", "إخراج: عرض", "إخراج: طباعة"], pk: "بيانات" },
-  5: { t: ["mb", "ports", "gpu", "psu"], flow: ["psu", "mb", "gpu", "ports"], fl: ["الطاقة", "اللوحة الأم تربط الكل", "بطاقة توسعة", "المنافذ للأجهزة"], pk: "⚡" },
-  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], flow: ["ssd", "ram", "cpu"], fl: ["تخزين دائم", "ذاكرة رئيسية مؤقتة", "المعالج يعمل"], pk: "ملف" },
-  7: { t: ["ram", "rom", "cpu"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS", "المعالج (Cache بداخله)", "RAM: العمل المؤقت"], pk: "تشغيل" },
-  8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح", "حفظ دائم", "عبر الإنترنت", "نسخة في السحابة"], pk: "ملف" },
+  3: { t: ["cpu", "ram"], flow: ["ram", "cpu"], fl: ["التعليمة في RAM", "CU توجّه و ALU تنفّذ"], pk: ["تعليمة"] },
+  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], flow: ["scan", "cpu", "prn"], fl: ["إدخال: الماسح يُدخل صورة", "معالجة", "إخراج: الطابعة تطبع"], pk: ["بيانات", "معلومات"] },
+  5: { t: ["mb", "ports", "gpu", "psu"], flow: ["psu", "mb", "ports"], fl: ["وحدة الطاقة", "اللوحة الأم تربط المكوّنات", "المنافذ تصل الأجهزة الخارجية"], pk: ["كهرباء ⚡", "بيانات"] },
+  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], flow: ["ssd", "ram", "cpu"], fl: ["ذاكرة مساندة: حفظ دائم", "ذاكرة رئيسية: مؤقتة", "المعالج يعمل عليها"], pk: ["ملف", "بيانات"] },
+  7: { t: ["ram", "rom", "cpu"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج (Cache بداخله)", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
+  8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح في RAM", "حفظ دائم على SSD", "عبر الإنترنت", "نسخة في التخزين السحابي"], pk: ["ملف", "ملف", "ملف"] },
   9: { t: ["ram", "hdd", "ssd"] },
-  10: { t: ["mon", "rom", "kb"], s: "os", flow: ["kb", "mon"], fl: ["المستخدم", "البرمجيات تخبر الحاسوب ماذا يفعل"], pk: "أمر" },
+  10: { t: ["mon", "rom", "kb", "cpu"], s: "os", flow: ["kb", "cpu", "mon"], fl: ["المستخدم يطلب", "البرمجيات تخبر الحاسوب ماذا يفعل", "النتيجة"], pk: ["أمر", "معلومات"] },
   11: { t: ["mon"], s: "apps" },
-  12: { t: ["mon", "user", "cpu"], s: "code", flow: ["user", "mon", "cpu"], fl: ["المبرمج يكتب", "المترجم يحوّل", "0 و 1 للمعالج"], pk: "كود" },
-  13: { t: ["mon", "kb", "mouse", "prn"], s: "os", flow: ["mouse", "mon", "prn"], fl: ["طلب طباعة", "نظام التشغيل يدير", "الطابعة"], pk: "طلب" },
+  12: { t: ["mon", "user", "cpu"], s: "code", flow: ["user", "mon", "cpu"], fl: ["المبرمج يكتب", "المترجم/المفسّر يحوّل", "المعالج ينفّذ"], pk: ["برنامج مصدري", "لغة الآلة 0/1"] },
+  13: { t: ["mon", "kb", "mouse", "prn"], s: "os", flow: ["mouse", "mon", "prn"], fl: ["المستخدم يطلب الطباعة", "نظام التشغيل يدير المصادر", "الطابعة"], pk: ["طلب طباعة", "ملف للطباعة"] },
   14: { t: ["user", "mon"] },
-  15: { t: ["router", "switch", "case", "cloud", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "الموجّه", "الإنترنت"], pk: "رسالة" },
-  16: { t: ["switch", "router", "case", "ports"], flow: ["ports", "switch", "router"], fl: ["جهاز", "مركز النجمة Switch", "Router"], pk: "حزمة" },
-  17: { t: ["router", "ports", "cloud"], flow: ["ports", "router", "cloud"], fl: ["IP: 192.168.1.5", "Router", "خادم HTTP"], pk: "HTTP" },
-  18: { t: ["router", "switch", "ports", "cloud"], flow: ["ports", "switch", "router", "cloud"], fl: ["منفذ الشبكة", "Switch", "Router", "الإنترنت"], pk: "حزمة" },
-  19: { t: ["cloud", "router", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "عبر الإنترنت", "خدمة سحابية"], pk: "طلب" },
-  20: { t: ["cloud", "router"], flow: ["router", "cloud"], fl: ["العميل", "المزوّد CSP"], pk: "SLA" },
+  15: { t: ["router", "switch", "case", "cloud", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "الموجّه", "الإنترنت"], pk: ["رسالة", "رسالة"] },
+  16: { t: ["switch", "router", "case", "ports"], flow: ["ports", "switch", "router"], fl: ["جهاز", "مركز النجمة: Switch", "الموجّه"], pk: ["حزمة بيانات", "حزمة بيانات"] },
+  17: { t: ["router", "ports", "cloud"], flow: ["ports", "router", "cloud"], fl: ["جهازك: IP 192.168.1.5", "الموجّه", "خادم الموقع"], pk: ["طلب HTTP", "طلب HTTP"] },
+  18: { t: ["router", "switch", "ports", "cloud"], flow: ["ports", "switch", "router", "cloud"], fl: ["منفذ الشبكة", "Switch: للجهاز المقصود", "Router: أفضل مسار", "الإنترنت"], pk: ["حزمة", "حزمة", "حزمة"] },
+  19: { t: ["cloud", "router", "ports"], flow: ["ports", "router", "cloud"], fl: ["جهازك", "عبر الإنترنت", "خدمة سحابية مدفوعة"], pk: ["طلب خدمة", "طلب خدمة"] },
+  20: { t: ["cloud", "router", "ports"], flow: ["ports", "cloud"], fl: ["العميل", "المزوّد CSP"], pk: ["طلب خدمة"] },
   21: { t: ["mon", "hdd"], s: "shield" },
-  22: { t: ["mon", "router", "cloud", "hdd"], s: "hacker", flow: ["cloud", "router", "hdd"], fl: ["المخترق", "يستغل ثغرة", "يصل إلى البيانات"], pk: "هجوم", bad: true },
-  23: { t: ["mon", "hdd", "cloud", "router"], s: "virus", flow: ["cloud", "router", "hdd", "mon"], fl: ["موقع غير رسمي", "يدخل الجهاز", "يشفّر الملفات", "يطلب الفدية"], pk: "🦠", bad: true },
-  24: { t: ["mon", "router", "cloud"], s: "shield", flow: ["cloud", "router", "mon"], fl: ["تهديد خارجي", "جدار الحماية يصفّي", "الجهاز آمن"], pk: "فحص" },
+  22: { t: ["mon", "router", "cloud", "hdd"], s: "hacker", flow: ["cloud", "router", "hdd"], fl: ["المخترق", "يستغل ثغرة", "يصل إلى البيانات"], pk: ["هجوم", "هجوم"], bad: true },
+  23: { t: ["mon", "hdd", "cloud", "router"], s: "virus", flow: ["cloud", "router", "hdd", "mon"], fl: ["موقع غير رسمي", "يدخل الجهاز", "يشفّر الملفات", "يطلب الفدية"], pk: ["برنامج خبيث", "برنامج خبيث", "رسالة فدية"], bad: true },
+  24: { t: ["mon", "router", "cloud"], s: "shield", flow: ["cloud", "router", "mon"], fl: ["تهديد خارجي", "جدار الحماية يصفّي", "الجهاز آمن"], pk: ["بيانات مشبوهة", "بيانات آمنة"] },
   25: { t: ["mon"], s: "ai" },
   26: { t: ["mon"], s: "ai" },
-  27: { t: ["mon", "cam", "mic", "cpu", "spk"], s: "ai", flow: ["cam", "cpu", "mon", "spk"], fl: ["رؤية حاسوبية", "تعلّم الآلة", "النتيجة", "لغة طبيعية"], pk: "AI" },
+  27: { t: ["mon", "cam", "cpu"], s: "ai", flow: ["cam", "cpu", "mon"], fl: ["الرؤية الحاسوبية: صورة", "تعلّم الآلة يحلّل", "النتيجة: تعرّف على الوجه"], pk: ["صورة", "نتيجة"] },
 };
 const PART_LESSON = { odd: 8, cam: 4, mic: 4, scan: 4, switch: 18, cpu: 3, ram: 7, rom: 7, mb: 5, hdd: 8, ssd: 8, psu: 5, gpu: 5, ports: 5, mon: 4, kb: 4, mouse: 4, spk: 4, prn: 4, router: 15, cloud: 19, user: 1 };
 const EXTRA_PARTS = { router: ["router", "الموجّه Router", "خارج الصندوق", "شبكات", "يربط الشبكات ببعضها ويحدّد أفضل مسار للبيانات، ومن خلاله يصل الإنترنت إلى جهازك."], cloud: ["cloud", "السحابة", "على الإنترنت", "حوسبة سحابية", "موارد حوسبة وتخزين تستأجرها عبر الإنترنت وتدفع حسب الاستخدام."], user: ["user", "المستخدم", "الكيان البشري", "إنسان", "الإنسان الذي يستخدم الحاسوب، ويشكّل مع المبرمج الكيان البشري."],
@@ -2177,8 +2177,12 @@ function showFlow(T) {
       for (const off of [-46, 52, -88, 94, -130, 136]) { const y = p[1] + off, r = { x: p[0] - w / 2, y: y - 16, w, h: 28 }; const hit = placed.some((q) => r.x < q.x + q.w + 6 && q.x < r.x + r.w + 6 && r.y < q.y + q.h + 4 && q.y < r.y + r.h + 4) || pts.some((pp) => Math.abs(pp[0] - p[0]) < w / 2 + 16 && Math.abs(pp[1] - y) < 30); if (!hit) { ly = y; break; } }
       placed.push({ x: p[0] - w / 2, y: ly - 16, w, h: 28 }); h += `<g class="fl-lab"><rect x="${p[0] - w / 2}" y="${ly - 16}" width="${w}" height="28" rx="14"/><text x="${p[0]}" y="${ly + 4}">${esc(lab)}</text></g>`; }
   });
-  const pk = esc(T.pk || ""), pw = Math.max(38, pk.length * 10 + 24);
-  h += `<g class="fl-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1" keyTimes="0;1" calcMode="linear"/><circle r="22" class="fl-pk-glow"/><rect x="${-pw / 2}" y="-15" width="${pw}" height="30" rx="15" class="fl-pk-b"/><text y="6" class="fl-pk-t">${pk}</text></g>`;
+  const PK = Array.isArray(T.pk) ? T.pk : [T.pk || ""];
+  let pkh = "";
+  PK.forEach((txt, k) => { const lbl = esc(txt), pw = Math.max(40, txt.length * 10 + 26), last = PK.length - 1, kt = [0], vs = [k ? 0 : 1];
+    if (k > 0) { kt.push(fr[k].toFixed(3)); vs.push(1); } if (k < last && fr[k + 1] != null) { kt.push(fr[k + 1].toFixed(3)); vs.push(0); }
+    pkh += `<g opacity="${k ? 0 : 1}">${PK.length > 1 ? `<animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" calcMode="discrete" keyTimes="${kt.join(";")}" values="${vs.join(";")}"/>` : ""}<rect x="${-pw / 2}" y="-15" width="${pw}" height="30" rx="15" class="fl-pk-b"/><text y="6" class="fl-pk-t">${lbl}</text></g>`; });
+  h += `<g class="fl-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1" keyTimes="0;1" calcMode="linear"/><circle r="22" class="fl-pk-glow"/>${pkh}</g>`;
   g.insertAdjacentHTML("beforeend", h);
 }
 function sceneInit() {
