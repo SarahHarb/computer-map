@@ -105,3 +105,11 @@ create policy "views admin delete" on public.views for delete to authenticated u
 --
 --  update public.profiles set role = 'admin' where email = 'YOUR_EMAIL';
 -- ======================================================
+
+-- إعلانات المعلمة للطلاب
+create table if not exists public.announcements (id bigint generated always as identity primary key, text text not null, active boolean not null default true, created_at timestamptz not null default now());
+alter table public.announcements enable row level security;
+drop policy if exists "ann read" on public.announcements;
+create policy "ann read" on public.announcements for select to authenticated using (true);
+drop policy if exists "ann admin" on public.announcements;
+create policy "ann admin" on public.announcements for all to authenticated using (public.is_admin()) with check (public.is_admin());

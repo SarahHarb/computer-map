@@ -12,6 +12,7 @@ header h1{margin:0;font-size:20px;flex:1}header h1 small{display:block;font-size
 .hb{font-family:inherit;color:var(--nv);background:var(--gd);border:none;border-radius:10px;padding:7px 14px;font-weight:800;cursor:pointer;text-decoration:none;font-size:14px}
 .hb.gh{background:transparent;color:#fff;border:1px solid #ffffff55}
 main{padding:18px 22px 60px;max-width:1500px;margin:auto}
+.ann{display:flex;align-items:center;gap:10px;padding:12px 16px;margin-bottom:14px;flex-wrap:wrap}.ann input{flex:1;min-width:220px;font-family:inherit;font-size:15px;padding:9px 12px;border:2px solid var(--ln);border-radius:10px}.hb.gh2{background:#fff;border:2px solid var(--ln);color:var(--nv)}
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
 .kpi{background:#fff;border-radius:16px;padding:14px 16px;border:1px solid var(--ln);display:flex;gap:12px;align-items:center}
 .kpi i{font-style:normal;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--opb);flex:none}
@@ -81,11 +82,12 @@ tr.ck{cursor:pointer}tr.ck:hover td{background:#FFFBEA}
 #gate{max-width:420px;margin:14vh auto;background:#fff;border-radius:16px;padding:26px;text-align:center;border:1px solid var(--ln)}
 @media (max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.lrow,.lhead{grid-template-columns:40px 1fr 1fr 80px}.lrow>:nth-child(n+5),.lhead>:nth-child(n+5){display:none}.ldet{grid-template-columns:1fr}.srow,.shead{grid-template-columns:1fr 1fr 70px}.srow>:nth-child(n+4),.shead>:nth-child(n+4){display:none}}
 </style></head><body>
-<header><div class="lg">📊</div><h1>لوحة المتابعة<small>مقدمة في الحاسوب · إعداد: سارة حرب</small></h1>
+<header><div class="lg">📊</div><h1>لوحة المتابعة<small>مقدمة في الحاسوب · سارة حرب</small></h1>
  <button class="hb" id="csv">⬇️ Excel</button><button class="hb gh" id="reload">🔄 تحديث</button><a href="./" class="hb gh">← الموقع</a></header>
 <div id="gate">لحظة… <span class="muted">جارٍ التحقق من الدخول</span></div>
 <main id="app" style="display:none">
  <div class="kpis" id="kpis"></div>
+ <div class="ann card" id="annBox"><b>📢 إعلان للطلاب</b><input id="annTxt" placeholder="مثلاً: امتحان الوحدة الثانية يوم الخميس" maxlength="200"><button class="hb" id="annPub">نشر الإعلان</button><button class="hb gh2" id="annStop">إيقاف الإعلان</button><span id="annSt" class="muted"></span></div>
  <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
  <div id="view"></div>
 </main>
@@ -125,7 +127,15 @@ async function all(table) {
     if (error) { alert(error.message); break; } out.push(...data); if (data.length < 1000) break;
   } return out;
 }
+async function annLoad() {
+  const st = document.getElementById("annSt"), { data, error } = await sb.from("announcements").select("*").eq("active", true).order("created_at", { ascending: false }).limit(1);
+  if (error) { st.textContent = "⚠️ جدول الإعلانات غير موجود بعد (شغّلي أمر SQL)."; return; }
+  st.textContent = data && data[0] ? "الإعلان الحالي: «" + data[0].text + "»" : "لا يوجد إعلان حالياً.";
+}
+document.getElementById("annPub").onclick = async () => { const t = document.getElementById("annTxt").value.trim(); if (!t) return; await sb.from("announcements").update({ active: false }).eq("active", true); const { error } = await sb.from("announcements").insert({ text: t, active: true }); if (error) return alert(error.message); document.getElementById("annTxt").value = ""; annLoad(); };
+document.getElementById("annStop").onclick = async () => { await sb.from("announcements").update({ active: false }).eq("active", true); annLoad(); };
 async function load() {
+  annLoad();
   document.getElementById("view").innerHTML = `<div class="card empty">لحظة… جارٍ تحميل البيانات</div>`;
   [P, A, V] = await Promise.all([all("profiles"), all("attempts"), all("views")]);
   build(); draw();
