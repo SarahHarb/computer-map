@@ -960,6 +960,35 @@ body.ui5 .home-top{display:inline-flex;align-items:center;gap:6px;background:#F2
 .v-map .mnode:has(>.vlist:not(.spx)),.mini .mnode:has(>.vlist:not(.spx)){display:grid;grid-template-columns:1fr 1fr;justify-items:center}
 .v-map .mnode:has(>.vlist:not(.spx))>*,.mini .mnode:has(>.vlist:not(.spx))>*{grid-column:1/-1}
 .v-map .mnode>.vlist:not(.spx),.mini .mnode>.vlist:not(.spx){grid-column:2;justify-self:stretch;margin-right:0!important;min-width:200px;width:max-content;max-width:300px}
+
+#sc.lesson.wide{grid-template-columns:minmax(240px,20%) 1fr}
+#sc.wide #cMap,#sc.wide #uMap{min-height:62vh;max-height:none}
+#sc.wide .unit-hero{padding:10px 16px;margin:4px 0 8px}#sc.wide .unit-hero .un{width:44px;height:44px;font-size:20px}#sc.wide .unit-hero h2{font-size:24px}
+.c-units{display:flex!important;flex-wrap:wrap;gap:6px!important}
+.c-units a{display:inline-flex!important;align-items:center;gap:6px!important;padding:4px 12px 4px 4px!important;border-radius:99px!important;font-size:14px;font-weight:700;border-width:1.5px!important}
+.c-units a span{grid-row:auto!important;width:24px!important;height:24px!important;font-size:12px}
+.c-units a:hover{background:var(--c)!important;color:#fff}
+
+#cMap.ovg-host{padding:18px;min-height:0}
+.ovg{display:flex;flex-direction:column;align-items:center}
+.ovg-root{display:inline-flex;align-items:center;gap:10px;background:#14213D;color:#fff;font-size:24px;font-weight:900;padding:12px 26px;border-radius:16px}.ovg-root .ic{width:26px;height:26px;color:#F2B705}
+.ovg-rel{font-size:13px;color:#77746C;font-style:italic;padding:4px 0;position:relative}
+.ovg-rel::before{content:"";display:block;width:2px;height:14px;background:#9A9890;margin:0 auto 2px}
+.ovg-top{display:grid;grid-template-columns:3fr 1fr;gap:18px;width:100%;border-top:2px solid #9A9890;padding-top:16px;position:relative}
+.ovg-br{display:flex;flex-direction:column;align-items:center;position:relative}
+.ovg-br::before{content:"";position:absolute;top:-16px;width:2px;height:16px;background:#9A9890}
+.ovg-node{display:inline-flex;align-items:center;gap:8px;font-size:20px;font-weight:900;color:var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);border:2px solid color-mix(in srgb,var(--c) 50%,#fff);padding:8px 20px;border-radius:14px}.ovg-node .ic{width:22px;height:22px}
+.ovg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;width:100%;margin-top:4px;padding-top:12px;border-top:2px dashed #C9C5B9}
+.ovg-br:last-child .ovg-grid{grid-template-columns:1fr}.ovg-grid{align-items:start}
+.ovg-card{background:#fff;border:2px solid color-mix(in srgb,var(--c) 40%,#fff);border-top:6px solid var(--c);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.ovg-h{display:flex;align-items:center;gap:8px;color:var(--c);text-decoration:none;font-size:17px}.ovg-h .ic{width:22px;height:22px;flex:none}.ovg-h:hover b{text-decoration:underline}
+.ovg-card small{color:#77746C;font-style:italic;font-size:12px}
+.ovg-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+.ovg-card li a{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#33415A;text-decoration:none;background:color-mix(in srgb,var(--c) 6%,#fff);border-radius:8px;padding:4px 8px}.ovg-card li a:hover{background:color-mix(in srgb,var(--c) 16%,#fff)}
+.ovg-card li .ic{width:15px;height:15px;color:var(--c);flex:none}
+.ovg-f{margin-top:auto;padding-top:6px;display:flex;align-items:center;gap:6px;font-size:12px;color:#77746C;font-weight:700;flex-wrap:wrap}
+.ovg-ls{display:flex;gap:4px;flex-wrap:wrap}.ovg-ls a{width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;text-decoration:none}.ovg-ls a:hover{outline:2px solid #F2B705}
+@media (max-width:900px){.ovg-top{grid-template-columns:1fr}}
 </style></head>
 <body>
 <header>
@@ -2031,13 +2060,13 @@ function sceneInit() {
 }
 function scRoute() { const h = location.hash; if (h.startsWith("#/all")) return scCourse(); const u = h.match(/^#\/u\/(\d+)/); if (u && +u[1] >= 1 && +u[1] <= UNITS.length) return scUnit(+u[1] - 1); const m = h.match(/^#\/l\/(\d+)/); const n = m ? +m[1] - 1 : -1; if (n >= 0 && n < LESSONS.length) scLesson(n); else scHome(); }
 function hideLens() { const L = document.getElementById("lensRing"); if (L) L.style.opacity = 0; }
-function mountMap(host, S, ov, depth) {
+function mountMap(host, S, ov, depth, minZ) {
   const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(mapHTML(S, ov)); host.appendChild(inn);
-  const fit = () => { inn.style.zoom = 1; inn.style.zoom = Math.max(0.4, Math.min(1.25, (host.clientWidth - 40) / inn.scrollWidth)); };
+  const fit = () => { inn.style.zoom = 1; inn.style.zoom = Math.max(minZ || 0.4, Math.min(1.3, (host.clientWidth - 40) / inn.scrollWidth)); };
   makeCollapsible(inn, depth == null ? 1 : depth, fit); fit(); if (document.fonts) document.fonts.ready.then(fit);
   host.querySelectorAll(".card").forEach((c) => (c.onclick = () => { const ch = c.querySelector(".chev"); if (ch) ch.click(); }));
 }
-function scFrame(on) { SC.i = -1; cur = -1; if (window.speechSynthesis) speechSynthesis.cancel(); hideLens(); document.getElementById("sc").classList.add("lesson"); document.getElementById("scene").classList.remove("home"); showFlow(null); document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done")); document.querySelectorAll("#scStrip .ustop").forEach((u, k) => u.classList.toggle("on", k === on)); }
+function scFrame(on) { SC.i = -1; cur = -1; if (window.speechSynthesis) speechSynthesis.cancel(); hideLens(); document.getElementById("sc").classList.add("lesson", "wide"); document.getElementById("scene").classList.remove("home"); showFlow(null); document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done")); document.querySelectorAll("#scStrip .ustop").forEach((u, k) => u.classList.toggle("on", k === on)); }
 function scUnit(k) {
   scFrame(k);
   const L = unitLessons(k), c = unitColor(k), ids = [...new Set(L.flatMap((i) => (LT[i] || { t: ["all"] }).t))];
@@ -2066,6 +2095,14 @@ function scUnit(k) {
   p.querySelectorAll(".u-tabs button").forEach((x) => (x.onclick = () => tab(x.dataset.t))); tab("map");
   p.scrollTop = 0; window.track && track.view("وحدة: " + unitName(k).t, "خارطة الوحدة");
 }
+function courseOverview() {
+  const [rt, , , , rrel, top] = OVDEF;
+  const lessonChips = (L) => `<div class="ovg-ls">${[...new Set(L)].map((i) => `<a href="#/l/${i + 1}" title="${esc(LESSONS[i][4])}">${i + 1}</a>`).join("")}</div>`;
+  const card = ([t, L, col, , rel, kids]) => { const c = "#" + (col || "16213E"), u = unitOfLesson[L[0]];
+    return `<div class="ovg-card" style="--c:${c}"><a class="ovg-h" href="#/u/${u + 1}" title="خارطة الوحدة">${ico(t)}<b>${esc(t)}</b></a>${kids && kids.length ? `<small>${esc(rel || "")}</small><ul>${kids.map(([kt, kl]) => `<li><a href="#/l/${kl[0] + 1}">${ico(kt)}${esc(kt)}</a></li>`).join("")}</ul>` : ""}<div class="ovg-f">الدروس ${lessonChips(kids && kids.length ? kids.flatMap((k) => k[1]) : L)}</div></div>`; };
+  const branch = ([t, L, col, , rel, kids]) => `<div class="ovg-br" style="--c:#${col}"><div class="ovg-node">${ico(t)}${esc(t)}</div><div class="ovg-rel">${esc(rel || "")}</div><div class="ovg-grid">${kids.map(card).join("")}</div></div>`;
+  return `<div class="ovg"><div class="ovg-root">${ico(rt)}${esc(rt)}</div><div class="ovg-rel">${esc(rrel)}</div><div class="ovg-top">${top.map(branch).join("")}</div><p class="muted center">اكبس على عنوان أي صندوق لتفتح خارطة الوحدة، أو على رقم لتفتح الدرس.</p></div>`;
+}
 function scCourse() {
   scFrame(-1); setFocus(["all"]); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
   const p = document.getElementById("scPanel");
@@ -2073,9 +2110,9 @@ function scCourse() {
   <div class="unit-hero" style="--c:#14213D"><span class="un">${svgI("FaGlobe")}</span><div><small>${UNITS.length} وحدات · ${LESSONS.length} درس</small><h2>خارطة المادة كاملة</h2></div></div>
   <div class="seg2"><button data-v="ov" class="on">${svgI("FaEye")} خارطة عامة</button><button data-v="full">${svgI("FaSitemap")} خارطة مفصّلة</button></div>
   <div class="v-map big" id="cMap"></div>
-  <h4 class="v-h">${svgI("FaLayerGroup")} الوحدات: اكبس لتشوف خارطتها</h4>
-  <div class="c-units">${UNITS.map((u, k) => `<a href="#/u/${k + 1}" style="--c:${unitColor(k)}"><span>${k + 1}</span><b>${esc(unitName(k).t)}</b><small>${unitLessons(k).length} ${unitLessons(k).length > 2 ? "دروس" : "درس"}</small></a>`).join("")}</div>`;
-  const draw = (v) => { const h = p.querySelector("#cMap"); h.innerHTML = ""; p.querySelectorAll(".seg2 button").forEach((b) => b.classList.toggle("on", b.dataset.v === v)); if (v === "ov") mountMap(h, null, true, 2); else mountMap(h, new Set(ALL), false, 1); };
+  <h4 class="v-h">${svgI("FaLayerGroup")} خارطة كل وحدة لحالها:</h4>
+  <div class="c-units">${UNITS.map((u, k) => `<a href="#/u/${k + 1}" style="--c:${unitColor(k)}" title="${unitLessons(k).length} ${unitLessons(k).length > 2 ? "دروس" : "درس"}"><span>${k + 1}</span>${esc(unitName(k).t)}</a>`).join("")}</div>`;
+  const draw = (v) => { const h = p.querySelector("#cMap"); h.innerHTML = ""; h.classList.remove("ovg-host"); p.querySelectorAll(".seg2 button").forEach((b) => b.classList.toggle("on", b.dataset.v === v)); if (v === "ov") { h.classList.add("ovg-host"); h.innerHTML = courseOverview(); } else mountMap(h, new Set(ALL), false, 1, 0.62); };
   p.querySelectorAll(".seg2 button").forEach((b) => (b.onclick = () => draw(b.dataset.v))); draw("ov");
   p.querySelectorAll(".c-units a").forEach((a, k) => { const ids = [...new Set(unitLessons(k).flatMap((i) => (LT[i] || { t: ["all"] }).t))]; a.onmouseenter = () => setFocus(ids); a.onmouseleave = () => setFocus(["all"]); });
   p.scrollTop = 0; window.track && track.view("خارطة المادة", "عامة");
@@ -2106,6 +2143,7 @@ function setFocus(ids, screen) {
   return els;
 }
 function scHome() {
+  document.getElementById("sc").classList.remove("wide");
   SC.i = -1; cur = -1; document.getElementById("sc").classList.remove("lesson"); setFocus(null); showFlow(null); document.getElementById("scene").classList.add("home"); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
   document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done"));
   const p = document.getElementById("scPanel");
@@ -2138,6 +2176,7 @@ function scPart(id) {
   window.track && track.view(p[1], "قطعة");
 }
 function scLesson(i) {
+  document.getElementById("sc").classList.remove("wide");
   { const L = document.getElementById("lensRing"); if (L) L.style.opacity = 0; }
   SC.i = i; cur = i; markVisited(i); document.getElementById("sc").classList.add("lesson");
   const T = LT[i] || { t: ["all"] }, els = setFocus(T.t, T.s); document.getElementById("scene").classList.remove("home"); showFlow(T.flow);
