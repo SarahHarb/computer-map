@@ -632,6 +632,29 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .v-pts{display:grid;gap:6px;margin-top:12px}
 .v-pts div{display:flex;gap:10px;align-items:flex-start;background:#F8FAFC;border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.6}
 .v-pts .ic{width:22px;height:22px;color:var(--c);flex:none;margin-top:2px}
+
+#sc.lesson{grid-template-columns:minmax(340px,34%) 1fr}
+#sc.lesson .sc-hint{display:none}
+#sc.lesson .sc-panel{padding:22px 30px 40px}
+#sc.lesson .sp-head h2{font-size:30px}
+#sc.lesson .v-idea p{font-size:20px}
+#sc.lesson .v-flow div{min-width:96px}#sc.lesson .v-flow div span{width:68px;height:68px;border-radius:18px}#sc.lesson .v-flow div span .ic{width:36px;height:36px}#sc.lesson .v-flow div b{font-size:15px}
+#sc.lesson .sp-t{font-size:16px}#sc.lesson .sp-t th{font-size:16px;padding:10px}#sc.lesson .sp-t td{padding:9px 10px}
+#sc.lesson .v-topo svg{height:110px}#sc.lesson .v-topo figcaption{font-size:16px}
+#sc.lesson .v-tl{grid-template-columns:repeat(4,1fr)}
+#sc.lesson .sp-cards{grid-template-columns:repeat(4,1fr)}
+#sc.lesson .sp-q .q .opts{grid-template-columns:1fr 1fr}
+.v-dcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.v-dc{border:2px solid color-mix(in srgb,var(--c) 25%,#fff);border-radius:14px;padding:12px 14px;background:#fff;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}
+.v-dic{grid-row:span 1;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
+.v-dic .ic{width:26px;height:26px}
+.v-dc b{font-size:17px;color:var(--c)}
+.v-dc p{grid-column:1/-1;margin:8px 0 0;line-height:1.7;font-size:15px}
+.v-pts{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:0}
+.v-pts div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px}
+.v-pic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--c) 12%,#fff);flex:none}
+.v-pts .v-pic .ic{width:20px;height:20px;margin:0}
+@media (max-width:900px){#sc.lesson{grid-template-columns:1fr;grid-template-rows:34vh 1fr}#sc.lesson .sp-cards{grid-template-columns:1fr 1fr}#sc.lesson .v-tl{grid-template-columns:1fr 1fr}#sc.lesson .sp-q .q .opts{grid-template-columns:1fr}}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -1673,7 +1696,7 @@ function setFocus(ids, screen) {
   return els;
 }
 function scHome() {
-  SC.i = -1; cur = -1; setFocus(null); showFlow(null); document.getElementById("scene").classList.add("home"); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
+  SC.i = -1; cur = -1; document.getElementById("sc").classList.remove("lesson"); setFocus(null); showFlow(null); document.getElementById("scene").classList.add("home"); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
   document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done"));
   const p = document.getElementById("scPanel");
   p.innerHTML = `<div class="sp-home"><small>إعداد: سارة حرب</small><h2>مقدمة في الحاسوب</h2><p>هاد هو الحاسوب. كل درس بيدخل على القطعة اللي بيحكي عنها. الدوائر الصفرا على القطع بتحكيلك كم درس إلها.</p><ol>${[["FaHandPointer", "اكبس على أي قطعة بالصورة لتعرف شو هي"], ["FaListOl", "أو اختار رقم الدرس من الشريط تحت"], ["FaClipboardCheck", "بكل درس: شرح، جدول، بطاقات، أسئلة وفيديو"]].map(([ic, t]) => `<li>${svgI(ic)}${t}</li>`).join("")}</ol><a class="btn-gold" href="#/l/1">ابدأ الدرس الأول ←</a></div>`;
@@ -1688,7 +1711,7 @@ function scPart(id) {
   window.track && track.view(p[1], "قطعة");
 }
 function scLesson(i) {
-  SC.i = i; cur = i; markVisited(i);
+  SC.i = i; cur = i; markVisited(i); document.getElementById("sc").classList.add("lesson");
   const T = LT[i] || { t: ["all"] }, els = setFocus(T.t, T.s); document.getElementById("scene").classList.remove("home"); showFlow(T.flow);
   requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : 70));
   document.querySelectorAll("#scStrip .stops button").forEach((b) => { const k = +b.dataset.i; b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
@@ -1707,8 +1730,8 @@ function scPanel() {
     (C.tables || []).forEach((t) => { b += `<h4 class="v-h">${svgI("FaTable")} ${esc(t.title || "جدول المقارنة")}</h4><div class="tw"><table class="s-table sp-t"><tr>${t.h.map((x) => `<th>${x ? ico(x) : ""}${esc(x)}</th>`).join("")}</tr>${t.r.map((r) => "<tr>" + r.map((x, c) => `<td>${c === 0 && x ? ico(x) : ""}${esc(x)}</td>`).join("") + "</tr>").join("")}</table></div>`; });
     if (C.topo) b += `<h4 class="v-h">${svgI("FaShapes")} أشكال الشبكات</h4><div class="v-topo">${Object.entries(TOPO).map(([k, sv]) => `<figure>${sv}<figcaption>${esc(k)}</figcaption></figure>`).join("")}</div>`;
     if (C.timeline) b += `<h4 class="v-h">${svgI("FaHistory")} الخط الزمني</h4><div class="v-tl">${C.timeline.map(([y, t]) => `<div><b>${y}</b><span>${esc(t)}</span></div>`).join("")}</div>`;
-    if (C.defs) b += `<h4 class="v-h">${svgI("FaBookOpen")} التعريفات</h4><div class="v-defs">${C.defs.map(([t, d]) => `<details><summary>${ico(t) || svgI("FaTag")}<b>${esc(t)}</b></summary><p>${esc(d)}</p></details>`).join("")}</div>`;
-    if (C.points) b += `<div class="v-pts">${C.points.map((x) => `<div>${ico(x) || svgI("FaCheck")}<span>${esc(x)}</span></div>`).join("")}</div>`;
+    if (C.defs) b += `<h4 class="v-h">${svgI("FaBookOpen")} التعريفات</h4><div class="v-dcards">${C.defs.map(([t, d]) => `<div class="v-dc"><span class="v-dic">${ico(t) || svgI("FaTag")}</span><b>${esc(t)}</b><p>${esc(d)}</p></div>`).join("")}</div>`;
+    if (C.points) b += `<h4 class="v-h">${svgI("FaCheck")} نقاط مهمة</h4><div class="v-pts">${C.points.map((x) => `<div><span class="v-pic">${ico(x) || svgI("FaCheck")}</span><span>${esc(x)}</span></div>`).join("")}</div>`;
     if (C.tip) b += `<div class="sp-tip">${svgI("FaLightbulb")}<span><b>طريقة حفظ:</b> ${esc(C.tip)}</span></div>`;
     if ((C.cards || []).length) b += `<h4 class="v-h">${svgI("FaClone")} بطاقات الحفظ <small class="muted">اكبس لتقلبها</small></h4><div class="flips sp-cards">${C.cards.slice(0, 4).map(([a, c]) => `<button class="flip"><span class="in"><span class="fa">${ico(a)}${esc(a)}</span><span class="fb">${esc(c)}</span></span></button>`).join("")}</div>`;
     if ((C.qs || []).length) b += `<h4 class="v-h">${svgI("FaClipboardCheck")} سؤال سريع</h4><div class="qwrap sp-q">${mcqHTML([shuffle(C.qs)[0]])}</div><button class="btn-line full" id="moreQs">❓ كل أسئلة الدرس</button>`;
