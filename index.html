@@ -952,6 +952,14 @@ body.ui5 .home-top{display:inline-flex;align-items:center;gap:6px;background:#F2
 #scStrip .ust{color:#cfd6e2;font-size:12px;text-decoration:none;font-weight:700;display:block}#scStrip .ust:hover{color:#F2B705;text-decoration:underline}
 #scStrip .ustop.on .ust{color:#F2B705}
 @media (max-width:900px){.c-units{grid-template-columns:1fr}.u-nav{flex-wrap:wrap}}
+
+.vlist.spx{margin-right:0!important;border-right:none!important;padding:10px 0 0!important;align-self:center!important;min-width:0}
+.vlist.spx::before{content:"";display:block;width:0;height:10px;border-left:2px solid #9A9890;margin:-10px auto 0}
+.v-map .hrow>.mnode,.mini .hrow>.mnode{padding-left:18px;padding-right:18px}
+
+.v-map .mnode:has(>.vlist:not(.spx)),.mini .mnode:has(>.vlist:not(.spx)){display:grid;grid-template-columns:1fr 1fr;justify-items:center}
+.v-map .mnode:has(>.vlist:not(.spx))>*,.mini .mnode:has(>.vlist:not(.spx))>*{grid-column:1/-1}
+.v-map .mnode>.vlist:not(.spx),.mini .mnode>.vlist:not(.spx){grid-column:2;justify-self:stretch;margin-right:0!important;min-width:200px;width:max-content;max-width:300px}
 </style></head>
 <body>
 <header>
