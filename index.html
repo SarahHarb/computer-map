@@ -581,7 +581,7 @@ body.ui5 .stage{display:flex;flex-direction:column}
 #scStrip .sp{background:var(--gold);border:none;font-weight:900;font-size:18px;width:40px;height:40px;flex:none}
 .stops{flex:1;display:flex;gap:14px;overflow-x:auto;scrollbar-width:thin}
 .ustop{flex:none}
-.ustop small{display:block;color:#B8C4D6;font-size:11px;white-space:nowrap;margin-bottom:3px}
+.ustop small,#scStrip .ust{display:block;white-space:nowrap;margin-bottom:3px;color:#B8C4D6;font-size:11px;white-space:nowrap;margin-bottom:3px}
 .ustop div{display:flex;gap:4px}
 .ustop button{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid var(--c);background:transparent;color:#fff;font-weight:800;font-size:13px}
 .ustop button.done{background:var(--c)}
@@ -918,6 +918,40 @@ body.ui5 .stage{display:flex;flex-direction:column}
 body.ui5 header .brand:hover h1{text-decoration:underline;text-decoration-color:#F2B705;text-underline-offset:6px}
 body.ui5 .home-top{display:inline-flex;align-items:center;gap:6px;background:#F2B705;color:#14213D;font-weight:800;font-size:15px;padding:8px 16px;border-radius:12px;text-decoration:none;margin-inline-start:auto}
 #scStrip .sp-home-b{display:grid;place-items:center;border-radius:10px;color:#14213D}#scStrip .sp-home-b .ic{width:20px;height:20px}
+
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}.crumbs .home-btn{margin:0}
+.crumb{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;padding:6px 14px;border-radius:99px;text-decoration:none;color:var(--c,#14213D);border:2px solid var(--c,#14213D);background:#fff}
+.crumb .ic{width:15px;height:15px}.crumb:hover{background:var(--c,#14213D);color:#fff}
+.unit-hero{display:flex;align-items:center;gap:14px;background:var(--c);color:#fff;border-radius:18px;padding:16px 18px;margin:6px 0 12px}
+.unit-hero .un{width:56px;height:56px;border-radius:50%;background:#fff;color:var(--c);display:grid;place-items:center;font-size:26px;font-weight:900;flex:none}.unit-hero .un .ic{width:28px;height:28px}
+.unit-hero small{opacity:.85;font-weight:700}.unit-hero h2{margin:2px 0 0;font-size:28px;display:flex;align-items:center;gap:10px}.unit-hero h2 .ic{width:28px;height:28px}
+.u-lessons{display:grid;gap:8px;margin-bottom:14px}
+.u-lessons a{display:grid;grid-template-columns:40px 1fr;gap:2px 12px;align-items:center;padding:10px 12px;border:2px solid color-mix(in srgb,var(--c) 30%,#fff);border-radius:14px;text-decoration:none;color:#14213D;background:#fff}
+.u-lessons a b{grid-row:span 2;width:40px;height:40px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:17px}
+.u-lessons a span{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px}.u-lessons a span .ic{width:20px;height:20px;color:var(--c)}
+.u-lessons a em{font-style:normal;color:var(--muted);font-size:14px}
+.u-lessons a:hover{border-color:var(--c);background:color-mix(in srgb,var(--c) 6%,#fff)}
+#scPanel .v-map{flex:none}
+#uMap .forest{display:flex;flex-direction:column;align-items:center;gap:28px}#uMap .forest>.mnode+.mnode{border-top:2px dashed #E3E0D6;padding-top:22px}
+.u-tabs{grid-template-columns:repeat(3,1fr)!important;margin-bottom:10px}.u-score{position:sticky;bottom:0;background:#14213D;color:#F2B705;font-weight:800;border-radius:12px;padding:8px 14px;display:flex;gap:8px;align-items:center;margin:8px 0}.u-score:empty{display:none}.u-score .ic{width:18px;height:18px}
+.u-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 20px}.u-nav a{text-decoration:none}
+.seg2{display:inline-flex;background:#EEF2F6;border-radius:12px;padding:4px;gap:4px;margin-bottom:10px}
+.seg2 button{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-weight:800;font-size:15px;border:none;background:none;padding:8px 16px;border-radius:9px;cursor:pointer;color:#14213D}.seg2 button .ic{width:16px;height:16px}
+.seg2 button.on{background:#14213D;color:#F2B705}
+.c-units{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+.c-units a{display:grid;grid-template-columns:36px 1fr;gap:0 10px;align-items:center;padding:10px;border-radius:14px;border:2px solid color-mix(in srgb,var(--c) 35%,#fff);text-decoration:none;color:#14213D;background:color-mix(in srgb,var(--c) 5%,#fff)}
+.c-units a span{grid-row:span 2;width:36px;height:36px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:900}
+.c-units a b{font-size:15px}.c-units a small{color:var(--muted)}.c-units a:hover{border-color:var(--c)}
+.course-btn{display:flex;align-items:center;gap:12px;background:#14213D;color:#fff;border-radius:16px;padding:12px 16px;text-decoration:none;margin:12px 0 4px}
+.course-btn>.ic{width:30px;height:30px;color:#F2B705;flex:none}.course-btn b{display:block;font-size:18px}.course-btn small{color:#cfd6e2}
+.course-btn:hover{background:#1d2f57}
+.lens-uh{margin:0 0 6px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--c);text-decoration:none;border-radius:10px;padding:2px 4px}
+.lens-uh span{width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:13px;flex:none}
+.lens-uh i{margin-inline-start:auto;font-style:normal;font-size:12px;display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--c);border-radius:99px;padding:1px 8px;white-space:nowrap}.lens-uh i .ic{width:12px;height:12px}
+.lens-uh:hover i{background:var(--c);color:#fff}
+#scStrip .ust{color:#cfd6e2;font-size:12px;text-decoration:none;font-weight:700;display:block}#scStrip .ust:hover{color:#F2B705;text-decoration:underline}
+#scStrip .ustop.on .ust{color:#F2B705}
+@media (max-width:900px){.c-units{grid-template-columns:1fr}.u-nav{flex-wrap:wrap}}
 </style></head>
 <body>
 <header>
@@ -1975,7 +2009,7 @@ function sceneInit() {
   const st = document.querySelector(".stage");
   st.insertAdjacentHTML("beforeend", `<div id="sc"><div class="sc-pic">${SCENE_SVG}<div class="sc-hint">اكبس على أي قطعة بالحاسوب، أو اختار درس من تحت</div></div><div class="sc-panel" id="scPanel"></div></div><nav id="scStrip"></nav>`);
   const strip = document.getElementById("scStrip");
-  strip.innerHTML = `<a class="sp sp-home-b" href="#/" title="الصفحة الرئيسية">${svgI("FaHome")}</a><button class="sp" id="scPrev">→</button><div class="stops">${UNITS.map((u, k) => `<div class="ustop" style="--c:${unitColor(k)}"><small>${esc(unitName(k).t)}</small><div>${unitLessons(k).map((i) => `<button data-i="${i}" title="${esc(LESSONS[i][4])}">${i + 1}</button>`).join("")}</div></div>`).join("")}</div><button class="sp" id="scNext">←</button>`;
+  strip.innerHTML = `<a class="sp sp-home-b" href="#/" title="الصفحة الرئيسية">${svgI("FaHome")}</a><button class="sp" id="scPrev">→</button><div class="stops">${UNITS.map((u, k) => `<div class="ustop" style="--c:${unitColor(k)}"><a class="ust" href="#/u/${k + 1}" title="خارطة الوحدة">${esc(unitName(k).t)}</a><div>${unitLessons(k).map((i) => `<button data-i="${i}" title="${esc(LESSONS[i][4])}">${i + 1}</button>`).join("")}</div></div>`).join("")}</div><button class="sp" id="scNext">←</button>`;
   strip.querySelectorAll(".stops button").forEach((b) => (b.onclick = () => (location.hash = "#/l/" + (+b.dataset.i + 1))));
   document.getElementById("scPrev").onclick = () => { if (SC.i > 0) location.hash = "#/l/" + SC.i; };
   document.getElementById("scNext").onclick = () => { location.hash = "#/l/" + (Math.min(LESSONS.length - 1, SC.i + 1) + 1); };
@@ -1987,7 +2021,57 @@ function sceneInit() {
   document.addEventListener("keydown", (e) => { if (!SC.on || pn || SHOW.on || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return; if (e.key === "ArrowLeft") document.getElementById("scNext").click(); if (e.key === "ArrowRight") document.getElementById("scPrev").click(); });
   scRoute();
 }
-function scRoute() { const m = location.hash.match(/^#\/l\/(\d+)/); const n = m ? +m[1] - 1 : -1; if (n >= 0 && n < LESSONS.length) scLesson(n); else scHome(); }
+function scRoute() { const h = location.hash; if (h.startsWith("#/all")) return scCourse(); const u = h.match(/^#\/u\/(\d+)/); if (u && +u[1] >= 1 && +u[1] <= UNITS.length) return scUnit(+u[1] - 1); const m = h.match(/^#\/l\/(\d+)/); const n = m ? +m[1] - 1 : -1; if (n >= 0 && n < LESSONS.length) scLesson(n); else scHome(); }
+function hideLens() { const L = document.getElementById("lensRing"); if (L) L.style.opacity = 0; }
+function mountMap(host, S, ov, depth) {
+  const inn = document.createElement("div"); inn.className = "v-map-in"; inn.appendChild(mapHTML(S, ov)); host.appendChild(inn);
+  const fit = () => { inn.style.zoom = 1; inn.style.zoom = Math.max(0.4, Math.min(1.25, (host.clientWidth - 40) / inn.scrollWidth)); };
+  makeCollapsible(inn, depth == null ? 1 : depth, fit); fit(); if (document.fonts) document.fonts.ready.then(fit);
+  host.querySelectorAll(".card").forEach((c) => (c.onclick = () => { const ch = c.querySelector(".chev"); if (ch) ch.click(); }));
+}
+function scFrame(on) { SC.i = -1; cur = -1; if (window.speechSynthesis) speechSynthesis.cancel(); hideLens(); document.getElementById("sc").classList.add("lesson"); document.getElementById("scene").classList.remove("home"); showFlow(null); document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done")); document.querySelectorAll("#scStrip .ustop").forEach((u, k) => u.classList.toggle("on", k === on)); }
+function scUnit(k) {
+  scFrame(k);
+  const L = unitLessons(k), c = unitColor(k), ids = [...new Set(L.flatMap((i) => (LT[i] || { t: ["all"] }).t))];
+  const els = setFocus(ids, (LT[L[0]] || {}).s); requestAnimationFrame(() => zoomTo(bboxOf(els), ids.includes("all") ? 10 : 60));
+  const S = new Set(L.flatMap((i) => [...lessonNodes[i]]));
+  const p = document.getElementById("scPanel");
+  p.innerHTML = `<div class="crumbs"><a class="home-btn" href="#/">${svgI("FaHome")} كل الدروس</a><a class="crumb" href="#/all">${svgI("FaGlobe")} خارطة المادة</a></div>
+  <div class="unit-hero" style="--c:${c}"><span class="un">${k + 1}</span><div><small>الوحدة ${k + 1} من ${UNITS.length} · ${L.length} ${L.length > 2 ? "دروس" : "درس"}</small><h2>${ico(unitName(k).t)}${esc(unitName(k).t)}</h2></div></div>
+  <div class="sp-tabs u-tabs" style="--c:${c}"><button data-t="map">${svgI("FaProjectDiagram")}خارطة الوحدة</button><button data-t="qs">${svgI("FaClipboardCheck")}أسئلة الوحدة</button><button data-t="ls">${svgI("FaSearchPlus")}دروس الوحدة</button></div><div id="uBody"></div>
+  <div class="u-nav">${k ? `<a class="btn-line" href="#/u/${k}">→ الوحدة ${k}</a>` : "<span></span>"}<a class="btn-gold" href="#/l/${L[0] + 1}">ابدأ أول درس بالوحدة ←</a>${k < UNITS.length - 1 ? `<a class="btn-line" href="#/u/${k + 2}">الوحدة ${k + 2} ←</a>` : "<span></span>"}</div>`;
+  const body = p.querySelector("#uBody");
+  const tab = (t) => {
+    SC.utab = t; p.querySelectorAll(".u-tabs button").forEach((x) => x.classList.toggle("on", x.dataset.t === t)); hideLens(); setFocus(ids, (LT[L[0]] || {}).s);
+    if (t === "map") { body.innerHTML = `<div class="v-map big" id="uMap"></div>`; mountMap(body.querySelector("#uMap"), S, false, S.size > 30 ? 1 : 2); }
+    else if (t === "qs") {
+      const Q = L.flatMap((i) => (LC[i] || {}).qs || []);
+      body.innerHTML = `<p class="muted">${Q.length} سؤال من كل دروس الوحدة. جاوب وشوف التصحيح فوراً.</p><div class="qwrap sp-q" id="uQ">${mcqHTML(Q)}</div><div class="u-score" id="uScore"></div>`;
+      bindMCQ(body.querySelector("#uQ"), "وحدة: " + unitName(k).t);
+      const upd = () => { const d = body.querySelectorAll(".q.done").length, ok = [...body.querySelectorAll(".q.done")].filter((q) => !q.querySelector(".opts button.no")).length; body.querySelector("#uScore").innerHTML = d ? `${svgI("FaCheckCircle")} جاوبت ${d} من ${Q.length}، منهم ${ok} صح` : ""; };
+      body.querySelectorAll(".q .opts button").forEach((x) => x.addEventListener("click", () => setTimeout(upd, 0)));
+    } else {
+      body.innerHTML = `<div class="u-lessons" style="--c:${c}">${L.map((i) => `<a href="#/l/${i + 1}" data-i="${i}"><b>${i + 1}</b><span>${ico(LESSONS[i][4])}${esc(LESSONS[i][4])}</span><em>${esc((LC[i] || {}).idea || "")}</em></a>`).join("")}</div>`;
+      body.querySelectorAll(".u-lessons a").forEach((a) => { a.onmouseenter = () => lensPreview(+a.dataset.i, c); a.onmouseleave = () => { hideLens(); setFocus(ids, (LT[L[0]] || {}).s); }; });
+    }
+  };
+  p.querySelectorAll(".u-tabs button").forEach((x) => (x.onclick = () => tab(x.dataset.t))); tab("map");
+  p.scrollTop = 0; window.track && track.view("وحدة: " + unitName(k).t, "خارطة الوحدة");
+}
+function scCourse() {
+  scFrame(-1); setFocus(["all"]); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
+  const p = document.getElementById("scPanel");
+  p.innerHTML = `<div class="crumbs"><a class="home-btn" href="#/">${svgI("FaHome")} كل الدروس</a></div>
+  <div class="unit-hero" style="--c:#14213D"><span class="un">${svgI("FaGlobe")}</span><div><small>${UNITS.length} وحدات · ${LESSONS.length} درس</small><h2>خارطة المادة كاملة</h2></div></div>
+  <div class="seg2"><button data-v="ov" class="on">${svgI("FaEye")} خارطة عامة</button><button data-v="full">${svgI("FaSitemap")} خارطة مفصّلة</button></div>
+  <div class="v-map big" id="cMap"></div>
+  <h4 class="v-h">${svgI("FaLayerGroup")} الوحدات: اكبس لتشوف خارطتها</h4>
+  <div class="c-units">${UNITS.map((u, k) => `<a href="#/u/${k + 1}" style="--c:${unitColor(k)}"><span>${k + 1}</span><b>${esc(unitName(k).t)}</b><small>${unitLessons(k).length} ${unitLessons(k).length > 2 ? "دروس" : "درس"}</small></a>`).join("")}</div>`;
+  const draw = (v) => { const h = p.querySelector("#cMap"); h.innerHTML = ""; p.querySelectorAll(".seg2 button").forEach((b) => b.classList.toggle("on", b.dataset.v === v)); if (v === "ov") mountMap(h, null, true, 2); else mountMap(h, new Set(ALL), false, 1); };
+  p.querySelectorAll(".seg2 button").forEach((b) => (b.onclick = () => draw(b.dataset.v))); draw("ov");
+  p.querySelectorAll(".c-units a").forEach((a, k) => { const ids = [...new Set(unitLessons(k).flatMap((i) => (LT[i] || { t: ["all"] }).t))]; a.onmouseenter = () => setFocus(ids); a.onmouseleave = () => setFocus(["all"]); });
+  p.scrollTop = 0; window.track && track.view("خارطة المادة", "عامة");
+}
 function groupsOf(ids) { const svg = document.getElementById("scene"); if (ids.includes("all")) return [svg.querySelector('[data-z="zin"]'), svg.querySelector('[data-z="zout"]')]; return ids.flatMap((id) => (id === "case" ? [svg.querySelector('[data-z="zin"]')] : [...svg.querySelectorAll(`g[data-p="${id}"]`)])); }
 function bboxOf(els) {
   const svg = document.getElementById("scene"), inv = svg.getScreenCTM().inverse(); let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9;
@@ -2017,8 +2101,8 @@ function scHome() {
   SC.i = -1; cur = -1; document.getElementById("sc").classList.remove("lesson"); setFocus(null); showFlow(null); document.getElementById("scene").classList.add("home"); zoomTo({ x: 0, y: 0, w: 1600, h: 900 }, 0);
   document.querySelectorAll("#scStrip .stops button").forEach((b) => b.classList.remove("on", "done"));
   const p = document.getElementById("scPanel");
-  p.innerHTML = `<div class="sp-home lens-home"><small>إعداد: سارة حرب</small><h2>مقدمة في الحاسوب</h2><p>هاي <b>كل الدروس مع بعض</b> على حاسوب واحد. كل درس <b>عدسة</b> بتقرّب على جزء منه. مرّر على أي درس لتشوف عدسته، واكبس لتدخل.</p>
-  <div class="lens-units">${UNITS.map((u, k) => `<div class="lens-u" style="--c:${unitColor(k)}"><h4><span>${k + 1}</span>${esc(unitName(k).t)}</h4><div>${unitLessons(k).map((i) => `<a class="lens-b" href="#/l/${i + 1}" data-i="${i}">${svgI("FaSearchPlus")}<b>${i + 1}</b>${esc(LESSONS[i][4])}</a>`).join("")}</div></div>`).join("")}</div>
+  p.innerHTML = `<div class="sp-home lens-home"><small>إعداد: سارة حرب</small><h2>مقدمة في الحاسوب</h2><p>هاي <b>كل الدروس مع بعض</b> على حاسوب واحد. كل درس <b>عدسة</b> بتقرّب على جزء منه. اكبس على اسم الوحدة لتشوف خارطتها، أو على درس لتدخل عدسته.</p>
+  <a class="course-btn" href="#/all">${svgI("FaGlobe")}<span><b>خارطة المادة كاملة</b><small>كل الوحدات بخارطة وحدة: عامة ومفصّلة</small></span></a><div class="lens-units">${UNITS.map((u, k) => `<div class="lens-u" style="--c:${unitColor(k)}"><a class="lens-uh" href="#/u/${k + 1}" title="خارطة الوحدة"><span>${k + 1}</span>${esc(unitName(k).t)}<i>خارطتها ←</i></a><div>${unitLessons(k).map((i) => `<a class="lens-b" href="#/l/${i + 1}" data-i="${i}">${svgI("FaSearchPlus")}<b>${i + 1}</b>${esc(LESSONS[i][4])}</a>`).join("")}</div></div>`).join("")}</div>
   <a class="btn-gold" href="#/l/1">ابدأ بعدسة الدرس الأول ←</a></div>`;
   p.querySelectorAll(".lens-b").forEach((a) => { a.onmouseenter = a.onfocus = () => lensPreview(+a.dataset.i, a.closest(".lens-u").style.getPropertyValue("--c")); a.onmouseleave = a.onblur = () => lensPreview(-1); });
 }
@@ -2097,7 +2181,7 @@ function scPanel() {
   }
   else b = `<div class="vid"><div style="font-size:19px;font-weight:700">فيديوهات عن «${esc(L[4])}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent("شرح " + L[4] + " مقدمة في الحاسوب")}" target="_blank" rel="noopener">▶ افتح على يوتيوب</a></div>`;
   const panel = document.getElementById("scPanel"); panel.style.setProperty("--c", col);
-  panel.innerHTML = `<a class="home-btn" href="#/">${svgI("FaHome")} رجوع لكل الدروس</a><div class="sp-head"><small>${esc(L[2])} — الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2></div><div class="sp-tabs">${tabs.map(([k, t, ic]) => `<button data-t="${k}" class="${k === SC.tab ? "on" : ""}">${svgI(ic)}${t}</button>`).join("")}</div><div class="sp-body">${b}</div>`;
+  panel.innerHTML = `<div class="crumbs"><a class="home-btn" href="#/">${svgI("FaHome")} كل الدروس</a><a class="crumb" href="#/u/${unitOfLesson[i] + 1}" style="--c:${unitColor(unitOfLesson[i])}">${svgI("FaProjectDiagram")} خارطة الوحدة ${unitOfLesson[i] + 1}</a></div><div class="sp-head"><small>${esc(L[2])} — الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2></div><div class="sp-tabs">${tabs.map(([k, t, ic]) => `<button data-t="${k}" class="${k === SC.tab ? "on" : ""}">${svgI(ic)}${t}</button>`).join("")}</div><div class="sp-body">${b}</div>`;
   panel.scrollTop = 0;
   panel.querySelectorAll(".sp-tabs button").forEach((x) => (x.onclick = () => { if (window.speechSynthesis) speechSynthesis.cancel(); SC.tab = x.dataset.t; scPanel(); window.track && track.view("درس: " + L[4], SC.tab); }));
   panel.querySelectorAll(".flip").forEach((x) => (x.onclick = () => x.classList.toggle("on")));
