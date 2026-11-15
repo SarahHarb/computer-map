@@ -83,13 +83,13 @@ tr.ck{cursor:pointer}tr.ck:hover td{background:#FFFBEA}
 </style></head><body>
 <header><div class="lg">📊</div><h1>لوحة المتابعة<small>مقدمة في الحاسوب · إعداد: سارة حرب</small></h1>
  <button class="hb" id="csv">⬇️ Excel</button><button class="hb gh" id="reload">🔄 تحديث</button><a href="./" class="hb gh">← الموقع</a></header>
-<div id="gate">لحظة… <span class="muted">بتأكد من الدخول</span></div>
+<div id="gate">لحظة… <span class="muted">جارٍ التحقق من الدخول</span></div>
 <main id="app" style="display:none">
  <div class="kpis" id="kpis"></div>
  <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
  <div id="view"></div>
 </main>
-<div id="dr"><div class="hd"><h2 id="dname"></h2><button class="x" id="dreset" title="يحذف إجابات ونشاط هاد الطالب">🗑️ تصفير</button><button class="x" id="dclose">✕</button></div><div class="bd" id="dbody"></div></div>
+<div id="dr"><div class="hd"><h2 id="dname"></h2><button class="x" id="dreset" title="يحذف إجابات هذا الطالب ونشاطه">🗑️ تصفير</button><button class="x" id="dclose">✕</button></div><div class="bd" id="dbody"></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
@@ -109,13 +109,13 @@ let sb, P = [], A = [], V = [], view = "ls", openL = -1, lf = "all", cur = null,
 const LIDX = {}; LS.forEach((l) => { LIDX[l.f] = l.i; LIDX[l.s] = l.i; });
 const lessonOf = (c) => { if (c == null) return -1; const t = String(c).replace(/^(درس|عرض):\s*/, ""); return LIDX[t] ?? -1; };
 
-if (!C.SUPABASE_URL || !window.supabase) gate.innerHTML = "لسا ما انحطّت إعدادات Supabase في config.js";
+if (!C.SUPABASE_URL || !window.supabase) gate.innerHTML = "لم تُضبط إعدادات Supabase في config.js بعد.";
 else {
   sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
   sb.auth.getSession().then(async ({ data }) => {
-    if (!data.session) { gate.innerHTML = `لازم تسجّلي دخول أول.<br><br><a class="hb" href="./">اذهبي لصفحة الدخول</a>`; return; }
+    if (!data.session) { gate.innerHTML = `يجب تسجيل الدخول أولاً.<br><br><a class="hb" href="./">اذهبي لصفحة الدخول</a>`; return; }
     const { data: me } = await sb.from("profiles").select("role").eq("id", data.session.user.id).maybeSingle();
-    if (!me || me.role !== "admin") { gate.innerHTML = "هاي الصفحة للمعلمة بس 🙂"; return; }
+    if (!me || me.role !== "admin") { gate.innerHTML = "هذه الصفحة للمعلمة فقط 🙂"; return; }
     gate.style.display = "none"; document.getElementById("app").style.display = ""; load();
   });
 }
@@ -126,7 +126,7 @@ async function all(table) {
   } return out;
 }
 async function load() {
-  document.getElementById("view").innerHTML = `<div class="card empty">لحظة… بجيب البيانات</div>`;
+  document.getElementById("view").innerHTML = `<div class="card empty">لحظة… جارٍ تحميل البيانات</div>`;
   [P, A, V] = await Promise.all([all("profiles"), all("attempts"), all("views")]);
   build(); draw();
 }
@@ -147,7 +147,7 @@ function draw() {
   const { S, Ls } = M, N = S.length, wk = Date.now() - 7 * 864e5;
   const act = S.filter((s) => s.last && new Date(s.last) > wk).length, tot = A.filter((a) => M.by[a.user_id]).length, okAll = A.filter((a) => a.is_correct && M.by[a.user_id]).length;
   const avgL = N ? (S.reduce((t, s) => t + s.n, 0) / N).toFixed(1) : "—";
-  document.getElementById("kpis").innerHTML = [["👥", N, "طالب مسجّل"], ["🔥", act, "نشطين آخر 7 أيام"], ["📚", avgL + " / " + LS.length, "متوسط الدروس اللي فتحوها"], ["✍️", tot, "إجابة على الأسئلة"], ["🎯", pc(okAll, tot) == null ? "—" : pc(okAll, tot) + "%", "نسبة الإجابات الصحيحة"]]
+  document.getElementById("kpis").innerHTML = [["👥", N, "طالب مسجّل"], ["🔥", act, "نشطون في آخر 7 أيام"], ["📚", avgL + " / " + LS.length, "متوسط الدروس التي فتحوها"], ["✍️", tot, "إجابة على الأسئلة"], ["🎯", pc(okAll, tot) == null ? "—" : pc(okAll, tot) + "%", "نسبة الإجابات الصحيحة"]]
     .map(([i, b, s]) => `<div class="kpi"><i>${i}</i><div><b>${b}</b><span>${s}</span></div></div>`).join("");
   const q = document.getElementById("q").value.trim(), el = document.getElementById("view");
   if (view === "ls") el.innerHTML = lessonsView(Ls, N, q);
@@ -156,52 +156,52 @@ function draw() {
   else el.innerHTML = logView(q);
   bind();
 }
-const LEG = `<div class="legend"><span><i class="c-n"></i>ما فتح الدرس</span><span><i class="c-o"></i>فتحه وما جاوب</span><span><i class="c-g"></i>جاوب 75%+</span><span><i class="c-m"></i>50–74%</span><span><i class="c-b"></i>أقل من 50%</span></div>`;
+const LEG = `<div class="legend"><span><i class="c-n"></i>لم يفتح الدرس</span><span><i class="c-o"></i>فتحه ولم يُجب</span><span><i class="c-g"></i>أجاب 75%+</span><span><i class="c-m"></i>50–74%</span><span><i class="c-b"></i>أقل من 50%</span></div>`;
 function lessonsView(Ls, N, q) {
   return UN.map((u) => {
     const rows = Ls.filter((l) => l.u === u.k && (!q || l.f.includes(q) || l.s.includes(q)));
     if (!rows.length) return "";
     return `<div class="unit card" style="--c:${u.c}"><h2>الوحدة ${u.k + 1}: ${esc(u.t)}<em>${rows.length} ${rows.length > 2 ? "دروس" : "درس"}</em></h2>
-    <div class="lhead"><span>#</span><span>الدرس</span><span>فتحوه</span><span>جاوبوا</span><span>نسبة الصح</span><span>أكثر سؤال غلطوا فيه</span><span></span></div>
+    <div class="lhead"><span>#</span><span>الدرس</span><span>فتحوه</span><span>أجابوا</span><span>نسبة الصواب</span><span>أكثر سؤال أخطؤوا فيه</span><span></span></div>
     ${rows.map((l) => { const w = Object.values(l.Q).filter((x) => x.all - x.ok > 0).sort((a, b) => (b.all - b.ok) - (a.all - a.ok))[0];
       return `<div class="lrow ${openL === l.i ? "open" : ""}" data-l="${l.i}"><span class="no">${l.i + 1}</span><span class="nm"><b>${esc(l.f)}</b></span>
       <span class="prog"><span class="bar"><i style="width:${N ? (100 * l.ans) / N : 0}%;background:#3FAE6A"></i><i style="width:${N ? (100 * (l.opened - l.ans)) / N : 0}%;background:#BFD3EE"></i></span>${l.opened}/${N}</span>
       <span><b>${l.ans}</b> <span class="muted">طالب</span></span><span>${pill(l.p)}</span>
       <span class="miss">${w ? `<b>${w.all - w.ok}×</b> ${esc(w.q)}` : "—"}</span><span class="chev">▼</span></div>${openL === l.i ? lessonDetail(l) : ""}`; }).join("")}</div>`;
-  }).join("") || `<div class="card empty">ما في دروس بهالاسم.</div>`;
+  }).join("") || `<div class="card empty">لا توجد دروس بهذا الاسم.</div>`;
 }
 function lessonDetail(l) {
   const S = M.S.map((s) => ({ s, c: s.L[l.i] })).filter(({ c }) => lf === "all" || (lf === "no" && !c) || (lf === "weak" && c && c.all && pc(c.ok, c.all) < 50) || (lf === "done" && c && c.all))
     .sort((a, b) => (b.c ? (b.c.all ? 2 : 1) : 0) - (a.c ? (a.c.all ? 2 : 1) : 0) || a.s.name.localeCompare(b.s.name, "ar"));
   const cnt = { no: M.S.filter((s) => !s.L[l.i]).length, weak: M.S.filter((s) => { const c = s.L[l.i]; return c && c.all && pc(c.ok, c.all) < 50; }).length, done: M.S.filter((s) => s.L[l.i] && s.L[l.i].all).length };
   const Q = Object.values(l.Q).sort((a, b) => pc(a.ok, a.all) - pc(b.ok, b.all));
-  return `<div class="ldet"><div><h4>👥 الطلاب بهالدرس</h4>
-  <div class="flt">${[["all", "الكل", M.S.length], ["done", "جاوبوا", cnt.done], ["no", "ما فتحوه", cnt.no], ["weak", "بحاجة مساعدة", cnt.weak]].map(([k, t, n]) => `<button data-f="${k}" class="${lf === k ? "on" : ""}">${t} (${n})</button>`).join("")}</div>
-  <table><tr><th>الطالب</th><th>الحالة</th><th>الطرق اللي استعملها</th><th>آخر مرة</th></tr>
-  ${S.map(({ s, c }) => `<tr class="ck" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${!c ? `<span class="st n">ما فتح</span>` : !c.all ? `<span class="st o">فتح بس</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td>
-  <td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">ما في طلاب بهالفلتر.</td></tr>`}</table></div>
-  <div><h4>❓ صعوبة الأسئلة (من الأصعب)</h4>${Q.length ? `<table><tr><th>السؤال</th><th style="width:150px">نسبة الصح</th></tr>${Q.map((x) => `<tr><td>${esc(x.q)}<div class="muted">الجواب: ${esc(x.right)}</div></td><td><div class="qbar"><span class="bar"><i style="width:${pc(x.ok, x.all)}%"></i></span><b>${pc(x.ok, x.all)}%</b></div><div class="muted">${x.all} إجابة</div></td></tr>`).join("")}</table>` : `<div class="card empty">لسا ما حدا جاوب على أسئلة هالدرس.</div>`}</div></div>`;
+  return `<div class="ldet"><div><h4>👥 الطلاب في هذا الدرس</h4>
+  <div class="flt">${[["all", "الكل", M.S.length], ["done", "أجابوا", cnt.done], ["no", "لم يفتحوه", cnt.no], ["weak", "بحاجة إلى مساعدة", cnt.weak]].map(([k, t, n]) => `<button data-f="${k}" class="${lf === k ? "on" : ""}">${t} (${n})</button>`).join("")}</div>
+  <table><tr><th>الطالب</th><th>الحالة</th><th>الطرق التي استخدمها</th><th>آخر مرة</th></tr>
+  ${S.map(({ s, c }) => `<tr class="ck" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${!c ? `<span class="st n">لم يفتح</span>` : !c.all ? `<span class="st o">فتحه فقط</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td>
+  <td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">لا يوجد طلاب بهذا الفلتر.</td></tr>`}</table></div>
+  <div><h4>❓ صعوبة الأسئلة (من الأصعب)</h4>${Q.length ? `<table><tr><th>السؤال</th><th style="width:150px">نسبة الصواب</th></tr>${Q.map((x) => `<tr><td>${esc(x.q)}<div class="muted">الجواب: ${esc(x.right)}</div></td><td><div class="qbar"><span class="bar"><i style="width:${pc(x.ok, x.all)}%"></i></span><b>${pc(x.ok, x.all)}%</b></div><div class="muted">${x.all} إجابة</div></td></tr>`).join("")}</table>` : `<div class="card empty">لم يُجب أحد عن أسئلة هذا الدرس بعد.</div>`}</div></div>`;
 }
 function matrixView(S, q) {
   const R = S.filter((s) => !q || s.name.includes(q)).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, "ar"));
-  if (!R.length) return `<div class="card empty">لسا ما في طلاب.</div>`;
+  if (!R.length) return `<div class="card empty">لا يوجد طلاب بعد.</div>`;
   return LEG + `<div class="card mx"><table><tr><th></th>${UN.map((u) => `<th class="u" style="--c:${u.c}" colspan="${LS.filter((l) => l.u === u.k).length}" title="${esc(u.t)}">${u.k + 1}</th>`).join("")}<th></th></tr>
   <tr class="l2"><th></th>${LS.map((l) => `<th title="${esc(l.f)}">${l.i + 1}</th>`).join("")}<th>فتح</th></tr>
   ${R.map((s) => `<tr><td class="nm" data-s="${s.id}">${esc(s.name)}</td>${LS.map((l) => { const c = s.L[l.i], v = lvl(c), p = c && c.all ? pc(c.ok, c.all) : null;
-    return `<td><div class="cell c-${v}" data-s="${s.id}" data-l="${l.i}" title="${esc(s.name)} · الدرس ${l.i + 1}: ${esc(l.f)}\n${!c ? "ما فتحه" : !c.all ? "فتحه وما جاوب" : `صح ${c.ok} من ${c.all}`}">${p != null ? p : ""}</div></td>`; }).join("")}<td class="sum">${s.n}/${LS.length}</td></tr>`).join("")}</table></div>`;
+    return `<td><div class="cell c-${v}" data-s="${s.id}" data-l="${l.i}" title="${esc(s.name)} · الدرس ${l.i + 1}: ${esc(l.f)}\n${!c ? "لم يفتحه" : !c.all ? "فتحه ولم يُجب" : `صحيح ${c.ok} من ${c.all}`}">${p != null ? p : ""}</div></td>`; }).join("")}<td class="sum">${s.n}/${LS.length}</td></tr>`).join("")}</table></div>`;
 }
 function studentsView(S, q) {
   const R = S.filter((s) => !q || [s.name, s.email].join(" ").includes(q)).sort((a, b) => (b.last || "").localeCompare(a.last || ""));
-  return `<div class="card"><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصح</span><span>آخر نشاط</span></div>
-  ${R.map((s) => `<div class="srow" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length}</span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لسا ما في طلاب سجّلوا.</div>`}</div>`;
+  return `<div class="card"><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصواب</span><span>آخر نشاط</span></div>
+  ${R.map((s) => `<div class="srow" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length}</span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لم يسجّل أي طالب بعد.</div>`}</div>`;
 }
 function logView(q) {
   const nm = (id) => (M.by[id] || {}).name || "؟";
   const L = [...A.map((a) => ({ ...a, k: "a" })), ...V.map((v) => ({ ...v, k: "v" }))].filter((x) => M.by[x.user_id]).sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
     .filter((x) => !q || (nm(x.user_id) + " " + x.concept).includes(q)).slice(0, 400);
   const tabName = Object.fromEntries(TABS.map(([k, i, t]) => [k, i + " " + t]));
-  return `<div class="card"><table><tr><th>الوقت</th><th>الطالب</th><th>الدرس</th><th>شو عمل</th></tr>${L.map((x) => { const i = lessonOf(x.concept);
-    return `<tr class="ck" data-s="${x.user_id}"><td class="muted">${ago(x.created_at)}</td><td><b>${esc(nm(x.user_id))}</b></td><td>${i >= 0 ? `<b>${i + 1}.</b> ${esc(LS[i].f)}` : esc(x.concept)}</td><td>${x.k === "a" ? `${x.is_correct ? "✅" : "❌"} ${esc(x.question)} ← <b>${esc(x.answer)}</b>` : "فتح " + (tabName[x.tab] || esc(x.tab))}</td></tr>`; }).join("") || `<tr><td colspan="4" class="empty">لسا ما في نشاط.</td></tr>`}</table></div>`;
+  return `<div class="card"><table><tr><th>الوقت</th><th>الطالب</th><th>الدرس</th><th>النشاط</th></tr>${L.map((x) => { const i = lessonOf(x.concept);
+    return `<tr class="ck" data-s="${x.user_id}"><td class="muted">${ago(x.created_at)}</td><td><b>${esc(nm(x.user_id))}</b></td><td>${i >= 0 ? `<b>${i + 1}.</b> ${esc(LS[i].f)}` : esc(x.concept)}</td><td>${x.k === "a" ? `${x.is_correct ? "✅" : "❌"} ${esc(x.question)} ← <b>${esc(x.answer)}</b>` : "فتح " + (tabName[x.tab] || esc(x.tab))}</td></tr>`; }).join("") || `<tr><td colspan="4" class="empty">لا يوجد نشاط بعد.</td></tr>`}</table></div>`;
 }
 function bind() {
   const el = document.getElementById("view");
@@ -213,17 +213,17 @@ function student(id, focus) {
   cur = id; const s = M.by[id]; if (!s) return;
   const wrong = A.filter((a) => a.user_id === id && !a.is_correct).slice(-30).reverse();
   document.getElementById("dname").innerHTML = `${esc(s.name)}<small>${esc(s.email)}</small>`;
-  let h = `<div class="minis"><div><b>${s.n}/${LS.length}</b><span>درس فتحه</span></div><div><b>${Object.values(s.L).filter((c) => c.all).length}</b><span>درس جاوب أسئلته</span></div><div><b>${s.p == null ? "—" : s.p + "%"}</b><span>نسبة الصح (${s.ok}/${s.all})</span></div><div><b>${ago(s.last)}</b><span>آخر نشاط</span></div></div>`;
-  h += `<h3>📚 تقدّمه بكل درس</h3>${LEG}<table><tr><th>الدرس</th><th>الحالة</th><th>الطرق</th><th>آخر مرة</th></tr>${LS.map((l) => { const c = s.L[l.i];
-    return `<tr class="${l.i === focus ? "hl" : ""}" id="sl${l.i}"><td><b style="color:${UN[l.u].c}">${l.i + 1}.</b> ${esc(l.f)}</td><td>${!c ? `<span class="st n">ما فتح</span>` : !c.all ? `<span class="st o">فتح بس</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td><td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`; }).join("")}</table>`;
-  h += `<h3>❌ آخر إجابات غلط (${wrong.length})</h3>${wrong.length ? `<table><tr><th>الدرس</th><th>السؤال</th><th>جوابه</th><th>الصح</th></tr>${wrong.map((a) => { const i = lessonOf(a.concept); return `<tr><td>${i >= 0 ? i + 1 : "—"}</td><td>${esc(a.question)}</td><td style="color:var(--bd);font-weight:700">${esc(a.answer)}</td><td style="color:var(--ok);font-weight:700">${esc(a.correct_answer)}</td></tr>`; }).join("")}</table>` : `<p class="muted">ما في إجابات غلط 👏</p>`}`;
+  let h = `<div class="minis"><div><b>${s.n}/${LS.length}</b><span>درس فتحه</span></div><div><b>${Object.values(s.L).filter((c) => c.all).length}</b><span>درس أجاب عن أسئلته</span></div><div><b>${s.p == null ? "—" : s.p + "%"}</b><span>نسبة الصواب (${s.ok}/${s.all})</span></div><div><b>${ago(s.last)}</b><span>آخر نشاط</span></div></div>`;
+  h += `<h3>📚 تقدّمه في كل درس</h3>${LEG}<table><tr><th>الدرس</th><th>الحالة</th><th>الطرق</th><th>آخر مرة</th></tr>${LS.map((l) => { const c = s.L[l.i];
+    return `<tr class="${l.i === focus ? "hl" : ""}" id="sl${l.i}"><td><b style="color:${UN[l.u].c}">${l.i + 1}.</b> ${esc(l.f)}</td><td>${!c ? `<span class="st n">لم يفتح</span>` : !c.all ? `<span class="st o">فتحه فقط</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td><td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`; }).join("")}</table>`;
+  h += `<h3>❌ آخر الإجابات الخاطئة (${wrong.length})</h3>${wrong.length ? `<table><tr><th>الدرس</th><th>السؤال</th><th>إجابته</th><th>الصحيحة</th></tr>${wrong.map((a) => { const i = lessonOf(a.concept); return `<tr><td>${i >= 0 ? i + 1 : "—"}</td><td>${esc(a.question)}</td><td style="color:var(--bd);font-weight:700">${esc(a.answer)}</td><td style="color:var(--ok);font-weight:700">${esc(a.correct_answer)}</td></tr>`; }).join("")}</table>` : `<p class="muted">لا توجد إجابات خاطئة 👏</p>`}`;
   document.getElementById("dbody").innerHTML = h; document.getElementById("dr").classList.add("show");
   if (focus >= 0) setTimeout(() => { const r = document.getElementById("sl" + focus); if (r) r.scrollIntoView({ block: "center" }); }, 280); else document.getElementById("dbody").scrollTop = 0;
 }
 document.getElementById("dclose").onclick = () => document.getElementById("dr").classList.remove("show");
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.getElementById("dr").classList.remove("show"); });
 document.getElementById("dreset").onclick = async () => {
-  if (!cur || !confirm("متأكدة؟ رح تنحذف كل إجابات ونشاط هاد الطالب (حسابه بيضل).")) return;
+  if (!cur || !confirm("هل أنتِ متأكدة؟ ستُحذف كل إجابات هذا الطالب ونشاطه (ويبقى حسابه).")) return;
   await sb.from("attempts").delete().eq("user_id", cur); await sb.from("views").delete().eq("user_id", cur);
   document.getElementById("dr").classList.remove("show"); load();
 };
@@ -231,10 +231,10 @@ document.querySelectorAll(".nav button").forEach((b) => (b.onclick = () => { vie
 document.getElementById("q").oninput = draw;
 document.getElementById("reload").onclick = load;
 document.getElementById("csv").onclick = () => {
-  const rows = [["الطالب", "الإيميل", "دروس فتحها", "نسبة الصح %", ...LS.map((l) => `${l.i + 1}. ${l.s}`)]];
-  M.S.forEach((s) => rows.push([s.name, s.email, s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "ما فتح" : !c.all ? "فتح" : pc(c.ok, c.all) + "%"; })]));
-  rows.push([]); rows.push(["الوقت", "الطالب", "الدرس", "السؤال", "جوابه", "الجواب الصح", "صح؟"]);
-  A.filter((a) => M.by[a.user_id]).forEach((a) => { const i = lessonOf(a.concept); rows.push([new Date(a.created_at).toLocaleString("en-GB"), M.by[a.user_id].name, i >= 0 ? `${i + 1}. ${LS[i].f}` : a.concept, a.question, a.answer, a.correct_answer, a.is_correct ? "صح" : "غلط"]); });
+  const rows = [["الطالب", "الإيميل", "دروس فتحها", "نسبة الصواب %", ...LS.map((l) => `${l.i + 1}. ${l.s}`)]];
+  M.S.forEach((s) => rows.push([s.name, s.email, s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "لم يفتح" : !c.all ? "فتحه" : pc(c.ok, c.all) + "%"; })]));
+  rows.push([]); rows.push(["الوقت", "الطالب", "الدرس", "السؤال", "جوابه", "الإجابة الصحيحة", "صحيحة؟"]);
+  A.filter((a) => M.by[a.user_id]).forEach((a) => { const i = lessonOf(a.concept); rows.push([new Date(a.created_at).toLocaleString("en-GB"), M.by[a.user_id].name, i >= 0 ? `${i + 1}. ${LS[i].f}` : a.concept, a.question, a.answer, a.correct_answer, a.is_correct ? "صحيح" : "خطأ"]); });
   const csv = "﻿" + rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "متابعة-الطلاب.csv"; a.click();
 };
