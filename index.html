@@ -606,6 +606,15 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .scene .fl-path{fill:none;stroke:#F2B705;stroke-width:5;stroke-dasharray:12 9;stroke-linecap:round;animation:flDash 1s linear infinite}
 @keyframes flDash{to{stroke-dashoffset:-21}}
 .scene .fl-path.br{stroke:#5DADE2}.scene .fl-glow.br{stroke:#5DADE2}
+.ustairs{background:#fbfaf6;border-radius:16px;padding:14px 16px;margin:6px 0 14px}
+.us-ends{direction:ltr;display:flex;justify-content:space-between;font-weight:800;color:#5B4B8A;font-size:14px;margin-bottom:6px}.us-ends .ic{width:13px;height:13px}
+.us-row{display:flex;align-items:flex-end;gap:4px;direction:ltr;justify-content:center}
+.us-c{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
+.us-bar{width:100%;height:calc(46px + var(--k) * 26px);border-radius:10px 10px 4px 4px;background:color-mix(in srgb,#5B4B8A calc(18% + var(--k) * 15%),#fff);color:var(--tc,#fff);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:8px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+.us-bar b{font-size:calc(15px + var(--k) * 2px);font-weight:900}.us-bar span{font-size:12px;font-weight:700;direction:rtl}
+.us-c small{margin-top:6px;font-weight:800;color:#33415A;font-size:13px;direction:rtl;white-space:nowrap}
+.us-m{font-style:normal;align-self:center;display:flex;flex-direction:column;align-items:center;font-size:12px;font-weight:900;color:#D35400;margin-bottom:26px}.us-m b{font-size:18px;color:#9A9890}
+.us-rule{margin:12px 0 0;font-size:15px;color:#33415A;text-align:center}
 .scene .fl-ar{fill:none;stroke:#14213D;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
 .scene .fl-ring{fill:none;stroke:#F2B705;stroke-width:5}
 .scene .fl-stop{fill:#14213D;stroke:#F2B705;stroke-width:3}
@@ -2138,7 +2147,13 @@ function bindListen(panel, i) {
 const FLOW_SUB = { "إدخال البيانات": "بيانات خام", "معالجة": "المعالج CPU", "إخراج المعلومات": "معلومات مفيدة", "تخزين": "ذاكرة وقرص", "Bit": "0 أو 1", "Byte": "8 Bit", "KB": "1024 Byte", "MB": "1024 KB", "GB": "1024 MB", "TB": "1024 GB", "الاستطلاع": "جمع معلومات", "الاختراق": "استغلال الثغرات", "حجب الخدمة": "طلبات تعطّل الجهاز" };
 const FLOW_TONE = ["lav", "mint", "lav", "sand", "mint", "lav"];
 function flowBox(x, k) { return `<div class="fd-box ${FLOW_TONE[k % FLOW_TONE.length]}"><span class="fd-ic">${ico(x) || ""}</span><b>${esc(x)}</b>${FLOW_SUB[x] ? `<small>${esc(FLOW_SUB[x])}</small>` : ""}</div>`; }
+function unitStairs() {
+  const U = [["Bit", "بت", "0 أو 1", ""], ["Byte", "بايت", "8 بت", "×8"], ["KB", "كيلوبايت", "1024 بايت", "×1024"], ["MB", "ميجابايت", "1024 KB", "×1024"], ["GB", "جيجابايت", "1024 MB", "×1024"], ["TB", "تيرابايت", "1024 GB", "×1024"]];
+  return `<div class="ustairs"><div class="us-ends"><span>${svgI("FaArrowDown")} الأصغر</span><span>${svgI("FaArrowUp")} الأكبر</span></div><div class="us-row">${U.map(([e, a, v, m], k) => `${m ? `<i class="us-m">${m}<b>→</b></i>` : ""}<div class="us-c" style="--k:${k};--tc:${k < 2 ? "#14213D" : "#fff"}"><div class="us-bar"><b>${e}</b><span>${a}</span></div><small>= ${v}</small></div>`).join("")}</div>
+  <p class="us-rule"><b>للتحويل إلى وحدة أكبر</b> نقسم على 1024، و<b>للتحويل إلى وحدة أصغر</b> نضرب في 1024 (ما عدا البايت = 8 بت).</p></div>`;
+}
 function flowDiagram(steps) {
+  if (steps[0] === "Bit" && steps.includes("TB")) return unitStairs();
   if (steps.length === 4 && /تخزين|حفظ/.test(steps[3])) {
     return `<div class="fd fd-ipo"><div class="fd-row">${flowBox(steps[0], 0)}<i class="fd-ar">←</i>${flowBox(steps[1], 1)}<i class="fd-ar">←</i>${flowBox(steps[2], 2)}</div><div class="fd-vert"><i>↓</i><i>↑</i></div><div class="fd-row c">${flowBox(steps[3], 3)}</div></div>`;
   }
