@@ -735,6 +735,12 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .v-map .rel,.mini .rel,.dmap .rel{background:#FBFAF7;color:#77746C}
 .v-map .vlist,.mini .vlist{border-color:#9A9890!important}
 .v-map .ic,.mini .ic,.dmap .ic{color:inherit}
+
+.sp-tabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px;border-bottom:none;margin-bottom:16px}
+.sp-tabs button{flex-direction:column;justify-content:center;gap:4px;border:1.5px solid var(--line);border-radius:12px;padding:8px 6px;font-size:13px;background:#fff;color:#33415A}
+.sp-tabs button .ic{width:22px;height:22px;color:var(--c)}
+.sp-tabs button.on{background:var(--c);border-color:var(--c);color:#fff}
+.sp-tabs button.on .ic{color:#fff}
 /* ---------- lesson sheet ---------- */
 .sheet{max-width:1060px;margin:0 auto}
 .sheet section{margin:26px 0 0}
@@ -1862,15 +1868,13 @@ function scLesson(i) {
   requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : 70));
   document.querySelectorAll("#scStrip .stops button").forEach((b) => { const k = +b.dataset.i; b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
   const on = document.querySelector("#scStrip .stops button.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-  SC.tab = null; if (window.speechSynthesis) speechSynthesis.cancel(); scPanel();
+  SC.tab = "map"; if (window.speechSynthesis) speechSynthesis.cancel(); scPanel();
   window.track && track.view("درس: " + LESSONS[i][4], "الحاسوب");
 }
 function scPanel() {
   const i = SC.i, L = LESSONS[i], C = LC[i] || {}, col = unitColor(unitOfLesson[i]);
-  const ALLT = { map: ["خارطة الدرس", "FaProjectDiagram"], exp: ["الشرح", "FaBookOpen"], listen: ["اسمع الدرس", "FaHeadphones"], read: ["الملخص المكتوب", "FaFileAlt"], do: ["جرّب بإيدك", "FaHandPaper"], cards: ["بطاقات الحفظ", "FaClone"], qs: ["أسئلة", "FaClipboardCheck"], vid: ["فيديو", "FaYoutube"], ai: ["اسأل الذكاء الاصطناعي", "FaRobot"] };
-  const ORDER = { all: ["map", "exp", "listen", "read", "do", "cards", "qs", "vid", "ai"], v: ["map", "exp", "vid", "cards", "qs"], a: ["listen", "vid", "ai", "qs"], r: ["read", "exp", "cards", "qs", "ai"], k: ["do", "qs", "cards", "map"] };
-  const tabs = ORDER[LSTYLE].map((k) => [k, ...ALLT[k]]);
-  if (!ORDER[LSTYLE].includes(SC.tab)) SC.tab = ORDER[LSTYLE][0];
+  const tabs = [["map", "الخارطة", "FaProjectDiagram"], ["exp", "بصري", "FaEye"], ["read", "كتابة", "FaFileAlt"], ["listen", "سمعي", "FaHeadphones"], ["vid", "يوتيوب", "FaYoutube"], ["do", "تفاعلي", "FaHandPaper"], ["qs", "أسئلة", "FaClipboardCheck"], ["cards", "بطاقات", "FaClone"], ["ai", "ذكاء اصطناعي", "FaRobot"]];
+  if (!tabs.some((t) => t[0] === SC.tab)) SC.tab = "map";
   let b = "";
   if (SC.tab === "exp") {
     b += `<div class="v-idea"><span>${ico(L[4]) || svgI("FaLightbulb")}</span><p>${esc(C.idea || "")}</p></div>`;
@@ -1910,9 +1914,8 @@ function scPanel() {
   }
   else b = `<div class="vid"><div style="font-size:19px;font-weight:700">فيديوهات عن «${esc(L[4])}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent("شرح " + L[4] + " مقدمة في الحاسوب")}" target="_blank" rel="noopener">▶ افتح على يوتيوب</a></div>`;
   const panel = document.getElementById("scPanel"); panel.style.setProperty("--c", col);
-  panel.innerHTML = `<div class="sp-head"><small>${esc(L[2])} — الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2></div>${styleBar()}<div class="sp-tabs">${tabs.map(([k, t, ic]) => `<button data-t="${k}" class="${k === SC.tab ? "on" : ""}">${svgI(ic)}${t}</button>`).join("")}</div><div class="sp-body">${b}</div>`;
+  panel.innerHTML = `<div class="sp-head"><small>${esc(L[2])} — الدرس ${i + 1} من ${LESSONS.length}</small><h2>${ico(L[4])}${esc(L[4])}</h2></div><div class="sp-tabs">${tabs.map(([k, t, ic]) => `<button data-t="${k}" class="${k === SC.tab ? "on" : ""}">${svgI(ic)}${t}</button>`).join("")}</div><div class="sp-body">${b}</div>`;
   panel.scrollTop = 0;
-  bindStyleBar(panel);
   panel.querySelectorAll(".sp-tabs button").forEach((x) => (x.onclick = () => { if (window.speechSynthesis) speechSynthesis.cancel(); SC.tab = x.dataset.t; scPanel(); window.track && track.view("درس: " + L[4], SC.tab); }));
   panel.querySelectorAll(".flip").forEach((x) => (x.onclick = () => x.classList.toggle("on")));
   const sh = panel.querySelector("#spShow"); if (sh) sh.onclick = () => openShow(i);
