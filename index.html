@@ -2024,6 +2024,7 @@ const SCENE_SVG = `<svg viewBox="0 0 1600 900" class="scene" id="scene" xmlns="h
 <path d="M262 284c0 10 10 12 18 12M286 284c0 12 10 14 20 14M310 284c0 10 10 12 22 12" stroke="#c97c3a" stroke-width="4" fill="none" stroke-linecap="round"/>
 <rect x="258" y="196" width="80" height="84" rx="12" fill="#14181f" stroke="#0d1117" stroke-width="2"/><g class="spin" style="transform-box:view-box;transform-origin:298px 238px"><use href="#fan" x="262" y="202" width="72" height="72"/></g><g fill="#0d1117"><circle cx="264" cy="202" r="3"/><circle cx="332" cy="202" r="3"/><circle cx="264" cy="274" r="3"/><circle cx="332" cy="274" r="3"/></g>
 <text x="298" y="312" class="pl s">المعالج CPU</text></g>
+<g data-p="cache"><g class="pt"><rect x="274" y="205" width="48" height="15" rx="3" fill="#F2B705" stroke="#0d1117" stroke-width="1.5"/><path d="M279 205v-3M287 205v-3M295 205v-3M303 205v-3M311 205v-3M317 205v-3" stroke="#c9a24a" stroke-width="1.5"/><text x="298" y="216.5" style="font:800 10px Cairo,sans-serif;fill:#14213D;text-anchor:middle">Cache</text></g><text x="298" y="192" class="pl xs">الذاكرة المخبئية داخل المعالج</text></g>
 <!-- ram with heat spreaders -->
 <g data-p="ram"><g class="pt"><rect x="362" y="180" width="12" height="132" rx="2" fill="#1f2329" stroke="#0d1117"/><rect x="377" y="180" width="12" height="132" rx="2" fill="#1f2329" stroke="#0d1117"/><rect x="392" y="180" width="12" height="132" rx="2" fill="#1f2329" stroke="#0d1117"/><rect x="407" y="180" width="12" height="132" rx="2" fill="#1f2329" stroke="#0d1117"/></g>
 <g fill="#c0392b"><path d="M362 200l12 10v40l-12 10z"/><path d="M377 200l12 10v40l-12 10z"/><path d="M392 200l12 10v40l-12 10z"/><path d="M407 200l12 10v40l-12 10z"/></g>
@@ -2121,11 +2122,11 @@ const LT = { // lesson -> parts the lens highlights (+ screen content, + animate
   0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon"], fl: ["1. إدخال", "2. معالجة", "3. إخراج"], pk: ["بيانات", "معلومات"], br: { from: "cpu", to: "hdd", fl: "4. تخزين للرجوع إليها", pk: "معلومات" } },
   1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "الكيان المادي: إدخال", "الكيان البرمجي يشغّل المعالجة", "النتيجة"], pk: ["أمر", "بيانات", "معلومات"] },
   2: { t: ["all"], z: true },
-  3: { t: ["ssd", "hdd", "ram", "cpu", "kb", "mon"] },
+  3: { t: ["ssd", "hdd", "ram", "cpu", "cache", "kb", "mon"] },
   4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], flow: ["scan", "cpu", "prn"], fl: ["إدخال: الماسح يُدخل صورة", "معالجة", "إخراج: الطابعة تطبع"], pk: ["بيانات", "معلومات"] },
   5: { t: ["mb", "ports", "gpu", "psu"], flow: ["psu", "mb", "ports"], fl: ["وحدة الطاقة", "اللوحة الأم تربط المكوّنات", "المنافذ تصل الأجهزة الخارجية"], pk: ["كهرباء ⚡", "بيانات"] },
   6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], flow: ["ssd", "ram", "cpu"], fl: ["ذاكرة مساندة: حفظ دائم", "ذاكرة رئيسية: مؤقتة", "المعالج يعمل عليها"], pk: ["ملف", "بيانات"] },
-  7: { t: ["ram", "rom", "cpu"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج (Cache بداخله)", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
+  7: { t: ["ram", "rom", "cpu", "cache"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج و Cache بداخله", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
   8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح في RAM", "حفظ دائم على SSD", "عبر الإنترنت", "نسخة في التخزين السحابي"], pk: ["ملف", "ملف", "ملف"] },
   9: { t: ["cpu", "ram", "ssd"], flow: ["cpu", "ram", "ssd"], fl: ["المسجّلات: بت وبايت", "RAM: جيجابايت GB", "SSD/HDD: تيرابايت TB"], pk: ["8 بت = بايت", "×1024 ×1024"] },
   10: { t: ["mon", "rom", "kb", "cpu"], s: "os", flow: ["kb", "cpu", "mon"], fl: ["المستخدم يطلب", "البرمجيات تخبر الحاسوب ماذا يفعل", "النتيجة"], pk: ["أمر", "معلومات"] },
@@ -2147,8 +2148,8 @@ const LT = { // lesson -> parts the lens highlights (+ screen content, + animate
   26: { t: ["mon"], s: "ai" },
   27: { t: ["mon", "cam", "cpu"], s: "ai", flow: ["cam", "cpu", "mon"], fl: ["الرؤية الحاسوبية: صورة", "تعلّم الآلة يحلّل", "النتيجة: تعرّف على الوجه"], pk: ["صورة", "نتيجة"] },
 };
-const PART_LESSON = { odd: 8, cam: 4, mic: 4, scan: 4, switch: 18, cpu: 3, ram: 7, rom: 7, mb: 5, hdd: 8, ssd: 8, psu: 5, gpu: 5, ports: 5, mon: 4, kb: 4, mouse: 4, spk: 4, prn: 4, router: 15, cloud: 19, user: 1 };
-const EXTRA_PARTS = { router: ["router", "الموجّه Router", "خارج الصندوق", "شبكات", "يربط الشبكات ببعضها ويحدّد أفضل مسار للبيانات، ومن خلاله يصل الإنترنت إلى جهازك."], cloud: ["cloud", "السحابة", "على الإنترنت", "حوسبة سحابية", "موارد حوسبة وتخزين تستأجرها عبر الإنترنت وتدفع حسب الاستخدام."], user: ["user", "المستخدم", "الكيان البشري", "إنسان", "الإنسان الذي يستخدم الحاسوب، ويشكّل مع المبرمج الكيان البشري."],
+const PART_LESSON = { cache: 7, odd: 8, cam: 4, mic: 4, scan: 4, switch: 18, cpu: 3, ram: 7, rom: 7, mb: 5, hdd: 8, ssd: 8, psu: 5, gpu: 5, ports: 5, mon: 4, kb: 4, mouse: 4, spk: 4, prn: 4, router: 15, cloud: 19, user: 1 };
+const EXTRA_PARTS = { cache: ["cache", "الذاكرة المخبئية Cache", "داخل المعالج", "ذاكرة", "ذاكرة صغيرة وسريعة جداً موجودة داخل شريحة المعالج نفسها، تحتفظ بنسخة من التعليمات والبيانات الأكثر استخداماً حتى لا ينتظر المعالج RAM في كل مرة. أسرع من RAM وأصغر منها، وأبطأ من المسجّلات."], router: ["router", "الموجّه Router", "خارج الصندوق", "شبكات", "يربط الشبكات ببعضها ويحدّد أفضل مسار للبيانات، ومن خلاله يصل الإنترنت إلى جهازك."], cloud: ["cloud", "السحابة", "على الإنترنت", "حوسبة سحابية", "موارد حوسبة وتخزين تستأجرها عبر الإنترنت وتدفع حسب الاستخدام."], user: ["user", "المستخدم", "الكيان البشري", "إنسان", "الإنسان الذي يستخدم الحاسوب، ويشكّل مع المبرمج الكيان البشري."],
   odd: ["odd", "القرص الضوئي Optical Disk", "داخل الصندوق", "ذاكرة مساندة", "وسيط تخزين يُقرأ ويُكتب عليه بالليزر، موثوق وسهل النسخ، وسعته من 700MB حتى 100GB."],
   cam: ["cam", "الكاميرا", "خارج الصندوق", "إدخال", "وحدة إدخال لالتقاط الصور والفيديو وإدخالها إلى الحاسوب."],
   mic: ["mic", "الميكروفون Mic", "خارج الصندوق", "إدخال", "وحدة إدخال لإدخال الصوت إلى الحاسوب."],
@@ -2429,7 +2430,7 @@ function scPart(id) {
   window.track && track.view(p[1], "قطعة");
 }
 // ---------- CPU lens: where the instruction comes from + what each part of the CPU does ----------
-let CPUX = { k: 0, play: true, tm: 0, full: false };
+let CPUX = { k: 0, play: true, tm: 0, full: true };
 const CPUX_SIMPLE = [
   { sc: "ssd", pk: "برنامج", t: "التعليمات", d: "التعليمات تأتي من **برنامج محفوظ على وحدة التخزين** (SSD أو HDD)." },
   { sc: "kb", pk: "5 و 3", t: "البيانات", d: "البيانات يُدخلها **المستخدم** من لوحة المفاتيح، مثل الرقمين 5 و 3." },
@@ -2500,10 +2501,9 @@ function cpuX(on) {
   pic.classList.add("cpux");
   pic.insertAdjacentHTML("beforeend", `<div id="cpuX" class="${CPUX.full ? "" : "simple"}"><div class="cx-head"><b>${svgI("FaSearchPlus")} المعالج مكبّراً: رحلة تعليمة</b><button class="cx-x" title="إخفاء">✕</button></div>${cpuxSVG()}
   <div class="cx-cap"><div class="cx-ph">${["جلب", "فك", "تنفيذ", "حفظ"].map((x, k) => `<span data-ph="${k + 1}"><b>${k + 1}</b> ${x}</span>`).join("")}<span class="cx-ctl"><button data-a="prev" title="السابق">→</button><button data-a="play" id="cxPlay"></button><button data-a="next" title="التالي">←</button></span></div><h4 id="cxT"></h4><p id="cxD"></p>
-  <div class="cx-dots">${cxSteps().map((_, k) => `<i data-k="${k}"></i>`).join("")}<small class="cx-hint">اضغط على أي جزء لتعرف وظيفته</small><button class="cx-more">${CPUX.full ? "↩ النسخة المبسّطة" : "للاستزادة: كل التفاصيل ←"}</button></div></div></div>`);
+  <div class="cx-dots">${cxSteps().map((_, k) => `<i data-k="${k}"></i>`).join("")}<small class="cx-hint">اضغط على أي جزء لتعرف وظيفته</small></div></div></div>`);
   const el = document.getElementById("cpuX");
   el.querySelector(".cx-x").onclick = () => { clearTimeout(CPUX.tm); el.remove(); pic.classList.remove("cpux"); pic.insertAdjacentHTML("beforeend", `<button id="cpuXBtn" class="cx-open">${svgI("FaSearchPlus")} كبّر المعالج</button>`); document.getElementById("cpuXBtn").onclick = () => cpuX(true); };
-  el.querySelector(".cx-more").onclick = () => { CPUX.full = !CPUX.full; cpuX(true); };
   const go = (k) => { CPUX.k = (k + cxSteps().length) % cxSteps().length; cpuxDraw(); };
   el.querySelector('[data-a="prev"]').onclick = () => { CPUX.play = false; go(CPUX.k - 1); };
   el.querySelector('[data-a="next"]').onclick = () => { CPUX.play = false; go(CPUX.k + 1); };
