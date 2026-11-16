@@ -680,6 +680,8 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .cx-ctl{margin-inline-start:auto;display:flex;gap:4px}.cx-ctl button{font-family:inherit;font-weight:800;background:#14213D;color:#fff;border:none;border-radius:8px;padding:2px 10px;cursor:pointer;font-size:13px}
 .cx-dots{display:flex;gap:5px;align-items:center;margin-top:4px;flex-wrap:wrap}.cx-dots i{width:8px;height:8px;border-radius:50%;background:#d5dce5;cursor:pointer}.cx-dots i.on{background:#F2B705;transform:scale(1.3)}
 .cx-hint{color:#8a96a8;font-size:11.5px;margin-inline-start:8px}
+.cx-more{margin-inline-start:auto;font-family:inherit;font-weight:800;font-size:12px;background:#eef2f6;color:#14213D;border:1px solid #d5dce5;border-radius:999px;padding:2px 12px;cursor:pointer}
+#cpuX.simple .cx-adv,#cpuX.simple .cx-ph span[data-ph],#cpuX:not(.simple) .cx-smp{display:none}.cx-ttl{font:900 17px Cairo,Tahoma,sans-serif;fill:#F2B705;text-anchor:middle}
 .cx-open{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:25;font-family:inherit;font-weight:800;font-size:14px;background:#F2B705;color:#14213D;border:none;border-radius:999px;padding:8px 16px;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:pointer;display:flex;gap:6px;align-items:center}.cx-open svg{width:16px;height:16px}
 #cxScene{pointer-events:none}.cxs-p{fill:none;stroke:#9fb0c6;stroke-width:5;stroke-dasharray:3 10;stroke-linecap:round;opacity:.55}.cxs-p.on{stroke:#F2B705;stroke-width:7;stroke-dasharray:14 10;opacity:1;animation:cxdash2 .7s linear infinite}
 .cxs-pk{transition:transform 1s cubic-bezier(.5,0,.3,1)}.cxs-pk text{font-size:17px}
@@ -2427,7 +2429,16 @@ function scPart(id) {
   window.track && track.view(p[1], "قطعة");
 }
 // ---------- CPU lens: where the instruction comes from + what each part of the CPU does ----------
-let CPUX = { k: 0, play: true, tm: 0 };
+let CPUX = { k: 0, play: true, tm: 0, full: false };
+const CPUX_SIMPLE = [
+  { sc: "ssd", pk: "برنامج", t: "التعليمات", d: "التعليمات تأتي من **برنامج محفوظ على وحدة التخزين** (SSD أو HDD)." },
+  { sc: "kb", pk: "5 و 3", t: "البيانات", d: "البيانات يُدخلها **المستخدم** من لوحة المفاتيح، مثل الرقمين 5 و 3." },
+  { sc: "ram", pk: "اجمع 5 و 3", path: ["ssd", "kb"], t: "إلى RAM", d: "عند تشغيل البرنامج تنتقل التعليمات والبيانات إلى **الذاكرة الرئيسية RAM**، ومنها إلى المعالج." },
+  { sc: "cpu", in: "cu", hi: ["cu", "sig"], pk: "اجمع!", path: ["ram"], r: ["5", "3", ""], t: "وحدة التحكم CU", d: "**وحدة التحكم CU** تفهم التعليمة وتوجّه باقي الأجزاء، لكنها لا تحسب." },
+  { sc: "cpu", in: "alu", hi: ["alu"], pk: "5 + 3 = 8", r: ["5", "3", ""], t: "وحدة الحساب والمنطق ALU", d: "**وحدة الحساب والمنطق ALU** تنفّذ العملية: 5 + 3 = 8." },
+  { sc: "mon", pk: "8", hi: ["reg"], path: ["back", "mon"], r: ["5", "3", "8"], scr: 1, t: "النتيجة", d: "تُحفظ النتيجة مؤقتاً في **المسجّلات Registers**، ثم تظهر على **الشاشة**." },
+];
+const cxSteps = () => (CPUX.full ? CPUX_STEPS : CPUX_SIMPLE);
 const CPUX_INFO = {
   cache: ["الذاكرة المخبئية Cache", "ذاكرة سريعة داخل المعالج تحتفظ بنسخة من التعليمات والبيانات الأكثر استخداماً، فلا ينتظر المعالج RAM في كل مرة."],
   reg: ["المسجّلات Registers", "أسرع ذاكرة في الحاسوب وأصغرها، داخل المعالج نفسه. تحفظ مؤقتاً التعليمة الحالية والأرقام التي يعمل عليها ونتيجتها."],
@@ -2455,11 +2466,11 @@ function cpuxSVG() {
   const box = (id, x, y, w, h, t, s) => `<g class="cx-u" data-u="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text x="${x + w / 2}" y="${y + h / 2 - (s ? 3 : -6)}" class="cx-t">${t}</text>${s ? `<text x="${x + w / 2}" y="${y + h / 2 + 18}" class="cx-s">${s}</text>` : ""}</g>`;
   let pins = ""; for (let x = 40; x <= 450; x += 26) pins += `<rect x="${x}" y="22" width="7" height="8" rx="2"/><rect x="${x}" y="290" width="7" height="8" rx="2"/>`;
   return `<svg viewBox="0 0 500 300" class="cx-svg" xmlns="http://www.w3.org/2000/svg">
-  <g class="cx-u bus" data-u="bus"><path d="M238 0V34M262 0V34" class="cx-bus"/></g>
+  <g class="cx-u bus cx-adv" data-u="bus"><path d="M238 0V34M262 0V34" class="cx-bus"/></g>
   <g class="cx-pins">${pins}</g><rect x="10" y="30" width="480" height="260" rx="20" class="cx-die"/>
-  ${box("cache", 30, 40, 440, 38, "الذاكرة المخبئية Cache")}
+  <g class="cx-adv">${box("cache", 30, 40, 440, 38, "الذاكرة المخبئية Cache")}</g><text x="250" y="64" class="cx-ttl cx-smp">المعالج CPU</text>
   <g class="cx-sig"><path d="M270 136H232"/><path d="M370 176V214H312"/></g>
-  <path d="M130 176V230H170" class="cx-ln dat"/><path d="M250 78V96" class="cx-ln"/>
+  <path d="M130 176V230H170" class="cx-ln dat"/><path d="M250 78V96" class="cx-ln cx-adv"/>
   <g class="cx-u" data-u="reg"><rect x="30" y="96" width="200" height="80" rx="10"/><text x="130" y="116" class="cx-t">المسجّلات Registers</text>${["R1", "R2", "R3"].map((r, k) => `<rect x="${48 + k * 58}" y="126" width="48" height="42" rx="6" class="cx-cell"/><text x="${72 + k * 58}" y="139" class="cx-s">${r}</text><text x="${72 + k * 58}" y="162" class="cx-rv" id="cxR${k}"></text>`).join("")}</g>
   ${box("cu", 270, 96, 200, 80, "وحدة التحكم CU", "تفهم وتوجّه")}
   <g class="cx-u" data-u="alu"><path d="M160 196H232L250 216L268 196H340L310 276H190Z"/><text x="250" y="244" class="cx-t">ALU</text><text x="250" y="266" class="cx-s">الحساب والمنطق</text></g>
@@ -2487,12 +2498,13 @@ function cpuX(on) {
   rm(); if (!on || !pic) { cpuxScene(false); return; }
   cpuxScene(true);
   pic.classList.add("cpux");
-  pic.insertAdjacentHTML("beforeend", `<div id="cpuX"><div class="cx-head"><b>${svgI("FaSearchPlus")} المعالج مكبّراً: رحلة تعليمة</b><button class="cx-x" title="إخفاء">✕</button></div>${cpuxSVG()}
+  pic.insertAdjacentHTML("beforeend", `<div id="cpuX" class="${CPUX.full ? "" : "simple"}"><div class="cx-head"><b>${svgI("FaSearchPlus")} المعالج مكبّراً: رحلة تعليمة</b><button class="cx-x" title="إخفاء">✕</button></div>${cpuxSVG()}
   <div class="cx-cap"><div class="cx-ph">${["جلب", "فك", "تنفيذ", "حفظ"].map((x, k) => `<span data-ph="${k + 1}"><b>${k + 1}</b> ${x}</span>`).join("")}<span class="cx-ctl"><button data-a="prev" title="السابق">→</button><button data-a="play" id="cxPlay"></button><button data-a="next" title="التالي">←</button></span></div><h4 id="cxT"></h4><p id="cxD"></p>
-  <div class="cx-dots">${CPUX_STEPS.map((_, k) => `<i data-k="${k}"></i>`).join("")}<small class="cx-hint">اضغط على أي جزء داخل المعالج لتعرف وظيفته</small></div></div></div>`);
+  <div class="cx-dots">${cxSteps().map((_, k) => `<i data-k="${k}"></i>`).join("")}<small class="cx-hint">اضغط على أي جزء لتعرف وظيفته</small><button class="cx-more">${CPUX.full ? "↩ النسخة المبسّطة" : "للاستزادة: كل التفاصيل ←"}</button></div></div></div>`);
   const el = document.getElementById("cpuX");
   el.querySelector(".cx-x").onclick = () => { clearTimeout(CPUX.tm); el.remove(); pic.classList.remove("cpux"); pic.insertAdjacentHTML("beforeend", `<button id="cpuXBtn" class="cx-open">${svgI("FaSearchPlus")} كبّر المعالج</button>`); document.getElementById("cpuXBtn").onclick = () => cpuX(true); };
-  const go = (k) => { CPUX.k = (k + CPUX_STEPS.length) % CPUX_STEPS.length; cpuxDraw(); };
+  el.querySelector(".cx-more").onclick = () => { CPUX.full = !CPUX.full; cpuX(true); };
+  const go = (k) => { CPUX.k = (k + cxSteps().length) % cxSteps().length; cpuxDraw(); };
   el.querySelector('[data-a="prev"]').onclick = () => { CPUX.play = false; go(CPUX.k - 1); };
   el.querySelector('[data-a="next"]').onclick = () => { CPUX.play = false; go(CPUX.k + 1); };
   el.querySelector('[data-a="play"]').onclick = () => { CPUX.play = !CPUX.play; cpuxDraw(); };
@@ -2502,7 +2514,7 @@ function cpuX(on) {
 }
 function cpuxDraw() {
   const el = document.getElementById("cpuX"); if (!el) return; clearTimeout(CPUX.tm);
-  const S = CPUX_STEPS[CPUX.k], pk = el.querySelector("#cxPk"), hi = S.hi || [];
+  const S = cxSteps()[CPUX.k], pk = el.querySelector("#cxPk"), hi = S.hi || [];
   const fitPk = (g, t) => { g.querySelector("text").textContent = t; const w = Math.max(56, t.length * 10.5 + 26), r = g.querySelector("rect"); r.setAttribute("x", -w / 2); r.setAttribute("width", w); };
   if (S.in) { const [x, y] = CPUX_IN[S.in]; pk.style.opacity = 1; pk.style.transform = `translate(${x}px,${y}px)`; fitPk(pk, S.pk); } else { pk.style.opacity = 0; pk.style.transform = `translate(250px,0px)`; }
   // packet on the real computer
@@ -2517,7 +2529,7 @@ function cpuxDraw() {
   el.querySelector("#cxT").textContent = S.t;
   el.querySelector("#cxD").innerHTML = esc(S.d).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\d+( [+=−-] \d+)+/g, (m) => `<bdi dir="ltr">${m}</bdi>`);
   el.querySelector("#cxPlay").textContent = CPUX.play ? "⏸" : "▶";
-  if (CPUX.play) CPUX.tm = setTimeout(() => { CPUX.k = (CPUX.k + 1) % CPUX_STEPS.length; cpuxDraw(); }, 4800);
+  if (CPUX.play) CPUX.tm = setTimeout(() => { CPUX.k = (CPUX.k + 1) % cxSteps().length; cpuxDraw(); }, CPUX.full ? 4800 : 4000);
 }
 function scLesson(i) {
   document.getElementById("sc").classList.remove("wide");
