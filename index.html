@@ -620,6 +620,11 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .scene #flow.bad .fl-path{stroke:#E74C3C}.scene #flow.bad .fl-glow{stroke:#E74C3C}.scene #flow.bad .fl-ring{stroke:#E74C3C}.scene #flow.bad .fl-stop{stroke:#E74C3C}.scene #flow.bad .fl-lab rect{stroke:#E74C3C}.scene #flow.bad .fl-pk-b{fill:#E74C3C}.scene #flow.bad .fl-pk-t{fill:#fff}.scene #flow.bad .fl-pk-glow{fill:#E74C3C}
 @media (prefers-reduced-motion:reduce){.scene .fl-path{animation:none}.scene .fl-pk{display:none}}
 .scene .fl-n{font:900 16px Cairo,sans-serif;fill:#fff;text-anchor:middle}
+.scene .fl-path.fl-pw{stroke:#E67E22;stroke-dasharray:4 7;stroke-width:4}
+.scene .fl-pk-t{font:900 17px Cairo,sans-serif;fill:#fff;text-anchor:middle}.scene .fl-pk-b{stroke:#fff;stroke-width:2.5}.scene .fl-pk-glow{opacity:.3}
+.scene .fl-lab text{font:800 16px Cairo,sans-serif}
+#flLeg{position:absolute;left:10px;bottom:10px;z-index:20;display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,.94);border:1px solid #d5dce5;border-radius:12px;padding:6px 10px;font-size:12.5px;font-weight:700;color:#14213D;box-shadow:0 4px 14px rgba(20,33,61,.12);pointer-events:none}
+#flLeg span{display:flex;align-items:center;gap:6px}#flLeg i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font-size:11px}
 .v-idea{display:flex;align-items:center;gap:12px;background:var(--c);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:14px}
 .v-idea span .ic{width:34px;height:34px}
 .v-idea p{margin:0;font-size:17px;font-weight:700;line-height:1.6}
@@ -2119,16 +2124,16 @@ const SCENE_SVG = `<svg viewBox="0 0 1600 900" class="scene" id="scene" xmlns="h
 <path d="M1420 194 v52" stroke="#1f7a8c" stroke-width="3" stroke-dasharray="6 6"/>
 </svg>`;
 const LT = { // lesson -> parts the lens highlights (+ screen content, + animated data flow with step labels)
-  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], flow: ["kb", "cpu", "mon"], fl: ["1. إدخال", "2. معالجة", "3. إخراج"], pk: ["بيانات", "معلومات"], br: { from: "cpu", to: "hdd", fl: "4. تخزين للرجوع إليها", pk: "معلومات" } },
-  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "الكيان المادي: إدخال", "الكيان البرمجي يشغّل المعالجة", "النتيجة"], pk: ["أمر", "بيانات", "معلومات"] },
+  0: { t: ["kb", "mouse", "cpu", "mon", "hdd"], leg: true, flow: ["kb", "cpu", "mon"], fl: ["1. إدخال", "2. معالجة", "3. إخراج"], pk: ["بيانات", "معلومات"], br: { from: "cpu", to: "hdd", fl: "4. تخزين للرجوع إليها", pk: "معلومات" } },
+  1: { t: ["case", "mon", "kb", "mouse", "spk", "user"], s: "os", leg: true, flow: ["user", "kb", "cpu", "mon"], fl: ["الكيان البشري", "الكيان المادي: إدخال", "الكيان البرمجي يشغّل المعالجة", "النتيجة"], pk: ["أمر", "بيانات", "معلومات"] },
   2: { t: ["all"], z: true },
   3: { t: ["ssd", "hdd", "ram", "cpu", "cache", "kb", "mon"] },
-  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], flow: ["scan", "cpu", "prn"], fl: ["إدخال: الماسح يُدخل صورة", "معالجة", "إخراج: الطابعة تطبع"], pk: ["بيانات", "معلومات"] },
-  5: { t: ["mb", "ports", "gpu", "psu"], flow: ["psu", "mb", "ports"], fl: ["وحدة الطاقة", "اللوحة الأم تربط المكوّنات", "المنافذ تصل الأجهزة الخارجية"], pk: ["كهرباء ⚡", "بيانات"] },
-  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], flow: ["ssd", "ram", "cpu"], fl: ["ذاكرة مساندة: حفظ دائم", "ذاكرة رئيسية: مؤقتة", "المعالج يعمل عليها"], pk: ["ملف", "بيانات"] },
-  7: { t: ["ram", "rom", "cpu", "cache"], flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج و Cache بداخله", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
-  8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح في RAM", "حفظ دائم على SSD", "عبر الإنترنت", "نسخة في التخزين السحابي"], pk: ["ملف", "ملف", "ملف"] },
-  9: { t: ["cpu", "ram", "ssd"], flow: ["cpu", "ram", "ssd"], fl: ["المسجّلات: بت وبايت", "RAM: جيجابايت GB", "SSD/HDD: تيرابايت TB"], pk: ["8 بت = بايت", "×1024 ×1024"] },
+  4: { t: ["kb", "mouse", "mic", "cam", "scan", "mon", "spk", "prn", "cpu"], leg: true, flow: ["scan", "cpu", "prn"], fl: ["إدخال: الماسح يقرأ الورقة", "معالجة", "إخراج: الطابعة تطبع"], pk: ["بيانات", "معلومات"] },
+  5: { t: ["mb", "ports", "gpu", "psu", "cpu", "mon"], leg: true, flow: ["ports", "cpu", "gpu", "mon"], fl: ["منفذ USB: من لوحة المفاتيح", "المعالج", "بطاقة GPU", "الشاشة"], pk: ["بيانات", "معلومات", "معلومات"], pw: ["psu", "mb", "PSU: كهرباء للقطع"] },
+  6: { t: ["ram", "rom", "hdd", "ssd", "odd", "cloud", "cpu"], leg: true, flow: ["ssd", "ram", "cpu"], fl: ["ذاكرة مساندة: حفظ دائم", "ذاكرة رئيسية: مؤقتة", "المعالج يعمل عليها"], pk: ["ملف", "بيانات"] },
+  7: { t: ["ram", "rom", "cpu", "cache"], leg: true, flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج و Cache بداخله", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
+  8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], leg: true, flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح في RAM", "حفظ دائم على SSD", "عبر الإنترنت", "نسخة في التخزين السحابي"], pk: ["ملف", "ملف", "ملف"] },
+  9: { t: ["cpu", "ram", "ssd"], tags: [["cpu", "المسجّلات: بت وبايت"], ["ram", "RAM: جيجابايت GB"], ["ssd", "SSD: تيرابايت TB"]] },
   10: { t: ["mon", "rom", "kb", "cpu"], s: "os", flow: ["kb", "cpu", "mon"], fl: ["المستخدم يطلب", "البرمجيات تخبر الحاسوب ماذا يفعل", "النتيجة"], pk: ["أمر", "معلومات"] },
   11: { t: ["mon", "user", "kb"], s: "apps", flow: ["user", "kb", "mon"], fl: ["المستخدم النهائي", "يفتح برنامجاً تطبيقياً", "Word · Chrome · Photoshop"], pk: ["طلب", "تطبيق يعمل"] },
   12: { t: ["mon", "user", "cpu"], s: "code", flow: ["user", "mon", "cpu"], fl: ["المبرمج يكتب", "المترجم/المفسّر يحوّل", "المعالج ينفّذ"], pk: ["برنامج مصدري", "لغة الآلة 0/1"] },
@@ -2255,38 +2260,51 @@ function drawMarkers() {
   ["cpu", "ram", "mb", "ports", "hdd", "odd", "mon", "kb", "prn", "router", "switch", "cloud", "user"].forEach((p) => { if (!byPart[p]) return; const [x, y] = centerOf(p); const m = document.createElementNS(NS, "g"); m.setAttribute("class", "mk"); m.dataset.p = p; m.innerHTML = `<circle cx="${x}" cy="${y}" r="22" class="mk-pulse"/><circle cx="${x}" cy="${y}" r="15" class="mk-dot"/><text x="${x}" y="${y + 5}" class="mk-n">${byPart[p].length}</text>`; m.onclick = (e) => { e.stopPropagation(); scPart(p); }; g.appendChild(m); });
   svg.appendChild(g);
 }
+const PKT = {
+  data: { c: "#2E86DE", ic: "🔢", n: "بيانات خام (قبل المعالجة)" },
+  info: { c: "#1E9E5A", ic: "💡", n: "معلومات (بعد المعالجة)" },
+  ins: { c: "#8E44AD", ic: "📜", n: "تعليمات وأوامر" },
+  power: { c: "#E67E22", ic: "⚡", n: "كهرباء: طاقة تشغّل القطع، وليست بيانات" },
+  bad: { c: "#E74C3C", ic: "☠", n: "تهديد" },
+};
+function pkType(t) { t = t || ""; if (/كهرباء|⚡/.test(t)) return "power"; if (/هجوم|خبيث|فدية|مشبوهة/.test(t)) return "bad"; if (/معلومات|نتيجة|معلومة|قرار|يعمل|آمنة|محمية/.test(t)) return "info"; if (/تعليم|أمر|برنامج|لغة الآلة/.test(t)) return "ins"; return "data"; }
 function showFlow(T) {
   const svg = document.getElementById("scene"), old = svg.querySelector("#flow"); if (old) old.remove();
-  if (!T || !T.flow) return;
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.id = "flow"; if (T.bad) g.classList.add("bad"); svg.appendChild(g);
-  const curve = (pts) => { let d = `M${pts[0][0]} ${pts[0][1]}`; for (let k = 1; k < pts.length; k++) { const [x0, y0] = pts[k - 1], [x1, y1] = pts[k]; d += ` Q${(x0 + x1) / 2} ${(y0 + y1) / 2 - Math.min(80, Math.hypot(x1 - x0, y1 - y0) * 0.18)} ${x1} ${y1}`; } return d; };
-  const mkPath = (d) => { g.insertAdjacentHTML("beforeend", `<path d="${d}" class="fl-glow"/><path d="${d}" class="fl-path"/>`); return g.lastElementChild; };
-  const fracs = (P, pts) => { const L = P.getTotalLength(); return pts.map((p, k) => { if (!k) return 0; let best = 0, bd = 1e9; for (let t = 0; t <= 1; t += 0.005) { const q = P.getPointAtLength(t * L), dd = Math.hypot(q.x - p[0], q.y - p[1]); if (dd < bd) { bd = dd; best = t; } } return best; }); };
-  const arrows = (P) => { const L = P.getTotalLength(); let h = ""; const m = Math.max(3, Math.round(L / 110)); for (let k = 1; k < m; k++) { const t = k / m, a = P.getPointAtLength(t * L), b2 = P.getPointAtLength(Math.min(L, t * L + 2)); h += `<path d="M-7 -6 L5 0 L-7 6" class="fl-ar" transform="translate(${a.x} ${a.y}) rotate(${Math.atan2(b2.y - a.y, b2.x - a.x) * 180 / Math.PI})"/>`; } return h; };
-  const placed = [], pts = T.flow.map(centerOf);
-  const label = (p, lab) => { const w = lab.length * 9 + 26; let ly = p[1] - 46; const all = pts.concat(T.br ? [centerOf(T.br.to)] : []);
-    for (const off of [-46, 52, -88, 94, -130, 136]) { const y = p[1] + off, r = { x: p[0] - w / 2, y: y - 16, w, h: 28 }; if (!(placed.some((q) => r.x < q.x + q.w + 6 && q.x < r.x + r.w + 6 && r.y < q.y + q.h + 4 && q.y < r.y + r.h + 4) || all.some((pp) => Math.abs(pp[0] - p[0]) < w / 2 + 16 && Math.abs(pp[1] - y) < 30))) { ly = y; break; } }
-    placed.push({ x: p[0] - w / 2, y: ly - 16, w, h: 28 }); return `<g class="fl-lab"><rect x="${p[0] - w / 2}" y="${ly - 16}" width="${w}" height="28" rx="14"/><text x="${p[0]}" y="${ly + 4}">${esc(lab)}</text></g>`; };
-  const stop = (p, n, f, dur) => { const kt = [0, Math.max(0, f - 0.02), f, Math.min(1, f + 0.08), 1].map((x) => x.toFixed(3)).join(";");
-    return `<circle cx="${p[0]}" cy="${p[1]}" r="20" class="fl-ring"><animate attributeName="r" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values="20;20;34;20;20"/><animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values="0;0;.9;0;0"/></circle><circle cx="${p[0]}" cy="${p[1]}" r="16" class="fl-stop"/><text x="${p[0]}" y="${p[1] + 6}" class="fl-n">${n}</text>`; };
-  const tag = (txt, extra) => { const pw = Math.max(40, txt.length * 10 + 26); return `<g ${extra || ""}><rect x="${-pw / 2}" y="-15" width="${pw}" height="30" rx="15" class="fl-pk-b"/><text y="6" class="fl-pk-t">${esc(txt)}</text></g>`; };
-  // main path
-  const d = curve(pts), P = mkPath(d), fr = fracs(P, pts), dur = Math.max(3.2, pts.length * 1.3 + (T.br ? 1.3 : 0));
-  const tMain = T.br ? (pts.length - 1) / pts.length : 1; // main packet finishes before the branch ends
-  let h = arrows(P);
-  pts.forEach((p, k) => { h += stop(p, k + 1, fr[k] * tMain, dur); const lab = (T.fl || [])[k]; if (lab) h += label(p, lab); });
-  const PK = Array.isArray(T.pk) ? T.pk : [T.pk || ""], last = PK.length - 1;
-  let pkh = ""; PK.forEach((txt, k) => { const kt = [0], vs = [k ? 0 : 1]; if (k > 0) { kt.push((fr[k] * tMain).toFixed(3)); vs.push(1); } if (k < last && fr[k + 1] != null) { kt.push((fr[k + 1] * tMain).toFixed(3)); vs.push(0); }
-    pkh += tag(txt, `opacity="${k ? 0 : 1}"`).replace(/^<g opacity="[^"]*">/, (m) => m + (PK.length > 1 ? `<animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" calcMode="discrete" keyTimes="${kt.join(";")}" values="${vs.join(";")}"/>` : "")); });
-  h += `<g class="fl-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1;1" keyTimes="0;${tMain.toFixed(3)};1" calcMode="linear"/><circle r="22" class="fl-pk-glow"/>${pkh}</g>`;
-  // branch (e.g. storage after processing)
-  if (T.br) {
-    const a = centerOf(T.br.from), z = centerOf(T.br.to), bd = curve([a, z]), fi = T.flow.indexOf(T.br.from), t0 = (fr[fi] || 0) * tMain;
-    const BP = mkPath(bd); BP.previousElementSibling.classList.add("br"); BP.classList.add("br");
-    h += arrows(BP) + stop(z, pts.length + 1, 1, dur) + label(z, T.br.fl);
-    h += `<g class="fl-pk" opacity="0"><animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${t0.toFixed(3)};0.99" values="0;1;0"/><animateMotion dur="${dur}s" repeatCount="indefinite" path="${bd}" keyPoints="0;0;1;1" keyTimes="0;${t0.toFixed(3)};${Math.min(0.97, t0 + 0.3).toFixed(3)};1" calcMode="linear"/><circle r="22" class="fl-pk-glow"/>${tag(T.br.pk)}</g>`;
-  }
+  const oldLeg = document.getElementById("flLeg"); if (oldLeg) oldLeg.remove();
+  if (!T || (!T.flow && !T.tags && !T.pw)) return;
+  const NS = "http://www.w3.org/2000/svg", g = document.createElementNS(NS, "g"); g.id = "flow"; if (T.bad) g.classList.add("bad"); svg.appendChild(g);
+  const used = new Set(), placed = [], SEG = 1.7, pts = (T.flow || []).map(centerOf);
+  const allPts = pts.concat(T.br ? [centerOf(T.br.to), centerOf(T.br.from)] : []);
+  const bez = (a, b, s) => { const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, h = Math.min(120, L * 0.28) * s; let nx = -dy / L, ny = dx / L; if (ny > 0) { nx = -nx; ny = -ny; } return `M${a[0]} ${a[1]} Q${(a[0] + b[0]) / 2 + nx * h} ${(a[1] + b[1]) / 2 + ny * h} ${b[0]} ${b[1]}`; };
+  const arrows = (P, col) => { const L = P.getTotalLength(); let h = ""; const m = Math.max(2, Math.round(L / 120)); for (let k = 1; k < m; k++) { const a = P.getPointAtLength((k / m) * L), b2 = P.getPointAtLength(Math.min(L, (k / m) * L + 2)); h += `<path d="M-8 -7 L6 0 L-8 7" class="fl-ar" style="stroke:${col}" transform="translate(${a.x} ${a.y}) rotate(${(Math.atan2(b2.y - a.y, b2.x - a.x) * 180) / Math.PI})"/>`; } return h; };
+  const label = (p, lab, col) => { const w = lab.length * 9.6 + 30; let ly = p[1] - 50;
+    for (const off of [-50, 56, -94, 100, -138, 144]) { const y = p[1] + off, r = { x: p[0] - w / 2, y: y - 17, w, h: 32 }; if (!(placed.some((q) => r.x < q.x + q.w + 6 && q.x < r.x + r.w + 6 && r.y < q.y + q.h + 4 && q.y < r.y + r.h + 4) || allPts.some((pp) => Math.abs(pp[0] - p[0]) < w / 2 + 18 && Math.abs(pp[1] - y) < 32))) { ly = y; break; } }
+    placed.push({ x: p[0] - w / 2, y: ly - 17, w, h: 32 }); return `<g class="fl-lab"><rect x="${p[0] - w / 2}" y="${ly - 17}" width="${w}" height="32" rx="16" style="stroke:${col || "#F2B705"}"/><text x="${p[0]}" y="${ly + 5}">${esc(lab)}</text></g>`; };
+  const pkTag = (txt, ty) => { const t = `${PKT[ty].ic} ${txt}`, pw = Math.max(48, txt.length * 11 + 48); return `<circle r="26" class="fl-pk-glow" style="fill:${PKT[ty].c}"/><rect x="${-pw / 2}" y="-17" width="${pw}" height="34" rx="17" class="fl-pk-b" style="fill:${PKT[ty].c}"/><text y="7" class="fl-pk-t">${esc(t)}</text>`; };
+  // segments: main chain + optional branch that leaves when the packet reaches its start
+  const segs = []; for (let k = 0; k + 1 < pts.length; k++) { const txt = (Array.isArray(T.pk) ? T.pk[k] : T.pk) || ""; segs.push({ a: pts[k], b: pts[k + 1], txt, ty: T.bad ? "bad" : pkType(txt), slot: k, s: k % 2 ? -1 : 1 }); }
+  if (T.br) { const fi = T.flow.indexOf(T.br.from); segs.push({ a: centerOf(T.br.from), b: centerOf(T.br.to), txt: T.br.pk, ty: pkType(T.br.pk), slot: Math.max(0, fi), s: -1, br: true }); }
+  const nSlots = Math.max(1, pts.length - 1), dur = nSlots * SEG + 1.4, f = (x) => (x / dur).toFixed(3);
+  let h = "";
+  segs.forEach((S) => { const d = bez(S.a, S.b, S.s), col = PKT[S.ty].c; used.add(S.ty);
+    g.insertAdjacentHTML("beforeend", `<path d="${d}" class="fl-glow" style="stroke:${col}"/><path d="${d}" class="fl-path" style="stroke:${col}"/>`);
+    h += arrows(g.lastElementChild, col);
+    const t0 = S.slot * SEG, t1 = t0 + SEG * 0.92;
+    h += `<g class="fl-pk" opacity="0"><animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${f(t0)};${f(t1 + 0.35)};1" values="0;1;0;0"/><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;0;1;1" keyTimes="0;${f(t0)};${f(t1)};1" calcMode="linear"/>${pkTag(S.txt, S.ty)}</g>`; });
+  // power line: always-on, not part of the data chain
+  if (T.pw) { const a = centerOf(T.pw[0]), b = centerOf(T.pw[1]), d = bez(a, b, 1); used.add("power");
+    h += `<path d="${d}" class="fl-glow" style="stroke:${PKT.power.c}"/><path d="${d}" class="fl-path fl-pw"/>`;
+    for (let k = 0; k < 3; k++) h += `<g class="fl-pk"><animateMotion dur="1.8s" begin="${k * 0.6}s" repeatCount="indefinite" path="${d}"/><circle r="14" style="fill:${PKT.power.c}"/><text y="6" class="fl-pk-t">⚡</text></g>`;
+    h += label(a, T.pw[2], PKT.power.c); }
+  // numbered stops (pulse when the packet arrives) + labels
+  const stop = (p, n, t) => { const kt = [0, Math.max(0, t - 0.02), t, Math.min(1, t + 0.08), 1].map((x) => x.toFixed(3)).join(";");
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="20" class="fl-ring"><animate attributeName="r" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values="20;20;36;20;20"/><animate attributeName="opacity" dur="${dur}s" repeatCount="indefinite" keyTimes="${kt}" values="0;0;.9;0;0"/></circle><circle cx="${p[0]}" cy="${p[1]}" r="17" class="fl-stop"/><text x="${p[0]}" y="${p[1] + 6}" class="fl-n">${n}</text>`; };
+  pts.forEach((p, k) => { h += stop(p, k + 1, Math.min(0.99, (k ? k * SEG - 0.1 : 0.001) / dur)); });
+  pts.forEach((p, k) => { const lab = (T.fl || [])[k]; if (lab) h += label(p, lab, k ? PKT[segs[k - 1] ? segs[k - 1].ty : "data"].c : null); });
+  if (T.br) { const z = centerOf(T.br.to), fi = Math.max(0, T.flow.indexOf(T.br.from)); h += stop(z, pts.length + 1, Math.min(0.99, ((fi + 1) * SEG - 0.1) / dur)) + label(z, T.br.fl, PKT[pkType(T.br.pk)].c); }
+  (T.tags || []).forEach(([p, txt]) => (h += label(centerOf(p), txt, "#F2B705")));
   g.insertAdjacentHTML("beforeend", h);
+  if (T.leg && used.size) { const pic = document.querySelector(".sc-pic"); if (pic) pic.insertAdjacentHTML("beforeend", `<div id="flLeg">${[...used].filter((t) => t !== "bad").map((t) => `<span><i style="background:${PKT[t].c}">${PKT[t].ic}</i>${PKT[t].n}</span>`).join("")}</div>`); }
 }
 function sceneInit() {
   { const br = document.querySelector("header .brand"); if (br) { br.style.cursor = "pointer"; br.title = "العودة إلى الصفحة الرئيسية"; br.onclick = () => (location.hash = "#/"); } }
@@ -2376,8 +2394,11 @@ function bboxOf(els) {
   return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
 }
 function zoomTo(r, pad) {
-  const svg = document.getElementById("scene"), cur0 = svg.viewBox.baseVal, ar = 16 / 9; pad = pad == null ? 60 : pad;
-  let w = r.w + pad * 2, h = r.h + pad * 2; if (w / h > ar) h = w / ar; else w = h * ar; w = Math.min(1600, Math.max(w, 420)); h = w / ar;
+  const svg = document.getElementById("scene"), cur0 = svg.viewBox.baseVal; pad = pad == null ? 60 : pad;
+  // fill the visible area: use the panel's own shape (portrait panels zoom in closer) unless showing the whole scene
+  const box = svg.getBoundingClientRect(), car = box.width && box.height ? box.width / box.height : 16 / 9, ar = r.w > 1200 ? 16 / 9 : Math.max(0.62, Math.min(16 / 9, car));
+  let w = r.w + pad * 2, h = r.h + pad * 2; if (w / h > ar) h = w / ar; else w = h * ar; w = Math.max(w, 420); h = w / ar;
+  if (w > 1600) { w = 1600; h = w / ar; } if (h > 900) { h = 900; w = Math.min(1600, Math.max(h * ar, r.w + pad * 2)); }
   const tx = Math.max(0, Math.min(1600 - w, r.x + r.w / 2 - w / 2)), ty = Math.max(0, Math.min(900 - h, r.y + r.h / 2 - h / 2));
   const from = [cur0.x, cur0.y, cur0.width, cur0.height], to = [tx, ty, w, h], t0 = performance.now(), D = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 750;
   cancelAnimationFrame(SC.anim);
