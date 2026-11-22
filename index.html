@@ -2651,9 +2651,12 @@ const STAGES = {
     { k: "sum", scr: "sum", t: "الخلاصة: ثلاثة أنواع", d: "كل برنامج شغّلته سارة اليوم ينتمي إلى نوع من الثلاثة." },
   ], scr: (s) => {
       const TY = { fw: ["برمجيات النظام", "البرامج الثابتة", "BIOS"], os: ["برمجيات النظام", "نظام التشغيل", "Windows"], app: ["البرامج التطبيقية", "معالجة النصوص", "Word"], drv: ["برمجيات النظام", "برامج تشغيل الأجهزة", "تعريف الطابعة"], ut: ["برمجيات النظام", "برامج الخدمات", "مكافح الفيروسات"], lang: ["لغات البرمجة", "لغة عالية المستوى", "C++"] }[s.k];
-      // which kind of software is working now: kind ← sub-kind ← program
-      const KC = { "برمجيات النظام": "#16213e", "البرامج التطبيقية": "#2b579a", "لغات البرمجة": "#e67e22" };
-      const badge = TY ? `<rect x="${SX + 8}" y="${SY + SH - 42}" width="${SW - 16}" height="34" rx="17" fill="${KC[TY[0]]}" stroke="#F2B705" stroke-width="3"/>${stT(SX + SW / 2, SY + SH - 19, TY.join("  ←  "), { s: 14, c: "#fff" })}` : "";
+      // the three kinds side by side; the one working now is lit and says which sub-kind and program
+      const KINDS = [["برمجيات النظام", "#16213e"], ["البرامج التطبيقية", "#2b579a"], ["لغات البرمجة", "#e67e22"]];
+      const badge = !TY ? "" : (() => { let x = SX + SW - 6, out = ""; KINDS.forEach(([n, c]) => { const on = TY[0] === n, w = on ? 236 : 94; x -= w;
+        out += `<rect x="${x}" y="${SY + SH - 50}" width="${w - 6}" height="44" rx="12" fill="${on ? c : "#2a3140"}" stroke="${on ? "#F2B705" : "none"}" stroke-width="3" ${on ? 'class="st-on"' : 'opacity=".7"'}/>` +
+          (on ? stT(x + (w - 6) / 2, SY + SH - 32, "● " + n, { s: 13, c: "#fff" }) + stT(x + (w - 6) / 2, SY + SH - 14, TY[1] + "  ←  " + TY[2], { s: 11.5, c: "#F2B705" }) : stT(x + (w - 6) / 2, SY + SH - 23, n, { s: 10.5, c: "#8b95a5" })); });
+        return out; })();
       const win = (x, y, w, hh, c, t) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="8" fill="#fff"/><rect x="${x}" y="${y}" width="${w}" height="24" rx="8" fill="${c}"/>${stT(x + w / 2, y + 17, t, { s: 13, c: "#fff", ltr: 1 })}`;
       const mono = (x, y, t, c, sz) => `<text x="${x}" y="${y}" style="font:700 ${sz || 13}px ui-monospace,Menlo,monospace;fill:${c};direction:ltr">${esc(t)}</text>`;
       let b = "";
