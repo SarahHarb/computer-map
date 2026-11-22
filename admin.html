@@ -29,6 +29,9 @@ main{padding:18px 22px 60px;max-width:1500px;margin:auto}
 .sec{margin-bottom:12px}.sech{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--ln)}.sech h2{margin:0;font-size:18px;color:var(--nv);margin-inline-end:auto}.sech h2 em{font-style:normal;font-size:13px;color:var(--mu);font-weight:700}
 .addbox{padding:12px 16px;background:#FFFBEA;border-bottom:1px solid var(--ln)}.addbox p{margin:0 0 6px}.addbox textarea{width:100%;font-family:inherit;font-size:14px;border:2px solid var(--ln);border-radius:10px;padding:8px;direction:rtl}
 .st.g{background:#E3F6EA;color:#1E7B45}.rm{border:none;background:none;color:#c0392b;cursor:pointer;font-size:15px}
+.grp{margin-bottom:12px}.gh{margin:0;padding:10px 16px;font-size:17px;color:var(--nv);background:#FFF8DD;border-bottom:1px solid var(--ln)}.gh em,.gr em{font-style:normal;color:var(--mu);font-size:12.5px;font-weight:700}
+.mx tr.gr td{background:#FFF8DD;font-weight:900;color:var(--nv);text-align:start;padding:6px 10px;position:sticky;right:0}
+.qs{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.qs b{color:var(--nv);font-size:15px}.qd{display:inline-flex;gap:3px}.qd i{width:11px;height:11px;border-radius:3px;background:#E5E7EB}.qd i.y{background:#3FAE6A}.qd i.x{background:#E05252}
 .card{background:#fff;border-radius:16px;border:1px solid var(--ln);overflow:hidden}
 /* lessons view */
 .unit{margin-bottom:14px}
@@ -102,8 +105,8 @@ tr.ck{cursor:pointer}tr.ck:hover td{background:#FFFBEA}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script>
-const D = {"U": [["الحاسوب ومكوناته", "#16213E"], ["الذاكرة والتخزين", "#2F5D9B"], ["البرمجيات", "#5B4B8A"], ["أنظمة التشغيل", "#5B4B8A"], ["الأخلاقيات", "#2E8B57"], ["الشبكات والإنترنت", "#D35400"], ["الحوسبة السحابية", "#D35400"], ["أمن المعلومات", "#C0392B"], ["الذكاء الاصطناعي", "#9A7D0A"]], "L": [["ما هو الحاسوب؟", "ما هو الحاسوب؟", 0], ["نظام الحاسوب", "نظام الحاسوب", 0], ["تصنيف الكيان المادي", "معايير تصنيف الكيان المادي", 0], ["المعالج CPU", "وحدة المعالجة المركزية CPU — عقل الحاسوب", 0], ["الإدخال والإخراج", "وحدات الإدخال والإخراج", 0], ["اللوحة الأم", "اللوحة الأم وما يتصل بها", 0], ["الذاكرة", "الذاكرة Memory — خريطة مفاهيمية", 1], ["RAM و ROM و Cache", "مقارنة: RAM و ROM و Cache", 1], ["التخزين المساند", "وسائط التخزين المساندة", 1], ["وحدات القياس", "وحدات قياس سعة الذاكرة", 1], ["البرمجيات وأنواعها", "البرمجيات وأنواعها", 2], ["البرامج التطبيقية", "البرامج التطبيقية حسب طريقة الحصول عليها", 2], ["لغات البرمجة", "لغات البرمجة والمترجمات", 2], ["أنظمة التشغيل", "أنظمة التشغيل ومهامها", 3], ["الأخلاقيات", "أخلاقيات استخدام الحاسوب", 4], ["الشبكات وتصنيفها", "الشبكات: التعريف والتصنيف", 5], ["أشكال الشبكات", "مقارنة أشكال الشبكات (التصميم الهندسي)", 5], ["مفاهيم الشبكات", "مفاهيم مهمة في الشبكات", 5], ["أجهزة الشبكة والوسائط", "أجهزة الشبكة ووسائط النقل", 5], ["الحوسبة السحابية", "الحوسبة السحابية Cloud Computing", 6], ["نماذج الخدمة السحابية", "نماذج الخدمة السحابية", 6], ["أمن المعلومات", "أمن المعلومات: المكونات والمخاطر", 7], ["المخترقون والهجمات", "المخترقون وأنواع الهجمات", 7], ["البرامج الخبيثة والاحتيال", "التهديدات الأمنية: البرامج الخبيثة والاحتيال", 7], ["الحلول الأمنية", "الحلول الأمنية", 7], ["الذكاء الاصطناعي وأنواعه", "الذكاء الاصطناعي: التعريف والأنواع", 8], ["الخط الزمني للذكاء", "الخط الزمني للذكاء الاصطناعي", 8], ["فروع الذكاء الاصطناعي", "فروع الذكاء الاصطناعي وخصائصه", 8]]};
-const UN = D.U.map(([t, c], k) => ({ k, t, c })), LS = D.L.map(([s, f, u], i) => ({ i, s, f, u }));
+const D = {"U": [["الحاسوب ومكوناته", "#16213E"], ["الذاكرة والتخزين", "#2F5D9B"], ["البرمجيات", "#5B4B8A"], ["أنظمة التشغيل", "#5B4B8A"], ["الأخلاقيات", "#2E8B57"], ["الشبكات والإنترنت", "#D35400"], ["الحوسبة السحابية", "#D35400"], ["أمن المعلومات", "#C0392B"], ["الذكاء الاصطناعي", "#9A7D0A"]], "L": [["ما هو الحاسوب؟", "ما هو الحاسوب؟", 0, ["ترتيب دورة عمل الحاسوب الصحيح:", "الحاسوب يتكون من:"]], ["نظام الحاسوب", "نظام الحاسوب", 0, ["الكيان البشري يتكون من:", "ما الفرق بين الحاسوب ونظام الحاسوب؟"]], ["تصنيف الكيان المادي", "معايير تصنيف الكيان المادي", 0, ["أي مما يلي من الأجهزة المحيطية؟", "معايير تقسيم الكيان المادي:"]], ["المعالج CPU", "وحدة المعالجة المركزية CPU — عقل الحاسوب", 0, ["الوحدة التي تنفذ عمليات AND و OR:", "وحدة التحكم CU:", "كلما زاد عدد الأنوية:"]], ["الإدخال والإخراج", "وحدات الإدخال والإخراج", 0, ["أي مما يلي من وحدات الإخراج؟", "وظيفة الماسح الضوئي:"]], ["اللوحة الأم", "اللوحة الأم وما يتصل بها", 0, ["المنفذ الذي توصل عليه الطابعة:", "لماذا سميت اللوحة الأم بهذا الاسم؟"]], ["الذاكرة", "الذاكرة Memory — خريطة مفاهيمية", 1, ["أي مما يلي من الذاكرة الرئيسية؟", "أصغر وحدة لقياس سعة الذاكرة:"]], ["RAM و ROM و Cache", "مقارنة: RAM و ROM و Cache", 1, ["الذاكرة التي تُمسح عند إطفاء الجهاز:", "أسرع ذاكرة:", "برنامج BIOS مخزّن في:"]], ["التخزين المساند", "وسائط التخزين المساندة", 1, ["وسيط التخزين الذي يعمل بالليزر:", "من سيئات التخزين السحابي:"]], ["وحدات القياس", "وحدات قياس سعة الذاكرة", 1, ["1 بايت يساوي:", "3 ميجابايت = ؟ كيلوبايت", "أكبر وحدة مما يلي:"]], ["البرمجيات وأنواعها", "البرمجيات وأنواعها", 2, ["BIOS مثال على:", "برنامج مكافحة الفيروسات من:"]], ["البرامج التطبيقية", "البرامج التطبيقية حسب طريقة الحصول عليها", 2, ["البرنامج المجاني لفترة محدودة:", "Scratch مثال على برنامج:"]], ["لغات البرمجة", "لغات البرمجة والمترجمات", 2, ["أي لغة من اللغات عالية المستوى؟", "الذي يترجم البرنامج كله مرة واحدة:", "المفسر مقارنة بالمترجم:"]], ["أنظمة التشغيل", "أنظمة التشغيل ومهامها", 3, ["أول برنامج يبدأ بالتنفيذ عند تشغيل الحاسوب:", "القدرة على تنفيذ أكثر من برنامج في نفس الوقت:"]], ["الأخلاقيات", "أخلاقيات استخدام الحاسوب", 4, ["احترام الملكية الفكرية من أخلاقيات:", "الحفاظ على كلمة السر وعدم إعطائها للآخرين من أخلاقيات:"]], ["الشبكات وتصنيفها", "الشبكات: التعريف والتصنيف", 5, ["الشبكة التي تربط عدة دول:", "شبكة الند للند:"]], ["أشكال الشبكات", "مقارنة أشكال الشبكات (التصميم الهندسي)", 5, ["الشبكة التي إذا تعطل خطها تعطلت كل الأجهزة:", "الشبكة التي تتميز بسهولة كشف الخلل:"]], ["مفاهيم الشبكات", "مفاهيم مهمة في الشبكات", 5, ["البروتوكول المستخدم لنقل الملفات:", "وحدة قياس عرض النطاق Bandwidth:", "أي مما يلي عنوان IP صحيح؟"]], ["أجهزة الشبكة والوسائط", "أجهزة الشبكة ووسائط النقل", 5, ["الجهاز الذي يحدد أفضل مسار للبيانات بين الشبكات:", "الألياف الضوئية من الوسائط:", "الجهاز الذي يعيد إرسال الإشارة بقدرة أكبر:"]], ["الحوسبة السحابية", "الحوسبة السحابية Cloud Computing", 6, ["مراقبة الاستخدام لأغراض الفوترة هي خاصية:", "من فوائد الحوسبة السحابية:"]], ["نماذج الخدمة السحابية", "نماذج الخدمة السحابية", 6, ["النموذج الذي يوفر أدوات ولغات البرمجة لبناء التطبيقات:", "العقد بين مزود الخدمة والعميل:", "تطبيقات جاهزة عبر المتصفح:"]], ["أمن المعلومات", "أمن المعلومات: المكونات والمخاطر", 7, ["حماية المعلومات من التعديل أو الحذف:", "المخاطر =", "عدم تحديث نظام التشغيل مثال على:"]], ["المخترقون والهجمات", "المخترقون وأنواع الهجمات", 7, ["الهجمات التي تسبق غيرها في معظم الحالات:", "المخترق الذي يرسل تقارير بالثغرات لإصلاحها:"]], ["البرامج الخبيثة والاحتيال", "التهديدات الأمنية: البرامج الخبيثة والاحتيال", 7, ["البرنامج الذي يستنسخ نفسه وينتقل بين الأجهزة:", "تشفير ملفات المستخدم مقابل المال:", "أحصنة طروادة تتميز بأنها:"]], ["الحلول الأمنية", "الحلول الأمنية", 7, ["الحل الذي يصفّي حركة مرور البيانات على الشبكة:", "يصل مواقع متباعدة جغرافياً بممرات آمنة:"]], ["الذكاء الاصطناعي وأنواعه", "الذكاء الاصطناعي: التعريف والأنواع", 8, ["الذكاء الاصطناعي الذي يقوم بمهام محددة فقط:", "الذكاء الاصطناعي الذي يتجاوز قدرات البشر في كل المجالات:"]], ["الخط الزمني للذكاء", "الخط الزمني للذكاء الاصطناعي", 8, ["في أي سنة عُقد مؤتمر دارتموث؟", "ما الذي حدث عام 1987؟", "أول برنامج معالجة لغة طبيعية:"]], ["فروع الذكاء الاصطناعي", "فروع الذكاء الاصطناعي وخصائصه", 8, ["الفرع الذي يُعتبر أساس الذكاء الاصطناعي:", "التعرف على الوجوه من تطبيقات:"]]]};
+const UN = D.U.map(([t, c], k) => ({ k, t, c })), LS = D.L.map(([s, f, u, qs], i) => ({ i, s, f, u, qs: qs || [] })), TOTQ = LS.reduce((t, l) => t + l.qs.length, 0);
 const TABS = [["map", "🗺️", "الخارطة"], ["exp", "👁️", "بصري"], ["read", "📝", "كتابة"], ["vid", "▶️", "يوتيوب"], ["do", "✋", "تفاعلي"], ["qs", "❓", "أسئلة"], ["cards", "🃏", "بطاقات"], ["ai", "🤖", "ذكاء اصطناعي"]];
 const C = window.APP_CONFIG || {}, gate = document.getElementById("gate");
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -154,13 +157,14 @@ async function load() {
 // model: per student × lesson
 function build() {
   const inSec = (p) => sec === "all" || R.some((r) => r.section_id == sec && r.email === (p.email || "").toLowerCase());
-  const S = P.filter((p) => p.role !== "admin" && inSec(p)).map((p) => ({ ...p, name: p.full_name || (p.email || "").split("@")[0], L: {}, ok: 0, all: 0, last: null }));
+  const rOf = (p) => R.find((r) => r.email === (p.email || "").toLowerCase());
+  const S = P.filter((p) => p.role !== "admin" && inSec(p)).map((p) => { const r = rOf(p); return { ...p, name: p.full_name || (r && r.name) || (p.email || "").split("@")[0], secId: r ? r.section_id : null, L: {}, ok: 0, all: 0, last: null }; });
   const by = Object.fromEntries(S.map((s) => [s.id, s]));
-  const cell = (s, i) => (s.L[i] ||= { views: 0, tabs: new Set(), ok: 0, all: 0, wrong: [], last: null });
+  const cell = (s, i) => (s.L[i] ||= { views: 0, tabs: new Set(), ok: 0, all: 0, wrong: [], last: null, qLast: {}, sc: 0, tr: 0 });
   const touch = (o, t) => { if (!o.last || t > o.last) o.last = t; };
   V.forEach((v) => { const s = by[v.user_id]; if (!s) return; touch(s, v.created_at); const i = lessonOf(v.concept); if (i < 0) return; const c = cell(s, i); c.views++; if (v.tab) c.tabs.add(v.tab); touch(c, v.created_at); });
-  A.forEach((a) => { const s = by[a.user_id]; if (!s) return; touch(s, a.created_at); s.all++; if (a.is_correct) s.ok++; const i = lessonOf(a.concept); if (i < 0) return; const c = cell(s, i); c.all++; if (a.is_correct) c.ok++; else c.wrong.push(a); touch(c, a.created_at); });
-  S.forEach((s) => { s.n = Object.keys(s.L).length; s.p = pc(s.ok, s.all); });
+  A.forEach((a) => { const s = by[a.user_id]; if (!s) return; touch(s, a.created_at); s.all++; if (a.is_correct) s.ok++; const i = lessonOf(a.concept); if (i < 0) return; const c = cell(s, i); c.all++; if (a.is_correct) c.ok++; else c.wrong.push(a); c.qLast[a.question] = a.is_correct; touch(c, a.created_at); });
+  S.forEach((s) => { s.sc = 0; Object.entries(s.L).forEach(([i, c]) => { const qs = LS[i].qs; c.sc = qs.filter((q) => c.qLast[q] === true).length; c.tr = qs.filter((q) => q in c.qLast).length; s.sc += c.sc; }); s.n = Object.keys(s.L).length; s.p = pc(s.ok, s.all); });
   const Ls = LS.map((l) => { const x = { ...l, opened: 0, ans: 0, ok: 0, all: 0, Q: {} }; S.forEach((s) => { const c = s.L[l.i]; if (!c) return; x.opened++; if (c.all) x.ans++; x.ok += c.ok; x.all += c.all; }); x.p = pc(x.ok, x.all); return x; });
   A.forEach((a) => { const i = lessonOf(a.concept); if (i < 0 || !by[a.user_id]) return; const q = (Ls[i].Q[a.question] ||= { q: a.question, ok: 0, all: 0, right: a.correct_answer }); q.all++; if (a.is_correct) q.ok++; });
   M = { S, Ls, by };
@@ -179,6 +183,10 @@ function draw() {
   else el.innerHTML = logView(q);
   drawSecBar(); bind();
 }
+// open status + score per lesson
+const openTag = (c) => c ? `<span class="st g" title="عدد مرات فتح الدرس وتبويباته">✓ فتحه${c.views ? ` · ${c.views} مرة` : ""}</span>` : `<span class="st n">✕ لم يفتحه</span>`;
+const qTag = (c, l) => { const N = l.qs.length; if (!N) return "—"; const sc = c ? c.sc : 0;
+  return `<span class="qs"><b>${sc}</b> من ${N}<span class="qd">${l.qs.map((q, k) => { const v = c && c.qLast[q]; return `<i class="${v === true ? "y" : v === false ? "x" : ""}" title="س${k + 1}: ${esc(q)}\n${v === true ? "✓ صحيحة" : v === false ? "✗ خاطئة" : "لم يحلّه"}"></i>`; }).join("")}</span></span>`; };
 const LEG = `<div class="legend"><span><i class="c-n"></i>لم يفتح الدرس</span><span><i class="c-o"></i>فتحه ولم يُجب</span><span><i class="c-g"></i>أجاب 75%+</span><span><i class="c-m"></i>50–74%</span><span><i class="c-b"></i>أقل من 50%</span></div>`;
 function lessonsView(Ls, N, q) {
   return UN.map((u) => {
@@ -200,23 +208,30 @@ function lessonDetail(l) {
   const Q = Object.values(l.Q).sort((a, b) => pc(a.ok, a.all) - pc(b.ok, b.all));
   return `<div class="ldet"><div><h4>👥 الطلاب في هذا الدرس</h4>
   <div class="flt">${[["all", "الكل", M.S.length], ["done", "أجابوا", cnt.done], ["no", "لم يفتحوه", cnt.no], ["weak", "بحاجة إلى مساعدة", cnt.weak]].map(([k, t, n]) => `<button data-f="${k}" class="${lf === k ? "on" : ""}">${t} (${n})</button>`).join("")}</div>
-  <table><tr><th>الطالب</th><th>الحالة</th><th>الطرق التي استخدمها</th><th>آخر مرة</th></tr>
-  ${S.map(({ s, c }) => `<tr class="ck" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${!c ? `<span class="st n">لم يفتح</span>` : !c.all ? `<span class="st o">فتحه فقط</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td>
-  <td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">لا يوجد طلاب بهذا الفلتر.</td></tr>`}</table></div>
+  <table><tr><th>الطالب</th><th>فتح الدرس</th><th>الأسئلة (آخر محاولة)</th><th>الطرق التي استخدمها</th><th>آخر مرة</th></tr>
+  ${S.map(({ s, c }) => `<tr class="ck" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${openTag(c)}</td><td>${qTag(c, l)}</td>
+  <td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">لا يوجد طلاب بهذا الفلتر.</td></tr>`}</table></div>
   <div><h4>❓ صعوبة الأسئلة (من الأصعب)</h4>${Q.length ? `<table><tr><th>السؤال</th><th style="width:150px">نسبة الصواب</th></tr>${Q.map((x) => `<tr><td>${esc(x.q)}<div class="muted">الجواب: ${esc(x.right)}</div></td><td><div class="qbar"><span class="bar"><i style="width:${pc(x.ok, x.all)}%"></i></span><b>${pc(x.ok, x.all)}%</b></div><div class="muted">${x.all} إجابة</div></td></tr>`).join("")}</table>` : `<div class="card empty">لم يُجب أحد عن أسئلة هذا الدرس بعد.</div>`}</div></div>`;
 }
 function matrixView(S, q) {
   const R = S.filter((s) => !q || s.name.includes(q)).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, "ar"));
   if (!R.length) return `<div class="card empty">لا يوجد طلاب بعد.</div>`;
   return LEG + `<div class="card mx"><table><tr><th></th>${UN.map((u) => `<th class="u" style="--c:${u.c}" colspan="${LS.filter((l) => l.u === u.k).length}" title="${esc(u.t)}">${u.k + 1}</th>`).join("")}<th></th></tr>
-  <tr class="l2"><th></th>${LS.map((l) => `<th title="${esc(l.f)}">${l.i + 1}</th>`).join("")}<th>فتح</th></tr>
-  ${R.map((s) => `<tr><td class="nm" data-s="${s.id}">${esc(s.name)}</td>${LS.map((l) => { const c = s.L[l.i], v = lvl(c), p = c && c.all ? pc(c.ok, c.all) : null;
-    return `<td><div class="cell c-${v}" data-s="${s.id}" data-l="${l.i}" title="${esc(s.name)} · الدرس ${l.i + 1}: ${esc(l.f)}\n${!c ? "لم يفتحه" : !c.all ? "فتحه ولم يُجب" : `صحيح ${c.ok} من ${c.all}`}">${p != null ? p : ""}</div></td>`; }).join("")}<td class="sum">${s.n}/${LS.length}</td></tr>`).join("")}</table></div>`;
+  <tr class="l2"><th></th>${LS.map((l) => `<th title="${esc(l.f)}">${l.i + 1}</th>`).join("")}<th>الأسئلة</th></tr>
+  ${groups(R).map(([gn, G]) => `<tr class="gr"><td colspan="${LS.length + 2}">${esc(gn)} <em>${G.length}</em></td></tr>` + G.map((s) => `<tr><td class="nm" data-s="${s.id}">${esc(s.name)}</td>${LS.map((l) => { const c = s.L[l.i], v = lvl(c), p = c && c.all ? pc(c.ok, c.all) : null;
+    return `<td><div class="cell c-${v}" data-s="${s.id}" data-l="${l.i}" title="${esc(s.name)} · الدرس ${l.i + 1}: ${esc(l.f)}\n${!c ? "لم يفتحه" : `فتحه ${c.views} مرة · الأسئلة: ${c.sc} من ${l.qs.length}`}">${c ? (c.tr ? c.sc + "/" + l.qs.length : "👁" + c.views) : ""}</div></td>`; }).join("")}<td class="sum">${s.sc}/${TOTQ}</td></tr>`).join("")).join("")}</table></div>`;
 }
 function studentsView(S, q) {
   const R = S.filter((s) => !q || [s.name, s.email].join(" ").includes(q)).sort((a, b) => (b.last || "").localeCompare(a.last || ""));
-  return `<div class="card"><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصواب</span><span>آخر نشاط</span></div>
-  ${R.map((s) => `<div class="srow" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length}</span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لم يسجّل أي طالب بعد.</div>`}</div>`;
+  return groups(R).map(([gn, R]) => `<div class="card grp"><h3 class="gh">${esc(gn)} <em>${R.length} طالب دخل الموقع</em></h3><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصواب</span><span>آخر نشاط</span></div>
+  ${R.map((s) => `<div class="srow" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length} درس<small>${s.sc}/${TOTQ} سؤال صحيح</small></span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لم يدخل أي طالب من هذه الشعبة بعد.</div>`}</div>`).join("");
+}
+// split students by section (when «كل الشعب» is selected)
+function groups(list) {
+  if (sec !== "all") { const x = SEC.find((s) => s.id == sec); return [[x ? x.name : "", list]]; }
+  const g = SEC.map((x) => [x.name, list.filter((s) => s.secId == x.id)]);
+  const out = list.filter((s) => !s.secId); if (out.length) g.push(["خارج الشعب (غير مسجّلين في أي شعبة)", out]);
+  return g;
 }
 function logView(q) {
   const nm = (id) => (M.by[id] || {}).name || "؟";
@@ -285,8 +300,8 @@ function student(id, focus) {
   const wrong = A.filter((a) => a.user_id === id && !a.is_correct).slice(-30).reverse();
   document.getElementById("dname").innerHTML = `${esc(s.name)}<small>${esc(s.email)}</small>`;
   let h = `<div class="minis"><div><b>${s.n}/${LS.length}</b><span>درس فتحه</span></div><div><b>${Object.values(s.L).filter((c) => c.all).length}</b><span>درس أجاب عن أسئلته</span></div><div><b>${s.p == null ? "—" : s.p + "%"}</b><span>نسبة الصواب (${s.ok}/${s.all})</span></div><div><b>${ago(s.last)}</b><span>آخر نشاط</span></div></div>`;
-  h += `<h3>📚 تقدّمه في كل درس</h3>${LEG}<table><tr><th>الدرس</th><th>الحالة</th><th>الطرق</th><th>آخر مرة</th></tr>${LS.map((l) => { const c = s.L[l.i];
-    return `<tr class="${l.i === focus ? "hl" : ""}" id="sl${l.i}"><td><b style="color:${UN[l.u].c}">${l.i + 1}.</b> ${esc(l.f)}</td><td>${!c ? `<span class="st n">لم يفتح</span>` : !c.all ? `<span class="st o">فتحه فقط</span>` : `${pill(pc(c.ok, c.all))} <span class="muted">${c.ok}/${c.all}</span>`}</td><td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`; }).join("")}</table>`;
+  h += `<h3>📚 تقدّمه في كل درس</h3>${LEG}<table><tr><th>الدرس</th><th>فتح الدرس</th><th>الأسئلة</th><th>الطرق</th><th>آخر مرة</th></tr>${LS.map((l) => { const c = s.L[l.i];
+    return `<tr class="${l.i === focus ? "hl" : ""}" id="sl${l.i}"><td><b style="color:${UN[l.u].c}">${l.i + 1}.</b> ${esc(l.f)}</td><td>${openTag(c)}</td><td>${qTag(c, l)}</td><td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`; }).join("")}</table>`;
   h += `<h3>❌ آخر الإجابات الخاطئة (${wrong.length})</h3>${wrong.length ? `<table><tr><th>الدرس</th><th>السؤال</th><th>إجابته</th><th>الصحيحة</th></tr>${wrong.map((a) => { const i = lessonOf(a.concept); return `<tr><td>${i >= 0 ? i + 1 : "—"}</td><td>${esc(a.question)}</td><td style="color:var(--bd);font-weight:700">${esc(a.answer)}</td><td style="color:var(--ok);font-weight:700">${esc(a.correct_answer)}</td></tr>`; }).join("")}</table>` : `<p class="muted">لا توجد إجابات خاطئة 👏</p>`}`;
   document.getElementById("dbody").innerHTML = h; document.getElementById("dr").classList.add("show");
   if (focus >= 0) setTimeout(() => { const r = document.getElementById("sl" + focus); if (r) r.scrollIntoView({ block: "center" }); }, 280); else document.getElementById("dbody").scrollTop = 0;
@@ -303,8 +318,8 @@ document.getElementById("q").oninput = draw;
 document.getElementById("reload").onclick = load;
 document.getElementById("csv").onclick = () => {
   const secOf = (e) => { const r = R.find((x) => x.email === (e || "").toLowerCase()); const x = r && SEC.find((s) => s.id == r.section_id); return x ? x.name : ""; };
-  const rows = [["الطالب", "الإيميل", "الشعبة", "دروس فتحها", "نسبة الصواب %", ...LS.map((l) => `${l.i + 1}. ${l.s}`)]];
-  M.S.forEach((s) => rows.push([s.name, s.email, secOf(s.email), s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "لم يفتح" : !c.all ? "فتحه" : pc(c.ok, c.all) + "%"; })]));
+  const rows = [["الطالب", "الإيميل", "الشعبة", "دروس فتحها", "نسبة الصواب %", ...LS.map((l) => `${l.i + 1}. ${l.s}`), "مجموع الأسئلة الصحيحة"]];
+  M.S.forEach((s) => rows.push([s.name, s.email, secOf(s.email), s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "لم يفتح" : `فتحه ${c.views} مرة · ${c.sc}/${l.qs.length}`; }), `${s.sc}/${TOTQ}`]));
   rows.push([]); rows.push(["الوقت", "الطالب", "الدرس", "السؤال", "جوابه", "الإجابة الصحيحة", "صحيحة؟"]);
   A.filter((a) => M.by[a.user_id]).forEach((a) => { const i = lessonOf(a.concept); rows.push([new Date(a.created_at).toLocaleString("en-GB"), M.by[a.user_id].name, i >= 0 ? `${i + 1}. ${LS[i].f}` : a.concept, a.question, a.answer, a.correct_answer, a.is_correct ? "صحيح" : "خطأ"]); });
   const csv = "﻿" + rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
