@@ -33,6 +33,8 @@ main{padding:18px 22px 60px;max-width:1500px;margin:auto}
 .mx tr.gr td{background:#FFF8DD;font-weight:900;color:var(--nv);text-align:start;padding:6px 10px;position:sticky;right:0}
 .qs{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.qs b{color:var(--nv);font-size:15px}.qd{display:inline-flex;gap:3px}.qd i{width:11px;height:11px;border-radius:3px;background:#E5E7EB}.qd i.y{background:#3FAE6A}.qd i.x{background:#E05252}
 .ghost{opacity:.42;filter:grayscale(1)}.ghost,.ghost *{cursor:default!important}
+.dosel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.dosel select{font-family:inherit;font-size:15px;padding:6px 10px;border:2px solid var(--ln);border-radius:10px;max-width:420px}
+.gts{max-width:320px}.gt{display:inline-flex;gap:3px;align-items:center;background:#EEF2F6;border-radius:999px;padding:1px 9px;margin:2px;font-size:12px;font-weight:700}.gt.ok{background:#E3F6EA;color:#1E7B45}.gt i{font-style:normal;color:var(--mu)}
 .card{background:#fff;border-radius:16px;border:1px solid var(--ln);overflow:hidden}
 /* lessons view */
 .unit{margin-bottom:14px}
@@ -99,7 +101,7 @@ tr.ck{cursor:pointer}tr.ck:hover td{background:#FFFBEA}
  <div class="kpis" id="kpis"></div>
  <div class="ann card" id="annBox"><b>📢 إعلان للطلاب</b><input id="annTxt" placeholder="مثلاً: امتحان الوحدة الثانية يوم الخميس" maxlength="200"><button class="hb" id="annPub">نشر الإعلان</button><button class="hb gh2" id="annStop">إيقاف الإعلان</button><span id="annSt" class="muted"></span></div>
  <div class="secbar" id="secbar"></div>
- <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><button data-v="sec">🗂️ الشعب والطلاب</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
+ <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><button data-v="do">🎮 التفاعلي والأسئلة</button><button data-v="sec">🗂️ الشعب والطلاب</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
  <div id="view"></div>
 </main>
 <div id="dr"><div class="hd"><h2 id="dname"></h2><button class="x" id="dreset" title="يحذف إجابات هذا الطالب ونشاطه">🗑️ تصفير</button><button class="x" id="dclose">✕</button></div><div class="bd" id="dbody"></div></div>
@@ -161,10 +163,13 @@ function build() {
   const rOf = (p) => R.find((r) => r.email === (p.email || "").toLowerCase());
   const S = P.filter((p) => p.role !== "admin" && inSec(p)).map((p) => { const r = rOf(p); return { ...p, name: p.full_name || (r && r.name) || (p.email || "").split("@")[0], secId: r ? r.section_id : null, L: {}, ok: 0, all: 0, last: null }; });
   const by = Object.fromEntries(S.map((s) => [s.id, s]));
-  const cell = (s, i) => (s.L[i] ||= { views: 0, tabs: new Set(), ok: 0, all: 0, wrong: [], last: null, qLast: {}, sc: 0, tr: 0 });
+  const cell = (s, i) => (s.L[i] ||= { views: 0, tabs: new Set(), ok: 0, all: 0, wrong: [], last: null, qLast: {}, sc: 0, tr: 0, tabN: {}, games: {}, story: { ok: 0, all: 0 } });
   const touch = (o, t) => { if (!o.last || t > o.last) o.last = t; };
-  V.forEach((v) => { const s = by[v.user_id]; if (!s) return; touch(s, v.created_at); const i = lessonOf(v.concept); if (i < 0) return; const c = cell(s, i); c.views++; if (v.tab) c.tabs.add(v.tab); touch(c, v.created_at); });
-  A.forEach((a) => { const s = by[a.user_id]; if (!s) return; touch(s, a.created_at); s.all++; if (a.is_correct) s.ok++; const i = lessonOf(a.concept); if (i < 0) return; const c = cell(s, i); c.all++; if (a.is_correct) c.ok++; else c.wrong.push(a); c.qLast[a.question] = a.is_correct; touch(c, a.created_at); });
+  V.forEach((v) => { const s = by[v.user_id]; if (!s) return; touch(s, v.created_at); const i = lessonOf(v.concept); if (i < 0) return; const c = cell(s, i); c.views++; if (v.tab) { c.tabs.add(v.tab); c.tabN[v.tab] = (c.tabN[v.tab] || 0) + 1; } touch(c, v.created_at); });
+  A.forEach((a) => { const s = by[a.user_id]; if (!s) return; touch(s, a.created_at); s.all++; if (a.is_correct) s.ok++; const i = lessonOf(a.concept); if (i < 0) return; const c = cell(s, i); c.all++; if (a.is_correct) c.ok++; else c.wrong.push(a); c.qLast[a.question] = a.is_correct; touch(c, a.created_at);
+    const qq = String(a.question || "");
+    if (qq.startsWith("لعبة: ")) { const nm = qq.slice(6), m = String(a.answer || "").match(/(\d+)\s*من\s*(\d+)/), g = (c.games[nm] ||= { ok: 0, all: 0, n: 0 }); g.n++; if (m && (+m[1] / +m[2] >= (g.all ? g.ok / g.all : -1))) { g.ok = +m[1]; g.all = +m[2]; } }
+    else if (qq.startsWith("قصة: ")) { c.story.all++; if (a.is_correct) c.story.ok++; } });
   S.forEach((s) => { s.sc = 0; Object.entries(s.L).forEach(([i, c]) => { const qs = LS[i].qs; c.sc = qs.filter((q) => c.qLast[q] === true).length; c.tr = qs.filter((q) => q in c.qLast).length; s.sc += c.sc; }); s.n = Object.keys(s.L).length; s.p = pc(s.ok, s.all); });
   // students on the section lists who have not signed in yet: shown dimmed
   const seen = new Set(P.map((p) => (p.email || "").toLowerCase()));
@@ -184,6 +189,7 @@ function draw() {
   else if (view === "mx") el.innerHTML = matrixView(S, q);
   else if (view === "st") el.innerHTML = studentsView(S, q);
   else if (view === "sec") el.innerHTML = secView(q);
+  else if (view === "do") el.innerHTML = doView(S, q);
   else el.innerHTML = logView(q);
   drawSecBar(); bind();
 }
@@ -292,7 +298,26 @@ function bindSec(el) {
     if (error) return (st.textContent = "⚠️ " + error.message);
     alert(`تمت إضافة ${L.length} طالب.` + (other ? `\n(${other} منهم كانوا في شعبة أخرى وتم نقلهم.)` : "")); addTo = null; load(); };
 }
+// ---------- interactive tab + questions tab, per student ----------
+let doL = -1;
+function doView(S, q) {
+  const sel = `<div class="dosel"><b>الدرس:</b><select id="doL"><option value="-1">كل الدروس (ملخّص)</option>${LS.map((l) => `<option value="${l.i}" ${doL === l.i ? "selected" : ""}>${l.i + 1}. ${esc(l.f)}</option>`).join("")}</select>
+    <span class="muted">التفاعلي = الألعاب والقصة و«داخل الحاسوب» · الأسئلة = تبويب الأسئلة في الدرس</span></div>`;
+  const R = S.filter((s) => !q || [s.name, s.email].join(" ").includes(q)).sort((a, b) => (a.ghost ? 1 : 0) - (b.ghost ? 1 : 0) || a.name.localeCompare(b.name, "ar"));
+  const gTags = (c) => { const G = Object.entries(c ? c.games : {}); return G.length ? G.map(([n, g]) => `<span class="gt ${g.all && g.ok === g.all ? "ok" : ""}" title="لعبها ${g.n} مرة · أفضل نتيجة">${esc(n)} <b>${g.ok}/${g.all}</b>${g.n > 1 ? ` <i>×${g.n}</i>` : ""}</span>`).join("") : `<span class="muted">لم يلعب</span>`; };
+  const seen = (c, t) => c && c.tabN[t] ? `<span class="st g">✓ ${c.tabN[t]} مرة</span>` : `<span class="st n">✕ لم يفتحه</span>`;
+  if (doL >= 0) { const l = LS[doL];
+    return sel + groups(R).map(([gn, G]) => `<div class="card grp"><h3 class="gh">${esc(gn)} <em>${G.filter((s) => !s.ghost).length} من ${G.length}</em></h3><table>
+      <tr><th>الطالب</th><th>فتح التفاعلي</th><th>الألعاب (أفضل نتيجة)</th><th>القصة</th><th>فتح الأسئلة</th><th>الأسئلة</th><th>آخر مرة</th></tr>
+      ${G.map((s) => { const c = s.L[l.i]; return `<tr class="ck ${s.ghost ? "ghost" : ""}" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td>${s.ghost ? `<td colspan="6"><span class="st n">لم يدخل الموقع بعد</span></td>` :
+        `<td>${seen(c, "do")}</td><td class="gts">${gTags(c)}</td><td>${c && c.story.all ? `<b>${c.story.ok}</b>/${c.story.all} صح` : "—"}</td><td>${seen(c, "qs")}</td><td>${qTag(c, l)}</td><td class="muted">${c ? ago(c.last) : "—"}</td>`}</tr>`; }).join("")}</table></div>`).join(""); }
+  return sel + groups(R).map(([gn, G]) => `<div class="card grp"><h3 class="gh">${esc(gn)} <em>${G.filter((s) => !s.ghost).length} من ${G.length}</em></h3><table>
+    <tr><th>الطالب</th><th>دروس فتح تفاعليّها</th><th>ألعاب لعبها</th><th>ألعاب كاملة</th><th>دروس فتح أسئلتها</th><th>الأسئلة الصحيحة</th><th>آخر نشاط</th></tr>
+    ${G.map((s) => { const C = Object.values(s.L), gs = C.flatMap((c) => Object.values(c.games)); return `<tr class="ck ${s.ghost ? "ghost" : ""}" data-s="${s.id}"><td><b>${esc(s.name)}</b></td>${s.ghost ? `<td colspan="6"><span class="st n">لم يدخل الموقع بعد</span></td>` :
+      `<td><b>${C.filter((c) => c.tabN.do).length}</b>/${LS.length}</td><td><b>${gs.length}</b></td><td><b>${gs.filter((g) => g.all && g.ok === g.all).length}</b></td><td><b>${C.filter((c) => c.tabN.qs).length}</b>/${LS.length}</td><td><b>${s.sc}</b>/${TOTQ}</td><td class="muted">${ago(s.last)}</td>`}</tr>`; }).join("")}</table></div>`).join("");
+}
 function bind() {
+  const dl = document.getElementById("doL"); if (dl) dl.onchange = () => { doL = +dl.value; draw(); };
   bindSec(document.getElementById("view"));
   const el = document.getElementById("view");
   el.querySelectorAll(".lrow").forEach((r) => (r.onclick = () => { const i = +r.dataset.l; openL = openL === i ? -1 : i; lf = "all"; draw(); }));
