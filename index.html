@@ -2614,11 +2614,11 @@ function scPanel() {
     const T = L[4], idea = C.idea || "";
     const NB = "https://notebook.google.com/notebook/7d5b0d3a-5567-447f-bd9c-7e734bc91d4c" + (window.ME_EMAIL ? "?authuser=" + encodeURIComponent(window.ME_EMAIL) : "");
     const AIS = [["Claude", "https://claude.ai/new?q="], ["ChatGPT", "https://chatgpt.com/?q="], ["Perplexity", "https://www.perplexity.ai/search?q="]];
-    const DEEP = [["ChatGPT", "https://chatgpt.com/?q="], ["Gemini", "https://gemini.google.com/app"], ["Perplexity", "https://www.perplexity.ai/search?q="]];
+    const DEEP = [["Claude", "https://claude.ai/new?q="], ["ChatGPT", "https://chatgpt.com/?q="], ["Gemini", "https://gemini.google.com/app"], ["Perplexity", "https://www.perplexity.ai/search?q="]];
     const P = [
       ["بحث عادي", "FaSearch", `ما هو «${T}» في مادة مقدمة في الحاسوب؟ أجب باختصار مع ذكر المصادر.`, AIS, ""],
       ["بحث عميق", "FaSearchPlus", `ابحث بعمق عن «${T}» في علم الحاسوب: التعريف، والأنواع أو المكوّنات، وأمثلة من الواقع، ومقارنة بين الآراء أو التقنيات، مع مصادر موثوقة لكل معلومة. اكتب تقريراً بعناوين واضحة.`, DEEP,
-        "قبل اللصق فعّل البحث العميق: في ChatGPT اضغط (+) ثم «بحث عميق»، وفي Gemini اختر «الأدوات» ثم Deep Research، وفي Perplexity اختر Research."],
+        "قبل اللصق فعّل البحث العميق: في Claude اضغط زر الأدوات ثم «Research»، وفي ChatGPT اضغط (+) ثم «بحث عميق»، وفي Gemini اختر «الأدوات» ثم Deep Research، وفي Perplexity اختر Research."],
       ["أمر مُهندَس (هندسة الأوامر)", "FaUserTie", `أنت مدرّس جامعي لمادة مقدمة في الحاسوب. أنا طالب سنة أولى أدرس درس «${T}»، وفكرته: ${idea} اشرح لي الدرس في جدول ثم ثلاث نقاط للخلاصة، بالعربية الفصحى، في حدود 200 كلمة، ولا تخرج عن محتوى الدرس.`, AIS,
         "الأمر الجيد فيه: الدور + السياق + المهمة + الشكل + القيود."],
       ["NotebookLM: من الدوسية", "FaBookOpen", `من الدوسية فقط: لخّص لي درس «${T}» بعناوين رئيسية وفرعية، واذكر المصدر لكل معلومة.`, [["افتح دفتر المادة", NB, true]],
