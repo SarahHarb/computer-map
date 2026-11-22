@@ -754,6 +754,7 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .nb-open{justify-self:start;display:inline-flex;gap:8px;align-items:center;text-decoration:none;font-weight:900;font-size:15px;background:#1a73e8;color:#fff;border-radius:999px;padding:9px 18px}.nb-open .ic{width:18px;height:18px}
 .nb-how{margin:0;padding-inline-start:20px;display:grid;gap:4px;font-size:14px;line-height:1.7}
 @media (max-width:700px){.ai-cmp,.pe-vs{grid-template-columns:1fr}}
+.ai-how{flex-basis:100%;color:var(--muted);font-size:12.5px;line-height:1.6}.ai-btns a.nb{background:#1a73e8}
 .ai-copy{padding:6px 8px}.ai-copy .ic{width:16px;height:16px}.ai-copy.ok{background:#E8F6EE;border-color:var(--done)}
 .ai-note{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:4px 0 0}.ai-note .ic{width:16px;height:16px}
 
@@ -2613,45 +2614,18 @@ function scPanel() {
     const T = L[4], idea = C.idea || "";
     const NB = "https://notebook.google.com/notebook/7d5b0d3a-5567-447f-bd9c-7e734bc91d4c" + (window.ME_EMAIL ? "?authuser=" + encodeURIComponent(window.ME_EMAIL) : "");
     const AIS = [["Claude", "https://claude.ai/new?q="], ["ChatGPT", "https://chatgpt.com/?q="], ["Perplexity", "https://www.perplexity.ai/search?q="]];
-    const P = [];
-    const btns = (q) => { const k = P.push(q) - 1; return `<div class="ai-btns">${AIS.map(([n, u]) => `<a href="${u}${encodeURIComponent(q)}" target="_blank" rel="noopener">${n}</a>`).join("")}<button class="ai-copy" data-k="${k}" title="انسخ الأمر">${svgI("FaCopy")}</button></div>`; };
-    const cp = (q) => { const k = P.push(q) - 1; return `<button class="ai-copy wide" data-k="${k}">${svgI("FaCopy")} انسخ الأمر</button>`; };
-    // 1) normal search vs deep research
-    const deepQ = `أجرِ بحثاً عميقاً عن موضوع «${T}» في علم الحاسوب: عرّف المفهوم، واشرح أنواعه أو مكوّناته، وأعطِ أمثلة حديثة من الواقع، وقارن بين الآراء أو التقنيات المختلفة، واذكر مصادر موثوقة لكل معلومة. اكتب التقرير بالعربية الفصحى في عناوين واضحة.`;
-    const s1 = `<section class="ai-sec"><h4><i>1</i>البحث بالذكاء الاصطناعي: عادي أم عميق؟</h4>
-      <div class="ai-cmp"><div><b>${svgI("FaSearch")} البحث العادي</b><p>سؤال واحد وجواب سريع خلال ثوانٍ، من عدد قليل من المصادر. مناسب لتعريف أو معلومة محدّدة.</p>
-        <div class="ai-btns"><a href="https://www.google.com/search?q=${encodeURIComponent(T)}" target="_blank" rel="noopener" class="g">Google</a><a href="https://www.perplexity.ai/search?q=${encodeURIComponent("ما هو " + T + " في الحاسوب؟ أجب باختصار مع المصادر")}" target="_blank" rel="noopener">Perplexity</a></div></div>
-      <div><b>${svgI("FaSearchPlus")} البحث العميق Deep Research</b><p>يخطّط الذكاء الاصطناعي للبحث بنفسه، ويقرأ عشرات المصادر خلال دقائق، ثم يكتب تقريراً منظّماً مع المراجع. مناسب لموضوع كامل أو مقارنة.</p>
-        ${cp(deepQ)}<small>انسخ الأمر، ثم الصقه في Gemini أو ChatGPT أو Perplexity بعد تفعيل خيار «Deep Research / بحث عميق».</small></div></div>
-      <p class="ai-tip">${svgI("FaInfoCircle")} جرّب الطريقتين على الموضوع نفسه وقارن: كم مصدراً في كل نتيجة؟ وما الفرق في العمق والدقة والوقت؟</p></section>`;
-    // 2) prompt engineering: weak vs engineered prompt, with a builder
-    const pb = (SC.pb ||= { role: 0, fmt: 0, lvl: 0 });
-    const ROLES = [["مدرّس صبور", "أنت مدرّس جامعي صبور لمادة مقدمة في الحاسوب"], ["ممتحن", "أنت ممتحن جامعي يضع أسئلة دقيقة لمادة مقدمة في الحاسوب"], ["زميل دراسة", "أنت زميل دراسة متفوّق تشرح لصديقك قبل الامتحان"]];
-    const FMTS = [["جدول", "في جدول مقارنة واضح، ثم ثلاث نقاط للخلاصة"], ["نقاط", "في نقاط مرقّمة قصيرة، كل نقطة سطر واحد"], ["قصة ومثال", "من خلال قصة قصيرة أو مثال من الحياة اليومية"]];
-    const LVLS = [["مبتدئ", "طالب سنة أولى لم أدرس الحاسوب من قبل"], ["متوسط", "طالب درست الأساسيات وأريد التعمّق قليلاً"]];
-    const strong = `${ROLES[pb.role][1]}. السياق: أنا ${LVLS[pb.lvl][1]}، وأدرس درس «${T}». الفكرة الأساسية للدرس: ${idea} المهمة: اشرح لي هذا الدرس ${FMTS[pb.fmt][1]}. القيود: استخدم العربية الفصحى، ولا تتجاوز 200 كلمة، ولا تخرج عن محتوى الدرس، وإن لم تكن متأكداً من معلومة فقل ذلك.`;
-    const chips = (key, arr) => arr.map(([t], k) => `<button class="pb-chip ${pb[key] === k ? "on" : ""}" data-pb="${key}" data-v="${k}">${t}</button>`).join("");
-    const s2 = `<section class="ai-sec"><h4><i>2</i>هندسة الأوامر: كيف تحصل على نتيجة دقيقة؟</h4>
-      <div class="pe-vs"><div class="weak"><b>${svgI("FaTimes")} أمر ضعيف</b><span class="wq">«اشرح ${T}»</span><small>نتيجة عامة وطويلة، وقد تكون بمستوى لا يناسبك.</small></div>
-      <div class="good"><b>${svgI("FaCheck")} أمر مُهندَس</b><div class="pe-parts"><span class="r">الدور</span><span class="c">السياق</span><span class="t">المهمة</span><span class="f">الشكل</span><span class="k">القيود</span></div><small>كل عنصر يقرّب النتيجة مما تريده بالضبط.</small></div></div>
-      <div class="pb"><div class="pb-row"><span>الدور:</span>${chips("role", ROLES)}</div><div class="pb-row"><span>الشكل:</span>${chips("fmt", FMTS)}</div><div class="pb-row"><span>المستوى:</span>${chips("lvl", LVLS)}</div>
-      <div class="pb-out">${esc(strong)}</div>${btns(strong)}</div>
-      <details class="ai-more"><summary>أوامر جاهزة أخرى لهذا الدرس</summary>${[
-        ["اصنع لي جدولاً ومخططاً", `لخّص لي درس «${T}» (مقدمة في الحاسوب) بجدول مقارنة وخارطة مفاهيمية مكتوبة نصياً.`],
-        ["اسألني أسئلة امتحان", `أنت ممتحن. أعطني 5 أسئلة اختيار من متعدد عن درس «${T}» (مقدمة في الحاسوب)، سؤالاً سؤالاً، وصحّح إجابتي بعد كل سؤال واشرح الخطأ.`],
-        ["طريقة لحفظه", `أعطني طريقة ذكية لحفظ درس «${T}» (مقدمة في الحاسوب): كلمات مفتاحية، واختصارات، وقصة قصيرة.`],
-      ].map(([t, q]) => `<div class="ai-row"><b>${t}</b>${btns(q)}</div>`).join("")}</details></section>`;
-    // 3) NotebookLM: organise notes from the course file
-    const nq = [["خريطة ذهنية للدرس", `من الدوسية فقط: اعمل لي ملخّصاً منظّماً لدرس «${T}» بعناوين رئيسية وفرعية، واذكر رقم الصفحة أو المقطع لكل معلومة.`],
-      ["جدول مقارنة من المصدر", `استخرج من الدوسية كل المقارنات المتعلقة بـ «${T}» وضعها في جدول واحد، مع الإشارة إلى مكانها في المصدر.`],
-      ["أسئلة مراجعة", `من الدوسية: اكتب 5 أسئلة مراجعة عن «${T}» مع إجاباتها، واذكر المقطع الذي أخذت منه كل إجابة.`]];
-    const s3 = `<section class="ai-sec nb"><h4><i>3</i>NotebookLM: نظّم ملاحظاتك من الدوسية</h4>
-      <p>دفتر المادة فيه الدوسية كمصدر. الذكاء الاصطناعي هنا يجيب <b>من الدوسية فقط</b> ويضع رقم المصدر بجانب كل معلومة، فتعرف من أين جاءت.</p>
-      <a class="nb-open" href="${NB}" target="_blank" rel="noopener">${svgI("FaBookOpen")} افتح دفتر المادة في NotebookLM</a><small class="muted">ادخل بحساب الجامعة ppu.edu.ps</small>
-      <ul class="nb-how"><li><b>اسأل</b> في خانة المحادثة، واضغط على رقم المصدر لترى النص الأصلي.</li><li><b>احفظ</b> الإجابة المفيدة كملاحظة (زر «حفظ في ملاحظة»)، فتصير عندك ملاحظات مرتّبة.</li><li><b>استوديو:</b> اصنع خريطة ذهنية أو بطاقات تعليمية أو اختباراً أو ملخّصاً صوتياً من الدوسية بضغطة.</li></ul>
-      ${nq.map(([t, q]) => `<div class="ai-row"><b>${t}</b>${cp(q)}</div>`).join("")}</section>`;
-    b = `<div class="ai-box">${s1}${s2}${s3}<p class="ai-note">${svgI("FaInfoCircle")} قد يخطئ الذكاء الاصطناعي أحياناً، فارجع إلى الدوسية وتأكّد من المعلومة.</p></div>`;
-    SC.aiP = P;
+    const DEEP = [["ChatGPT", "https://chatgpt.com/?q="], ["Gemini", "https://gemini.google.com/app"], ["Perplexity", "https://www.perplexity.ai/search?q="]];
+    const P = [
+      ["بحث عادي", "FaSearch", `ما هو «${T}» في مادة مقدمة في الحاسوب؟ أجب باختصار مع ذكر المصادر.`, AIS, ""],
+      ["بحث عميق", "FaSearchPlus", `ابحث بعمق عن «${T}» في علم الحاسوب: التعريف، والأنواع أو المكوّنات، وأمثلة من الواقع، ومقارنة بين الآراء أو التقنيات، مع مصادر موثوقة لكل معلومة. اكتب تقريراً بعناوين واضحة.`, DEEP,
+        "قبل اللصق فعّل البحث العميق: في ChatGPT اضغط (+) ثم «بحث عميق»، وفي Gemini اختر «الأدوات» ثم Deep Research، وفي Perplexity اختر Research."],
+      ["أمر مُهندَس (هندسة الأوامر)", "FaUserTie", `أنت مدرّس جامعي لمادة مقدمة في الحاسوب. أنا طالب سنة أولى أدرس درس «${T}»، وفكرته: ${idea} اشرح لي الدرس في جدول ثم ثلاث نقاط للخلاصة، بالعربية الفصحى، في حدود 200 كلمة، ولا تخرج عن محتوى الدرس.`, AIS,
+        "الأمر الجيد فيه: الدور + السياق + المهمة + الشكل + القيود."],
+      ["NotebookLM: من الدوسية", "FaBookOpen", `من الدوسية فقط: لخّص لي درس «${T}» بعناوين رئيسية وفرعية، واذكر المصدر لكل معلومة.`, [["افتح دفتر المادة", NB, true]],
+        "انسخ الأمر والصقه في دفتر المادة، ثم احفظ الإجابة كملاحظة لتنظّم ملاحظاتك."],
+    ];
+    b = `<div class="ai-box"><p class="muted">اختر ما تريده من الذكاء الاصطناعي، ثم اختر الموقع. سيكون الأمر جاهزاً ومكتوباً عن هذا الدرس.</p>${P.map(([t, ic, q, sites, how], k) => `<div class="ai-row"><b>${svgI(ic)}${t}</b><div class="ai-btns">${sites.map(([n, u, raw]) => `<a href="${raw || !u.endsWith("=") ? u : u + encodeURIComponent(q)}" target="_blank" rel="noopener"${raw ? ' class="nb"' : ""}>${n}</a>`).join("")}<button class="ai-copy" data-k="${k}" title="انسخ الأمر">${svgI("FaCopy")}</button></div>${how ? `<small class="ai-how">${how}</small>` : ""}</div>`).join("")}<p class="ai-note">${svgI("FaInfoCircle")} قد يخطئ الذكاء الاصطناعي أحياناً، فارجع إلى الدوسية وتأكّد من المعلومة.</p></div>`;
+    SC.aiP = P.map((x) => x[2]);
   }
   else b = `<div class="vid"><div style="font-size:19px;font-weight:700">فيديوهات عن «${esc(L[4])}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent("شرح " + L[4] + " مقدمة في الحاسوب")}" target="_blank" rel="noopener">▶ افتح على يوتيوب</a></div>`;
   const panel = document.getElementById("scPanel"); panel.style.setProperty("--c", col);
