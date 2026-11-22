@@ -32,6 +32,7 @@ main{padding:18px 22px 60px;max-width:1500px;margin:auto}
 .grp{margin-bottom:12px}.gh{margin:0;padding:10px 16px;font-size:17px;color:var(--nv);background:#FFF8DD;border-bottom:1px solid var(--ln)}.gh em,.gr em{font-style:normal;color:var(--mu);font-size:12.5px;font-weight:700}
 .mx tr.gr td{background:#FFF8DD;font-weight:900;color:var(--nv);text-align:start;padding:6px 10px;position:sticky;right:0}
 .qs{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.qs b{color:var(--nv);font-size:15px}.qd{display:inline-flex;gap:3px}.qd i{width:11px;height:11px;border-radius:3px;background:#E5E7EB}.qd i.y{background:#3FAE6A}.qd i.x{background:#E05252}
+.ghost{opacity:.42;filter:grayscale(1)}.ghost,.ghost *{cursor:default!important}
 .card{background:#fff;border-radius:16px;border:1px solid var(--ln);overflow:hidden}
 /* lessons view */
 .unit{margin-bottom:14px}
@@ -165,6 +166,9 @@ function build() {
   V.forEach((v) => { const s = by[v.user_id]; if (!s) return; touch(s, v.created_at); const i = lessonOf(v.concept); if (i < 0) return; const c = cell(s, i); c.views++; if (v.tab) c.tabs.add(v.tab); touch(c, v.created_at); });
   A.forEach((a) => { const s = by[a.user_id]; if (!s) return; touch(s, a.created_at); s.all++; if (a.is_correct) s.ok++; const i = lessonOf(a.concept); if (i < 0) return; const c = cell(s, i); c.all++; if (a.is_correct) c.ok++; else c.wrong.push(a); c.qLast[a.question] = a.is_correct; touch(c, a.created_at); });
   S.forEach((s) => { s.sc = 0; Object.entries(s.L).forEach(([i, c]) => { const qs = LS[i].qs; c.sc = qs.filter((q) => c.qLast[q] === true).length; c.tr = qs.filter((q) => q in c.qLast).length; s.sc += c.sc; }); s.n = Object.keys(s.L).length; s.p = pc(s.ok, s.all); });
+  // students on the section lists who have not signed in yet: shown dimmed
+  const seen = new Set(P.map((p) => (p.email || "").toLowerCase()));
+  R.filter((r) => !seen.has(r.email) && (sec === "all" || r.section_id == sec)).forEach((r) => S.push({ id: "g:" + r.email, ghost: true, email: r.email, name: r.name || r.email.split("@")[0], secId: r.section_id, L: {}, ok: 0, all: 0, sc: 0, n: 0, p: null, last: null }));
   const Ls = LS.map((l) => { const x = { ...l, opened: 0, ans: 0, ok: 0, all: 0, Q: {} }; S.forEach((s) => { const c = s.L[l.i]; if (!c) return; x.opened++; if (c.all) x.ans++; x.ok += c.ok; x.all += c.all; }); x.p = pc(x.ok, x.all); return x; });
   A.forEach((a) => { const i = lessonOf(a.concept); if (i < 0 || !by[a.user_id]) return; const q = (Ls[i].Q[a.question] ||= { q: a.question, ok: 0, all: 0, right: a.correct_answer }); q.all++; if (a.is_correct) q.ok++; });
   M = { S, Ls, by };
@@ -173,7 +177,7 @@ function draw() {
   const { S, Ls } = M, N = S.length, wk = Date.now() - 7 * 864e5;
   const act = S.filter((s) => s.last && new Date(s.last) > wk).length, tot = A.filter((a) => M.by[a.user_id]).length, okAll = A.filter((a) => a.is_correct && M.by[a.user_id]).length;
   const avgL = N ? (S.reduce((t, s) => t + s.n, 0) / N).toFixed(1) : "—";
-  document.getElementById("kpis").innerHTML = [["👥", N, "طالب مسجّل"], ["🔥", act, "نشطون في آخر 7 أيام"], ["📚", avgL + " / " + LS.length, "متوسط الدروس التي فتحوها"], ["✍️", tot, "إجابة على الأسئلة"], ["🎯", pc(okAll, tot) == null ? "—" : pc(okAll, tot) + "%", "نسبة الإجابات الصحيحة"]]
+  document.getElementById("kpis").innerHTML = [["👥", `${S.filter((s) => !s.ghost).length} / ${N}`, "طالب دخلوا الموقع"], ["🔥", act, "نشطون في آخر 7 أيام"], ["📚", avgL + " / " + LS.length, "متوسط الدروس التي فتحوها"], ["✍️", tot, "إجابة على الأسئلة"], ["🎯", pc(okAll, tot) == null ? "—" : pc(okAll, tot) + "%", "نسبة الإجابات الصحيحة"]]
     .map(([i, b, s]) => `<div class="kpi"><i>${i}</i><div><b>${b}</b><span>${s}</span></div></div>`).join("");
   const q = document.getElementById("q").value.trim(), el = document.getElementById("view");
   if (view === "ls") el.innerHTML = lessonsView(Ls, N, q);
@@ -203,28 +207,28 @@ function lessonsView(Ls, N, q) {
 }
 function lessonDetail(l) {
   const S = M.S.map((s) => ({ s, c: s.L[l.i] })).filter(({ c }) => lf === "all" || (lf === "no" && !c) || (lf === "weak" && c && c.all && pc(c.ok, c.all) < 50) || (lf === "done" && c && c.all))
-    .sort((a, b) => (b.c ? (b.c.all ? 2 : 1) : 0) - (a.c ? (a.c.all ? 2 : 1) : 0) || a.s.name.localeCompare(b.s.name, "ar"));
+    .sort((a, b) => (a.s.ghost ? 1 : 0) - (b.s.ghost ? 1 : 0) || (b.c ? (b.c.all ? 2 : 1) : 0) - (a.c ? (a.c.all ? 2 : 1) : 0) || a.s.name.localeCompare(b.s.name, "ar"));
   const cnt = { no: M.S.filter((s) => !s.L[l.i]).length, weak: M.S.filter((s) => { const c = s.L[l.i]; return c && c.all && pc(c.ok, c.all) < 50; }).length, done: M.S.filter((s) => s.L[l.i] && s.L[l.i].all).length };
   const Q = Object.values(l.Q).sort((a, b) => pc(a.ok, a.all) - pc(b.ok, b.all));
   return `<div class="ldet"><div><h4>👥 الطلاب في هذا الدرس</h4>
   <div class="flt">${[["all", "الكل", M.S.length], ["done", "أجابوا", cnt.done], ["no", "لم يفتحوه", cnt.no], ["weak", "بحاجة إلى مساعدة", cnt.weak]].map(([k, t, n]) => `<button data-f="${k}" class="${lf === k ? "on" : ""}">${t} (${n})</button>`).join("")}</div>
   <table><tr><th>الطالب</th><th>فتح الدرس</th><th>الأسئلة (آخر محاولة)</th><th>الطرق التي استخدمها</th><th>آخر مرة</th></tr>
-  ${S.map(({ s, c }) => `<tr class="ck" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${openTag(c)}</td><td>${qTag(c, l)}</td>
+  ${S.map(({ s, c }) => `<tr class="ck ${s.ghost ? "ghost" : ""}" data-s="${s.id}" data-l="${l.i}"><td><b>${esc(s.name)}</b></td><td>${s.ghost ? `<span class="st n">لم يدخل الموقع بعد</span>` : openTag(c)}</td><td>${qTag(c, l)}</td>
   <td><span class="tb">${TABS.map(([k, i, t]) => `<span class="${c && c.tabs.has(k) ? "y" : ""}" title="${t}">${i}</span>`).join("")}</span></td><td class="muted">${c ? ago(c.last) : "—"}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">لا يوجد طلاب بهذا الفلتر.</td></tr>`}</table></div>
   <div><h4>❓ صعوبة الأسئلة (من الأصعب)</h4>${Q.length ? `<table><tr><th>السؤال</th><th style="width:150px">نسبة الصواب</th></tr>${Q.map((x) => `<tr><td>${esc(x.q)}<div class="muted">الجواب: ${esc(x.right)}</div></td><td><div class="qbar"><span class="bar"><i style="width:${pc(x.ok, x.all)}%"></i></span><b>${pc(x.ok, x.all)}%</b></div><div class="muted">${x.all} إجابة</div></td></tr>`).join("")}</table>` : `<div class="card empty">لم يُجب أحد عن أسئلة هذا الدرس بعد.</div>`}</div></div>`;
 }
 function matrixView(S, q) {
-  const R = S.filter((s) => !q || s.name.includes(q)).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, "ar"));
+  const R = S.filter((s) => !q || s.name.includes(q)).sort((a, b) => (a.ghost ? 1 : 0) - (b.ghost ? 1 : 0) || b.n - a.n || a.name.localeCompare(b.name, "ar"));
   if (!R.length) return `<div class="card empty">لا يوجد طلاب بعد.</div>`;
   return LEG + `<div class="card mx"><table><tr><th></th>${UN.map((u) => `<th class="u" style="--c:${u.c}" colspan="${LS.filter((l) => l.u === u.k).length}" title="${esc(u.t)}">${u.k + 1}</th>`).join("")}<th></th></tr>
   <tr class="l2"><th></th>${LS.map((l) => `<th title="${esc(l.f)}">${l.i + 1}</th>`).join("")}<th>الأسئلة</th></tr>
-  ${groups(R).map(([gn, G]) => `<tr class="gr"><td colspan="${LS.length + 2}">${esc(gn)} <em>${G.length}</em></td></tr>` + G.map((s) => `<tr><td class="nm" data-s="${s.id}">${esc(s.name)}</td>${LS.map((l) => { const c = s.L[l.i], v = lvl(c), p = c && c.all ? pc(c.ok, c.all) : null;
+  ${groups(R).map(([gn, G]) => `<tr class="gr"><td colspan="${LS.length + 2}">${esc(gn)} <em>${G.length}</em></td></tr>` + G.map((s) => `<tr class="${s.ghost ? "ghost" : ""}"><td class="nm" data-s="${s.id}">${esc(s.name)}${s.ghost ? `<small> · لم يدخل</small>` : ""}</td>${LS.map((l) => { const c = s.L[l.i], v = lvl(c), p = c && c.all ? pc(c.ok, c.all) : null;
     return `<td><div class="cell c-${v}" data-s="${s.id}" data-l="${l.i}" title="${esc(s.name)} · الدرس ${l.i + 1}: ${esc(l.f)}\n${!c ? "لم يفتحه" : `فتحه ${c.views} مرة · الأسئلة: ${c.sc} من ${l.qs.length}`}">${c ? (c.tr ? c.sc + "/" + l.qs.length : "👁" + c.views) : ""}</div></td>`; }).join("")}<td class="sum">${s.sc}/${TOTQ}</td></tr>`).join("")).join("")}</table></div>`;
 }
 function studentsView(S, q) {
-  const R = S.filter((s) => !q || [s.name, s.email].join(" ").includes(q)).sort((a, b) => (b.last || "").localeCompare(a.last || ""));
-  return groups(R).map(([gn, R]) => `<div class="card grp"><h3 class="gh">${esc(gn)} <em>${R.length} طالب دخل الموقع</em></h3><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصواب</span><span>آخر نشاط</span></div>
-  ${R.map((s) => `<div class="srow" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length} درس<small>${s.sc}/${TOTQ} سؤال صحيح</small></span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لم يدخل أي طالب من هذه الشعبة بعد.</div>`}</div>`).join("");
+  const R = S.filter((s) => !q || [s.name, s.email].join(" ").includes(q)).sort((a, b) => (a.ghost ? 1 : 0) - (b.ghost ? 1 : 0) || (b.last || "").localeCompare(a.last || "") || a.name.localeCompare(b.name));
+  return groups(R).map(([gn, R]) => `<div class="card grp"><h3 class="gh">${esc(gn)} <em>دخل الموقع ${R.filter((s) => !s.ghost).length} من ${R.length}</em></h3><div class="shead"><span>الطالب</span><span>الدروس (كل مربع درس)</span><span>فتح</span><span>نسبة الصواب</span><span>آخر نشاط</span></div>
+  ${R.map((s) => `<div class="srow ${s.ghost ? "ghost" : ""}" data-s="${s.id}"><span><b>${esc(s.name)}</b><small>${s.ghost ? "لم يدخل الموقع بعد · " : ""}${esc(s.email)}</small></span><span class="dots">${LS.map((l) => `<i class="c-${lvl(s.L[l.i])}" title="${esc(l.f)}"></i>`).join("")}</span><span><b>${s.n}</b>/${LS.length} درس<small>${s.sc}/${TOTQ} سؤال صحيح</small></span><span>${pill(s.p)}</span><span class="muted">${ago(s.last)}</span></div>`).join("") || `<div class="empty">لم يدخل أي طالب من هذه الشعبة بعد.</div>`}</div>`).join("");
 }
 // split students by section (when «كل الشعب» is selected)
 function groups(list) {
