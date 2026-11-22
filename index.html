@@ -2162,7 +2162,7 @@ const LT = { // lesson -> parts the lens highlights (+ screen content, + animate
   7: { t: ["ram", "rom", "cpu", "cache"], leg: true, flow: ["rom", "cpu", "ram"], fl: ["ROM: برنامج BIOS (قراءة فقط)", "المعالج و Cache بداخله", "RAM: العمل المؤقت"], pk: ["تعليمات التشغيل", "بيانات"] },
   8: { t: ["hdd", "ssd", "odd", "cloud", "ram", "router"], leg: true, flow: ["ram", "ssd", "router", "cloud"], fl: ["ملف مفتوح في RAM", "حفظ دائم على SSD", "عبر الإنترنت", "نسخة في التخزين السحابي"], pk: ["ملف", "ملف", "ملف"] },
   9: { t: ["cpu", "ram", "ssd"], tags: [["cpu", "المسجّلات: بت وبايت"], ["ram", "RAM: جيجابايت GB"], ["ssd", "SSD: تيرابايت TB"]] },
-  10: { t: ["user", "kb", "mon", "cpu", "ram", "rom", "prn", "ssd"] },
+  10: { t: ["user", "mon", "cpu", "rom", "ram", "ssd", "prn", "kb"] },
   11: { t: ["mon", "cloud", "ssd"] },
   12: { t: ["user", "kb", "mon", "cpu", "ram"] },
   13: { t: ["rom", "ssd", "ram", "cpu", "mon", "mouse", "kb", "prn"] },
@@ -2630,18 +2630,30 @@ function stageLang(v) {
       on(4.4 + j * 0.4, D, T(SX + 406, y + 46, "8", { s: 22, c: "#7CFC9A" })) + on(2.6 + j * 0.4, D, T(SX + 256, y + 40, "⟶", { s: 14, c: "#F2B705", ltr: 1 })); }).join("");
 }
 const STAGES = {
-  10: { parts: ["user", "mon", "cpu", "rom", "prn", "ssd"], steps: [
-    { g: "البرامج التطبيقية", t: "البرامج التطبيقية", tiles: [["W", "Word", "#2b579a"], ["◉", "Chrome", "#db4437"], ["Ps", "Photoshop", "#31a8ff"]], p: ["user", "mon"], pk: "مهمة", d: "تساعد المستخدم على إنجاز مهامه، مثل كتابة نص أو تصفّح الإنترنت. نثبّتها حسب الحاجة." },
-    { g: "برمجيات النظام", t: "نظام التشغيل", tiles: [["⊞", "Windows", "#0078d4"], ["🐧", "Linux", "#333"], ["U", "Unix", "#5b6b82"]], p: ["mon", "cpu"], pk: "إدارة", d: "يدير موارد الحاسوب، وهو الوسيط بين المستخدم والعتاد." },
-    { g: "برمجيات النظام", t: "برامج تشغيل الأجهزة Drivers", tiles: [["🖨", "تعريف الطابعة", "#1E9E5A"]], p: ["mon", "prn"], pk: "تعريف", d: "تعرّف الحاسوب على الجهاز المتصل به. بدون تعريف الطابعة لا يعرف الحاسوب كيف يطبع." },
-    { g: "برمجيات النظام", t: "البرامج الثابتة Firmware", tiles: [["⚙", "BIOS", "#8E44AD"]], p: ["rom", "cpu"], pk: "BIOS", d: "مضمّنة في ROM أثناء التصنيع، مثل BIOS الذي يشغّل الجهاز." },
-    { g: "برمجيات النظام", t: "برامج الخدمات Utility", tiles: [["🛡", "مكافح الفيروسات", "#c0392b"], ["🧹", "تنظيف القرص", "#e67e22"], ["💾", "نسخ احتياطي", "#2E86DE"]], p: ["mon", "ssd"], pk: "فحص", d: "تدعم عمل الحاسوب وتحافظ عليه." },
-    { g: "لغات البرمجة", t: "لغات البرمجة", tiles: [["Py", "Python", "#3776ab"], ["C", "C", "#5c6bc0"], ["J", "Java", "#e76f00"]], p: ["user", "mon"], pk: "كود", d: "النوع الثالث: يكتب بها المبرمج البرامج كلها." },
-    { sum: 1, t: "الخلاصة: البرمجيات ثلاثة أنواع", d: "برمجيات النظام، والبرامج التطبيقية، ولغات البرمجة." },
+  10: { parts: ["user", "mon", "cpu", "rom", "ram", "ssd", "prn", "kb"], steps: [
+    { k: "fw", scr: "bios", p: ["rom", "cpu"], pk: "BIOS", tg: [["rom", "BIOS ساكن هنا"]], t: "1. سارة تضغط زر التشغيل", d: "" },
+    { k: "os", scr: "boot", p: ["ssd", "ram", "cpu"], pk: "Windows", tg: [["ssd", "Windows محفوظ هنا"], ["ram", "يُنسخ إلى RAM"]], t: "2. BIOS يُحضر نظام التشغيل", d: "" },
+    { k: "os", scr: "desk", p: ["cpu", "mon"], pk: "سطح المكتب", t: "3. نظام التشغيل جاهز", d: "" },
+    { k: "app", scr: "word", p: ["ssd", "ram", "cpu", "mon"], pk: "Word", tg: [["ssd", "Word محفوظ هنا"], ["ram", "يُنسخ إلى RAM"]], t: "4. سارة تفتح Word", d: "" },
+    { k: "drv", scr: "print", p: ["cpu", "prn"], pk: "طباعة", tg: [["prn", "تعريف الطابعة يترجم الأمر"]], t: "5. سارة تطبع واجبها", d: "" },
+    { k: "ut", scr: "av", p: ["cpu", "ssd"], pk: "فحص", tg: [["ssd", "يفحص الملفات"]], t: "6. مكافح الفيروسات يحرس الملفات", d: "" },
+    { k: "lang", scr: "code", p: ["user", "kb", "ssd"], pk: "C++", tg: [["user", "المبرمج"], ["ssd", "word.exe"]], t: "7. ومن أين جاء Word أصلاً؟", d: "" },
+    { k: "sum", scr: "sum", t: "الخلاصة: ثلاثة أنواع", d: "" },
   ], scr: (s) => {
-      if (s.sum) return [["برمجيات النظام", "#16213e", "⊞ 🖨 ⚙ 🛡"], ["البرامج التطبيقية", "#2b579a", "W ◉ Ps"], ["لغات البرمجة", "#8E44AD", "Py C J"]].map(([n, c, ic], j) => { const w = 132, x = SX + SW - 12 - (j + 1) * w - j * 10; return `<rect x="${x}" y="${SY + 30}" width="${w}" height="184" rx="14" fill="${c}"/>${stT(x + w / 2, SY + 108, ic, { s: 20, c: "#fff", ltr: 1 })}${stT(x + w / 2, SY + 168, n, { s: 17, c: "#fff" })}`; }).join("");
-      const n = s.tiles.length, w = n === 1 ? 170 : 124, gap = 14, x0 = SX + (SW - (n * w + (n - 1) * gap)) / 2;
-      return `${stT(SX + SW - 16, SY + 30, s.g, { s: 14, c: "#9fd3ff", a: "start" })}${stT(SX + SW / 2, SY + 66, s.t, { s: 24, c: "#fff" })}` + s.tiles.map(([ic, nm, c], j) => { const x = x0 + (n - 1 - j) * (w + gap); return `<rect x="${x}" y="${SY + 88}" width="${w}" height="140" rx="16" fill="#fff"/><rect x="${x + w / 2 - 34}" y="${SY + 102}" width="68" height="68" rx="16" fill="${c}"/>${stT(x + w / 2, SY + 148, ic, { s: 28, c: "#fff", ltr: 1 })}${stT(x + w / 2, SY + 206, nm, { s: 16, ltr: /^[A-Za-z]/.test(nm) })}`; }).join(""); } },
+      const TY = { fw: ["برمجيات النظام", "البرامج الثابتة Firmware", "#8E44AD"], os: ["برمجيات النظام", "نظام التشغيل", "#0078d4"], app: ["البرامج التطبيقية", "Word", "#2b579a"], drv: ["برمجيات النظام", "برنامج تشغيل الطابعة Driver", "#1E9E5A"], ut: ["برمجيات النظام", "برامج الخدمات Utility", "#c0392b"], lang: ["لغات البرمجة", "C++", "#e67e22"] }[s.k];
+      const badge = TY ? `<rect x="${SX + 10}" y="${SY + SH - 40}" width="${SW - 20}" height="32" rx="16" fill="${TY[2]}"/>${stT(SX + SW / 2, SY + SH - 18, TY[0] + " · " + TY[1], { s: 15, c: "#fff" })}` : "";
+      const win = (x, y, w, hh, c, t) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="8" fill="#fff"/><rect x="${x}" y="${y}" width="${w}" height="24" rx="8" fill="${c}"/>${stT(x + w / 2, y + 17, t, { s: 13, c: "#fff", ltr: 1 })}`;
+      const mono = (x, y, t, c, sz) => `<text x="${x}" y="${y}" style="font:700 ${sz || 13}px ui-monospace,Menlo,monospace;fill:${c};direction:ltr">${esc(t)}</text>`;
+      let b = "";
+      if (s.scr === "bios") b = `<rect x="${SX}" y="${SY}" width="${SW}" height="${SH}" fill="#000"/>${mono(SX + 20, SY + 34, "BIOS v2.1", "#9aa4b2")}${mono(SX + 20, SY + 62, "CPU ......... OK", "#7CFC9A")}${mono(SX + 20, SY + 86, "RAM 8GB ..... OK", "#7CFC9A")}${mono(SX + 20, SY + 110, "Keyboard .... OK", "#7CFC9A")}${mono(SX + 20, SY + 134, "Disk SSD .... OK", "#7CFC9A")}${stT(SX + SW - 60, SY + 110, "⏻", { s: 54, c: "#F2B705" })}`;
+      else if (s.scr === "boot") b = `<rect x="${SX}" y="${SY}" width="${SW}" height="${SH}" fill="#000"/><g transform="translate(${SX + SW / 2 - 36} ${SY + 40})"><rect width="34" height="34" fill="#f25022"/><rect x="38" width="34" height="34" fill="#7fba00"/><rect y="38" width="34" height="34" fill="#00a4ef"/><rect x="38" y="38" width="34" height="34" fill="#ffb900"/></g><rect x="${SX + 118}" y="${SY + 140}" width="200" height="10" rx="5" fill="#333"/><rect x="${SX + 118}" y="${SY + 140}" width="0" height="10" rx="5" fill="#00a4ef"><animate attributeName="width" dur="3s" repeatCount="indefinite" values="0;200"/></rect>`;
+      else if (s.scr === "desk") b = `<rect x="${SX}" y="${SY}" width="${SW}" height="${SH}" fill="#1f6fb2"/>` + [["📄", "ملفاتي"], ["W", "Word"], ["🗑", "سلة"]].map(([ic, n], j) => stT(SX + SW - 40, SY + 40 + j * 54, ic, { s: 24, c: "#fff" }) + stT(SX + SW - 40, SY + 58 + j * 54, n, { s: 11, c: "#fff" })).join("") + `<rect x="${SX}" y="${SY + SH - 48}" width="${SW}" height="8" fill="#0f1724"/>`;
+      else if (s.scr === "word") b = win(SX + 20, SY + 14, SW - 40, 160, "#2b579a", "Word") + stT(SX + SW - 40, SY + 76, "واجب الحاسوب", { s: 16, a: "start" }) + `<rect x="${SX + 60}" y="${SY + 92}" width="300" height="8" rx="4" fill="#d5dbe3"/><rect x="${SX + 120}" y="${SY + 110}" width="240" height="8" rx="4" fill="#d5dbe3"/><rect x="${SX + 160}" y="${SY + 128}" width="200" height="8" rx="4" fill="#d5dbe3"/>`;
+      else if (s.scr === "print") b = win(SX + 70, SY + 14, SW - 140, 160, "#14213D", "Print") + stT(SX + SW / 2, SY + 80, "🖨  الطابعة: HP", { s: 16 }) + stT(SX + SW / 2, SY + 112, "التعريف: HP Driver ✓", { s: 14, c: "#1E7B45" }) + `<rect x="${SX + SW / 2 - 50}" y="${SY + 130}" width="100" height="30" rx="8" fill="#2b579a"/>` + stT(SX + SW / 2, SY + 150, "طباعة", { s: 14, c: "#fff" });
+      else if (s.scr === "av") b = `<rect x="${SX}" y="${SY}" width="${SW}" height="${SH}" fill="#14213D"/>${stT(SX + SW / 2, SY + 70, "🛡", { s: 44 })}${stT(SX + SW / 2, SY + 112, "جارٍ فحص الملفات…", { s: 16, c: "#fff" })}<rect x="${SX + 98}" y="${SY + 130}" width="240" height="12" rx="6" fill="#333"/><rect x="${SX + 98}" y="${SY + 130}" width="0" height="12" rx="6" fill="#1E9E5A"><animate attributeName="width" dur="3s" repeatCount="indefinite" values="0;240"/></rect>${stT(SX + SW / 2, SY + 172, "لا توجد فيروسات ✓", { s: 14, c: "#7CFC9A" })}`;
+      else if (s.scr === "code") b = `<rect x="${SX + 10}" y="${SY + 10}" width="${SW - 20}" height="${SH - 58}" rx="8" fill="#1e1e2e"/>${mono(SX + 24, SY + 40, "// Word.cpp", "#7f848e")}${mono(SX + 24, SY + 66, "void save(File f) {", "#c678dd")}${mono(SX + 44, SY + 90, "disk.write(f);", "#e5c07b")}${mono(SX + 24, SY + 114, "}", "#c678dd")}${stT(SX + SW - 30, SY + 150, "⟵ يُترجم إلى word.exe", { s: 14, c: "#7CFC9A", a: "start" })}`;
+      else b = [["برمجيات النظام", "#16213e", "⚙ ⊞ 🖨 🛡", "في ROM و SSD ثم RAM"], ["البرامج التطبيقية", "#2b579a", "W", "من SSD إلى RAM"], ["لغات البرمجة", "#e67e22", "C++", "يكتب بها المبرمج"]].map(([n, c, ic, where], j) => { const w = 132, x = SX + SW - 12 - (j + 1) * w - j * 10; return `<rect x="${x}" y="${SY + 16}" width="${w}" height="212" rx="14" fill="${c}"/>${stT(x + w / 2, SY + 90, ic, { s: 22, c: "#fff", ltr: 1 })}${stT(x + w / 2, SY + 150, n, { s: 16, c: "#fff" })}${stT(x + w / 2, SY + 190, where, { s: 11, c: "#F2B705" })}`; }).join("");
+      return b + badge; } },
   11: { parts: ["mon", "cloud", "ssd"], steps: [
     { c: ["A", "Adobe Reader", "#e2231a", "مجاني Freeware"], b: [["💲", "مجاناً مدى الحياة", "#1E7B45"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "مجاني Freeware", d: "تحمّله من الإنترنت وتثبّته على القرص، وتستخدمه مجاناً مدى الحياة. لكن الكود المصدري غير متاح." },
     { c: ["Ps", "Photoshop", "#31a8ff", "تجريبي Shareware"], b: [["⏳", "مجاناً 30 يوماً فقط ثم تدفع", "#e67e22"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "تجريبي Shareware", d: "مجاني لفترة محدودة فقط، ثم تدفع لتكمل استخدامه. الكود غير متاح." },
@@ -2715,14 +2727,15 @@ function stageDraw() {
   const g = document.getElementById("stage"), c = document.getElementById("stCap"); if (!g || !c || ST.i < 0) return; clearTimeout(ST.tm);
   const S = STAGES[ST.i], s = S.steps[ST.k];
   let h = `<g class="st-scr"><rect x="${SX}" y="${SY}" width="${SW}" height="${SH}" fill="#1b2a44"/>${S.scr(s)}</g>`;
-  if (s.p && !S.mon) { const [a, b] = s.p.map(centerOf), dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, hh = Math.min(110, L * 0.3); let nx = -dy / L, ny = dx / L; if (ny > 0) { nx = -nx; ny = -ny; }
-    const d = `M${a[0]} ${a[1]} Q${(a[0] + b[0]) / 2 + nx * hh} ${(a[1] + b[1]) / 2 + ny * hh} ${b[0]} ${b[1]}`, w = Math.max(56, s.pk.length * 11 + 30);
-    h += `<path d="${d}" class="st-glow"/><path d="${d}" class="st-path"/><circle cx="${a[0]}" cy="${a[1]}" r="16" class="st-end"/><circle cx="${b[0]}" cy="${b[1]}" r="20" class="st-end b"/>
-      <g class="st-pk"><animateMotion dur="2.2s" repeatCount="indefinite" path="${d}" keyPoints="0;1;1" keyTimes="0;.75;1" calcMode="linear"/><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text y="7">${esc(s.pk)}</text></g>`; }
-  (S.tags || []).forEach(([pt, txt]) => { const [x, y] = centerOf(pt), w = txt.length * 9.5 + 26; h += `<g class="st-tag"><rect x="${x - w / 2}" y="${y - 70}" width="${w}" height="32" rx="16"/><text x="${x}" y="${y - 48}">${txt}</text><path d="M${x} ${y - 38} V${y - 18}"/></g>`; });
+  if (s.p && !S.mon) { const P = s.p.map(centerOf); let d = `M${P[0][0]} ${P[0][1]}`;
+    for (let k = 1; k < P.length; k++) { const a = P[k - 1], b = P[k], dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, hh = Math.min(90, L * 0.3); let nx = -dy / L, ny = dx / L; if (ny > 0) { nx = -nx; ny = -ny; } d += ` Q${(a[0] + b[0]) / 2 + nx * hh} ${(a[1] + b[1]) / 2 + ny * hh} ${b[0]} ${b[1]}`; }
+    const w = Math.max(56, (s.pk || "").length * 11 + 30), dur = 1.4 + 1.3 * (P.length - 1);
+    h += `<path d="${d}" class="st-glow"/><path d="${d}" class="st-path"/>` + P.map((q, k) => `<circle cx="${q[0]}" cy="${q[1]}" r="${k === P.length - 1 ? 20 : 15}" class="st-end ${k === P.length - 1 ? "b" : ""}"/>`).join("") +
+      (s.pk ? `<g class="st-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1;1" keyTimes="0;.8;1" calcMode="linear"/><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text y="7">${esc(s.pk)}</text></g>` : ""); }
+  [...(S.tags || []), ...(s.tg || [])].forEach(([pt, txt], k) => { const [x, y] = centerOf(pt), w = txt.length * 9.5 + 30, up = k % 2 ? 1 : -1, ty = up < 0 ? y - 70 : y + 38; h += `<g class="st-tag"><rect x="${x - w / 2}" y="${ty}" width="${w}" height="32" rx="16"/><text x="${x}" y="${ty + 22}">${txt}</text><path d="M${x} ${up < 0 ? y - 38 : y + 38} V${up < 0 ? y - 18 : y + 18}"/></g>`; });
   g.innerHTML = h; try { document.getElementById("scene").setCurrentTime(0); } catch (e) {}
   // camera: frame the screen and the two ends of this step's path, leaving room for the caption at the bottom
-  try { const ids = S.mon ? ["mon"] : [...new Set(["mon", ...(s.p || []), ...(S.tags || []).map((x) => x[0])])]; setFocus(ids); const r = bboxOf(groupsOf(ids)); r.h += Math.max(110, r.h * 0.3); zoomTo(r, 30); } catch (e) {}
+  try { const ids = S.mon ? ["mon"] : [...new Set(["mon", ...(s.p || []), ...(S.tags || []).map((x) => x[0]), ...(s.tg || []).map((x) => x[0])])]; setFocus(ids); const r = bboxOf(groupsOf(ids)); r.h += Math.max(110, r.h * 0.3); zoomTo(r, 30); } catch (e) {}
   c.querySelector("h4").textContent = s.t; c.querySelector("p").innerHTML = esc(s.d); c.querySelector("p").style.display = s.d ? "" : "none";
   c.querySelectorAll(".stc-dots i").forEach((d) => d.classList.toggle("on", +d.dataset.k === ST.k));
   c.querySelector('[data-a="play"]').textContent = ST.play ? "⏸" : "▶";
