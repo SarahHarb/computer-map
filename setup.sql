@@ -55,8 +55,8 @@ create trigger on_auth_user_created after insert on auth.users
 create or replace function public.only_ppu_emails()
 returns trigger language plpgsql as $$
 begin
-  if new.email is null or new.email !~* '@ppu\.edu\.ps$' then
-    raise exception 'Only @ppu.edu.ps emails are allowed';
+  if new.email is null or new.email !~* '@ppu\.edu(\.ps)?$' then
+    raise exception 'Only @ppu.edu.ps or @ppu.edu emails are allowed';
   end if;
   return new;
 end $$;
