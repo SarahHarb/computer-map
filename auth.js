@@ -62,7 +62,7 @@
     const { data } = await sb.from("profiles").select("*").eq("id", u.id).maybeSingle();
     profile = data || { full_name: (u.user_metadata || {}).full_name || u.email, role: "student" };
     // only students listed in the course sections (شعب) may use the site
-    if (profile.role !== "admin") { const { data: ok, error } = await sb.rpc("is_allowed"); if (!error && ok === false) { await sb.auth.signOut(); user = null; L.style.display = ""; say("حسابك (" + u.email + ") غير مسجّل في شعب هذه المادة. إذا كنت طالباً في الشعبة، تواصل مع المعلمة لإضافتك."); return; } }
+    if (profile.role !== "admin") { const { data: ok, error } = await sb.rpc("is_allowed"); if (!error && ok === false) { await sb.auth.signOut(); user = null; L.style.display = ""; say("حسابك (" + u.email + ") غير مسجّل في شعب هذه المادة. إذا كنت طالباً في الشعبة، تواصل مع مدرّسك لإضافتك."); return; } }
     const [{ data: at }, { data: vw }] = await Promise.all([sb.from("attempts").select("concept,question,is_correct,created_at").eq("user_id", u.id), sb.from("views").select("concept,tab,created_at").eq("user_id", u.id)]);
     stats = { ok: (at || []).filter((x) => x.is_correct).length, all: (at || []).length };
     const MY = (window.MY = window.MY || {}); MY.A = at || []; MY.V = vw || []; MY.uid = u.id; MY.ready = true;
