@@ -113,3 +113,22 @@ drop policy if exists "ann read" on public.announcements;
 create policy "ann read" on public.announcements for select to authenticated using (true);
 drop policy if exists "ann admin" on public.announcements;
 create policy "ann admin" on public.announcements for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- ===== الشعب: فقط طلاب الشعب يدخلون الموقع =====
+create table if not exists public.sections (id bigint generated always as identity primary key, name text unique not null, created_at timestamptz not null default now());
+create table if not exists public.roster (email text primary key, name text, section_id bigint not null references public.sections(id) on delete cascade, added_at timestamptz not null default now());
+alter table public.sections enable row level security;
+alter table public.roster enable row level security;
+drop policy if exists "sections admin" on public.sections;
+create policy "sections admin" on public.sections for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "roster admin" on public.roster;
+create policy "roster admin" on public.roster for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create or replace function public.is_allowed() returns boolean language sql stable security definer set search_path = public as $$
+  select public.is_admin() or exists (select 1 from public.roster where lower(email) = lower(auth.jwt() ->> 'email'));
+$$;
+grant execute on function public.is_allowed() to authenticated;
+drop policy if exists "attempts add" on public.attempts;
+create policy "attempts add" on public.attempts for insert to authenticated with check (user_id = auth.uid() and public.is_allowed());
+drop policy if exists "views add" on public.views;
+create policy "views add" on public.views for insert to authenticated with check (user_id = auth.uid() and public.is_allowed());
+insert into public.sections (name) values ('شعبة 38'), ('شعبة 53') on conflict (name) do nothing;

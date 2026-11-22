@@ -23,6 +23,12 @@ main{padding:18px 22px 60px;max-width:1500px;margin:auto}
 .nav input{font-family:inherit;font-size:15px;padding:8px 14px;border:2px solid var(--ln);border-radius:12px;min-width:240px;margin-inline-start:auto}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mu);font-weight:700;margin:0 0 10px}
 .legend span{display:inline-flex;align-items:center;gap:5px}.legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.secbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 10px}.secbar b{color:var(--nv)}
+.secbar button{font-family:inherit;font-weight:800;font-size:14px;border:2px solid var(--ln);background:#fff;color:var(--nv);border-radius:999px;padding:5px 14px;cursor:pointer}.secbar button em{font-style:normal;color:var(--mu);font-size:12px;margin-inline-start:4px}
+.secbar button.on{background:var(--gd);border-color:var(--gd)}.secbar button.add{border-style:dashed;color:var(--mu)}
+.sec{margin-bottom:12px}.sech{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--ln)}.sech h2{margin:0;font-size:18px;color:var(--nv);margin-inline-end:auto}.sech h2 em{font-style:normal;font-size:13px;color:var(--mu);font-weight:700}
+.addbox{padding:12px 16px;background:#FFFBEA;border-bottom:1px solid var(--ln)}.addbox p{margin:0 0 6px}.addbox textarea{width:100%;font-family:inherit;font-size:14px;border:2px solid var(--ln);border-radius:10px;padding:8px;direction:rtl}
+.st.g{background:#E3F6EA;color:#1E7B45}.rm{border:none;background:none;color:#c0392b;cursor:pointer;font-size:15px}
 .card{background:#fff;border-radius:16px;border:1px solid var(--ln);overflow:hidden}
 /* lessons view */
 .unit{margin-bottom:14px}
@@ -88,7 +94,8 @@ tr.ck{cursor:pointer}tr.ck:hover td{background:#FFFBEA}
 <main id="app" style="display:none">
  <div class="kpis" id="kpis"></div>
  <div class="ann card" id="annBox"><b>📢 إعلان للطلاب</b><input id="annTxt" placeholder="مثلاً: امتحان الوحدة الثانية يوم الخميس" maxlength="200"><button class="hb" id="annPub">نشر الإعلان</button><button class="hb gh2" id="annStop">إيقاف الإعلان</button><span id="annSt" class="muted"></span></div>
- <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
+ <div class="secbar" id="secbar"></div>
+ <div class="nav"><button data-v="ls" class="on">📚 حسب الدرس</button><button data-v="mx">🟩 خريطة التقدّم</button><button data-v="st">👥 الطلاب</button><button data-v="log">🕒 آخر النشاط</button><button data-v="sec">🗂️ الشعب والطلاب</button><input id="q" placeholder="🔍 ابحثي باسم طالب أو درس"></div>
  <div id="view"></div>
 </main>
 <div id="dr"><div class="hd"><h2 id="dname"></h2><button class="x" id="dreset" title="يحذف إجابات هذا الطالب ونشاطه">🗑️ تصفير</button><button class="x" id="dclose">✕</button></div><div class="bd" id="dbody"></div></div>
@@ -105,6 +112,7 @@ const ago = (d) => { if (!d) return "—"; const m = (Date.now() - new Date(d)) 
 const pc = (ok, all) => all ? Math.round((100 * ok) / all) : null;
 const pill = (p) => p == null ? `<span class="pill p-z">—</span>` : `<span class="pill ${p >= 75 ? "p-g" : p >= 50 ? "p-m" : "p-b"}">${p}%</span>`;
 const lvl = (c) => !c ? "n" : !c.all ? "o" : (p => p >= 75 ? "g" : p >= 50 ? "m" : "b")(pc(c.ok, c.all));
+let SEC = [], R = [], sec = "all", secOk = true, addTo = null;
 let sb, P = [], A = [], V = [], view = "ls", openL = -1, lf = "all", cur = null, M = null;
 
 // concept text -> lesson index
@@ -138,11 +146,15 @@ async function load() {
   annLoad();
   document.getElementById("view").innerHTML = `<div class="card empty">لحظة… جارٍ تحميل البيانات</div>`;
   [P, A, V] = await Promise.all([all("profiles"), all("attempts"), all("views")]);
+  const [s1, s2] = await Promise.all([sb.from("sections").select("*").order("id"), sb.from("roster").select("*").order("name")]);
+  secOk = !s1.error && !s2.error; SEC = s1.data || []; R = (s2.data || []).map((r) => ({ ...r, email: r.email.toLowerCase() }));
+  if (sec !== "all" && !SEC.some((x) => x.id == sec)) sec = "all";
   build(); draw();
 }
 // model: per student × lesson
 function build() {
-  const S = P.filter((p) => p.role !== "admin").map((p) => ({ ...p, name: p.full_name || (p.email || "").split("@")[0], L: {}, ok: 0, all: 0, last: null }));
+  const inSec = (p) => sec === "all" || R.some((r) => r.section_id == sec && r.email === (p.email || "").toLowerCase());
+  const S = P.filter((p) => p.role !== "admin" && inSec(p)).map((p) => ({ ...p, name: p.full_name || (p.email || "").split("@")[0], L: {}, ok: 0, all: 0, last: null }));
   const by = Object.fromEntries(S.map((s) => [s.id, s]));
   const cell = (s, i) => (s.L[i] ||= { views: 0, tabs: new Set(), ok: 0, all: 0, wrong: [], last: null });
   const touch = (o, t) => { if (!o.last || t > o.last) o.last = t; };
@@ -163,8 +175,9 @@ function draw() {
   if (view === "ls") el.innerHTML = lessonsView(Ls, N, q);
   else if (view === "mx") el.innerHTML = matrixView(S, q);
   else if (view === "st") el.innerHTML = studentsView(S, q);
+  else if (view === "sec") el.innerHTML = secView(q);
   else el.innerHTML = logView(q);
-  bind();
+  drawSecBar(); bind();
 }
 const LEG = `<div class="legend"><span><i class="c-n"></i>لم يفتح الدرس</span><span><i class="c-o"></i>فتحه ولم يُجب</span><span><i class="c-g"></i>أجاب 75%+</span><span><i class="c-m"></i>50–74%</span><span><i class="c-b"></i>أقل من 50%</span></div>`;
 function lessonsView(Ls, N, q) {
@@ -213,7 +226,55 @@ function logView(q) {
   return `<div class="card"><table><tr><th>الوقت</th><th>الطالب</th><th>الدرس</th><th>النشاط</th></tr>${L.map((x) => { const i = lessonOf(x.concept);
     return `<tr class="ck" data-s="${x.user_id}"><td class="muted">${ago(x.created_at)}</td><td><b>${esc(nm(x.user_id))}</b></td><td>${i >= 0 ? `<b>${i + 1}.</b> ${esc(LS[i].f)}` : esc(x.concept)}</td><td>${x.k === "a" ? `${x.is_correct ? "✅" : "❌"} ${esc(x.question)} ← <b>${esc(x.answer)}</b>` : "فتح " + (tabName[x.tab] || esc(x.tab))}</td></tr>`; }).join("") || `<tr><td colspan="4" class="empty">لا يوجد نشاط بعد.</td></tr>`}</table></div>`;
 }
+// ---------- sections (شعب) ----------
+const byMail = () => Object.fromEntries(P.map((p) => [(p.email || "").toLowerCase(), p]));
+function drawSecBar() {
+  const n = (id) => R.filter((r) => r.section_id == id).length;
+  document.getElementById("secbar").innerHTML = !secOk ? `<span class="muted">⚠️ جدول الشعب غير موجود بعد (شغّلي أمر SQL).</span>` :
+    `<b>الشعبة:</b><button data-sec="all" class="${sec === "all" ? "on" : ""}">كل الشعب <em>${R.length}</em></button>${SEC.map((x) => `<button data-sec="${x.id}" class="${sec == x.id ? "on" : ""}">${esc(x.name)} <em>${n(x.id)}</em></button>`).join("")}<button class="add" id="secAdd">➕ شعبة جديدة</button>`;
+  document.querySelectorAll("#secbar [data-sec]").forEach((b) => (b.onclick = () => { sec = b.dataset.sec; build(); draw(); }));
+  const a = document.getElementById("secAdd"); if (a) a.onclick = async () => { const nm = prompt("اسم الشعبة الجديدة (مثلاً: شعبة 61)"); if (!nm || !nm.trim()) return; const { error } = await sb.from("sections").insert({ name: nm.trim() }); if (error) return alert(error.message); load(); };
+}
+function secView(q) {
+  if (!secOk) return `<div class="card empty">جدول الشعب غير موجود بعد. شغّلي أمر SQL ثم حدّثي الصفحة.</div>`;
+  const bm = byMail(), stat = (email) => { const p = bm[email]; const s = p && M.by[p.id]; return { p, s }; };
+  const list = SEC.filter((x) => sec === "all" || x.id == sec);
+  return list.map((x) => { const rows = R.filter((r) => r.section_id == x.id && (!q || (r.name + " " + r.email).includes(q)));
+    const joined = R.filter((r) => r.section_id == x.id && bm[r.email]).length, tot = R.filter((r) => r.section_id == x.id).length;
+    return `<div class="card sec"><div class="sech"><h2>${esc(x.name)} <em>${tot} طالب · دخل الموقع ${joined}</em></h2>
+    <button class="hb" data-add="${x.id}">➕ إضافة طلاب</button><button class="hb gh2" data-ren="${x.id}">✏️ تغيير الاسم</button><button class="hb gh2" data-del="${x.id}">🗑️ حذف الشعبة</button></div>
+    ${addTo == x.id ? `<div class="addbox"><p><b>الصقي قائمة الطلاب:</b> كل سطر فيه اسم الطالب وإيميله الجامعي (من Classroom أو Excel). أو ارفعي ملف CSV.</p>
+      <textarea id="addTxt" rows="7" placeholder="أحمد محمد, s12345@ppu.edu.ps&#10;سارة علي, s67890@ppu.edu.ps"></textarea>
+      <div><button class="hb" id="addGo">حفظ الطلاب</button> <label class="hb gh2">📄 ملف CSV<input type="file" id="addFile" accept=".csv,.txt" hidden></label> <button class="hb gh2" id="addX">إلغاء</button> <span id="addSt" class="muted"></span></div></div>` : ""}
+    <table><tr><th>#</th><th>الطالب</th><th>الإيميل</th><th>الحالة</th><th>دروس فتحها</th><th>نسبة الصواب</th><th>آخر نشاط</th><th></th></tr>
+    ${rows.map((r, k) => { const { p, s } = stat(r.email); return `<tr class="${p ? "ck" : ""}" ${p ? `data-s="${p.id}"` : ""}><td class="muted">${k + 1}</td><td><b>${esc(r.name || (p && p.full_name) || "—")}</b></td><td class="muted" dir="ltr">${esc(r.email)}</td>
+      <td>${p ? `<span class="st g">✓ دخل الموقع</span>` : `<span class="st n">لم يدخل بعد</span>`}</td><td>${s ? `${s.n}/${LS.length}` : "—"}</td><td>${s ? pill(s.p) : "—"}</td><td class="muted">${s ? ago(s.last) : "—"}</td>
+      <td><button class="rm" data-rm="${esc(r.email)}" title="إزالة من الشعبة">✕</button></td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">لا يوجد طلاب في هذه الشعبة بعد. اضغطي «إضافة طلاب».</td></tr>`}</table></div>`; }).join("")
+    || `<div class="card empty">لا توجد شعب بعد. اضغطي «➕ شعبة جديدة».</div>`;
+}
+function parseRoster(txt) {
+  const out = []; txt.split(/\r?\n/).forEach((line) => { const m = line.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/); if (!m) return;
+    const name = line.replace(m[0], "").replace(/["']/g, "").split(/[,;\t]/).map((x) => x.trim()).filter((x) => x && !/^\d+(\.\d+)?%?$/.test(x)).slice(0, 2).join(" ").trim();
+    out.push({ email: m[0].toLowerCase(), name }); });
+  return out;
+}
+function bindSec(el) {
+  el.querySelectorAll("[data-add]").forEach((b) => (b.onclick = () => { addTo = addTo == b.dataset.add ? null : b.dataset.add; draw(); setTimeout(() => { const t = document.getElementById("addTxt"); if (t) t.focus(); }, 30); }));
+  el.querySelectorAll("[data-ren]").forEach((b) => (b.onclick = async () => { const x = SEC.find((s) => s.id == b.dataset.ren), nm = prompt("الاسم الجديد للشعبة", x.name); if (!nm || !nm.trim()) return; const { error } = await sb.from("sections").update({ name: nm.trim() }).eq("id", x.id); if (error) return alert(error.message); load(); }));
+  el.querySelectorAll("[data-del]").forEach((b) => (b.onclick = async () => { const x = SEC.find((s) => s.id == b.dataset.del); if (!confirm(`حذف «${x.name}»؟ سيُحذف طلابها من القائمة ولن يستطيعوا دخول الموقع (تبقى إجاباتهم محفوظة).`)) return; const { error } = await sb.from("sections").delete().eq("id", x.id); if (error) return alert(error.message); load(); }));
+  el.querySelectorAll("[data-rm]").forEach((b) => (b.onclick = async (e) => { e.stopPropagation(); if (!confirm("إزالة " + b.dataset.rm + " من الشعبة؟ لن يستطيع دخول الموقع.")) return; const { error } = await sb.from("roster").delete().eq("email", b.dataset.rm); if (error) return alert(error.message); load(); }));
+  const go = document.getElementById("addGo"); if (!go) return;
+  document.getElementById("addX").onclick = () => { addTo = null; draw(); };
+  document.getElementById("addFile").onchange = async (e) => { const f = e.target.files[0]; if (f) document.getElementById("addTxt").value = await f.text(); };
+  go.onclick = async () => { const L = parseRoster(document.getElementById("addTxt").value), st = document.getElementById("addSt");
+    if (!L.length) return (st.textContent = "لم أجد أي إيميل في النص.");
+    const other = L.filter((x) => R.some((r) => r.email === x.email && r.section_id != addTo)).length;
+    const { error } = await sb.from("roster").upsert(L.map((x) => ({ ...x, section_id: +addTo })), { onConflict: "email" });
+    if (error) return (st.textContent = "⚠️ " + error.message);
+    alert(`تمت إضافة ${L.length} طالب.` + (other ? `\n(${other} منهم كانوا في شعبة أخرى وتم نقلهم.)` : "")); addTo = null; load(); };
+}
 function bind() {
+  bindSec(document.getElementById("view"));
   const el = document.getElementById("view");
   el.querySelectorAll(".lrow").forEach((r) => (r.onclick = () => { const i = +r.dataset.l; openL = openL === i ? -1 : i; lf = "all"; draw(); }));
   el.querySelectorAll(".flt button").forEach((b) => (b.onclick = (e) => { e.stopPropagation(); lf = b.dataset.f; draw(); }));
@@ -241,8 +302,9 @@ document.querySelectorAll(".nav button").forEach((b) => (b.onclick = () => { vie
 document.getElementById("q").oninput = draw;
 document.getElementById("reload").onclick = load;
 document.getElementById("csv").onclick = () => {
-  const rows = [["الطالب", "الإيميل", "دروس فتحها", "نسبة الصواب %", ...LS.map((l) => `${l.i + 1}. ${l.s}`)]];
-  M.S.forEach((s) => rows.push([s.name, s.email, s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "لم يفتح" : !c.all ? "فتحه" : pc(c.ok, c.all) + "%"; })]));
+  const secOf = (e) => { const r = R.find((x) => x.email === (e || "").toLowerCase()); const x = r && SEC.find((s) => s.id == r.section_id); return x ? x.name : ""; };
+  const rows = [["الطالب", "الإيميل", "الشعبة", "دروس فتحها", "نسبة الصواب %", ...LS.map((l) => `${l.i + 1}. ${l.s}`)]];
+  M.S.forEach((s) => rows.push([s.name, s.email, secOf(s.email), s.n, s.p ?? "", ...LS.map((l) => { const c = s.L[l.i]; return !c ? "لم يفتح" : !c.all ? "فتحه" : pc(c.ok, c.all) + "%"; })]));
   rows.push([]); rows.push(["الوقت", "الطالب", "الدرس", "السؤال", "جوابه", "الإجابة الصحيحة", "صحيحة؟"]);
   A.filter((a) => M.by[a.user_id]).forEach((a) => { const i = lessonOf(a.concept); rows.push([new Date(a.created_at).toLocaleString("en-GB"), M.by[a.user_id].name, i >= 0 ? `${i + 1}. ${LS[i].f}` : a.concept, a.question, a.answer, a.correct_answer, a.is_correct ? "صحيح" : "خطأ"]); });
   const csv = "﻿" + rows.map((r) => r.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
