@@ -2650,10 +2650,10 @@ const STAGES = {
     { k: "lang", scr: "code", p: ["user", "kb", "ssd"], pk: "C++", tg: [["user", "المبرمج"], ["ssd", "word.exe"]], t: "7. ومن أين جاء Word أصلاً؟", d: "كتبه مبرمجون بلغة برمجة (مثل C++)، ثم تُرجم إلى ملف word.exe محفوظ على القرص. لغات البرمجة هي النوع الثالث من البرمجيات." },
     { k: "sum", scr: "sum", t: "الخلاصة: ثلاثة أنواع", d: "كل برنامج شغّلته سارة اليوم ينتمي إلى نوع من الثلاثة." },
   ], scr: (s) => {
-      const TY = { fw: ["برمجيات النظام", "BIOS"], os: ["برمجيات النظام", "Windows"], app: ["البرامج التطبيقية", "Word"], drv: ["برمجيات النظام", "تعريف الطابعة"], ut: ["برمجيات النظام", "مكافح الفيروسات"], lang: ["لغات البرمجة", "C++"] }[s.k];
-      // the three kinds are always shown; the one working now is lit
-      const KINDS = [["برمجيات النظام", "#16213e"], ["البرامج التطبيقية", "#2b579a"], ["لغات البرمجة", "#e67e22"]];
-      const badge = s.k === "sum" ? "" : (() => { let x = SX + SW - 8, out = ""; KINDS.forEach(([n, c]) => { const on = TY && TY[0] === n, w = on ? 210 : 104; x -= w; out += `<rect x="${x}" y="${SY + SH - 42}" width="${w - 6}" height="34" rx="17" fill="${on ? c : "#2a3140"}" stroke="${on ? "#F2B705" : "none"}" stroke-width="3" ${on ? 'class="st-on"' : 'opacity=".75"'}/>${stT(x + (w - 6) / 2, SY + SH - 20, on ? "● " + n + ": " + TY[1] : n, { s: on ? 12.5 : 10.5, c: on ? "#fff" : "#8b95a5" })}`; }); return out; })();
+      const TY = { fw: ["برمجيات النظام", "البرامج الثابتة", "BIOS"], os: ["برمجيات النظام", "نظام التشغيل", "Windows"], app: ["البرامج التطبيقية", "معالجة النصوص", "Word"], drv: ["برمجيات النظام", "برامج تشغيل الأجهزة", "تعريف الطابعة"], ut: ["برمجيات النظام", "برامج الخدمات", "مكافح الفيروسات"], lang: ["لغات البرمجة", "لغة عالية المستوى", "C++"] }[s.k];
+      // which kind of software is working now: kind ← sub-kind ← program
+      const KC = { "برمجيات النظام": "#16213e", "البرامج التطبيقية": "#2b579a", "لغات البرمجة": "#e67e22" };
+      const badge = TY ? `<rect x="${SX + 8}" y="${SY + SH - 42}" width="${SW - 16}" height="34" rx="17" fill="${KC[TY[0]]}" stroke="#F2B705" stroke-width="3"/>${stT(SX + SW / 2, SY + SH - 19, TY.join("  ←  "), { s: 14, c: "#fff" })}` : "";
       const win = (x, y, w, hh, c, t) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="8" fill="#fff"/><rect x="${x}" y="${y}" width="${w}" height="24" rx="8" fill="${c}"/>${stT(x + w / 2, y + 17, t, { s: 13, c: "#fff", ltr: 1 })}`;
       const mono = (x, y, t, c, sz) => `<text x="${x}" y="${y}" style="font:700 ${sz || 13}px ui-monospace,Menlo,monospace;fill:${c};direction:ltr">${esc(t)}</text>`;
       let b = "";
