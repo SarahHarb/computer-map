@@ -2585,49 +2585,59 @@ const ST = { i: -1, k: 0, play: true, tm: 0 };
 const SX = 588, SY = 182, SW = 436, SH = 244; // monitor screen area in scene units
 const stT = (x, y, t, o = {}) => `<text x="${x}" y="${y}" style="font:${o.w || 800} ${o.s || 15}px Cairo,Tahoma,sans-serif;fill:${o.c || "#14213D"};text-anchor:${o.a || "middle"}${o.ltr ? ";direction:ltr" : ""}">${t}</text>`;
 const stBox = (x, y, w, h, fill, on, extra = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${fill}" stroke="${on ? "#F2B705" : "rgba(255,255,255,.25)"}" stroke-width="${on ? 4 : 1.5}" ${on ? 'class="st-on"' : 'opacity=".55"'} ${extra}/>`;
-// animated screens for compiler / interpreter / hybrid (loop of 8s, phases shown by opacity)
-function stageLang(v) {
-  const D = 8, f = (t) => (t / D).toFixed(3);
-  const show = (t0, t1 = D) => `<animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${f(t0)};${t1 < D ? f(t1) + ";" : ""}1" values="0;1;${t1 < D ? "0;" : ""}${t1 < D ? "0" : "1"}"/>`;
-  const on = (t0, t1, body) => `<g opacity="0">${show(t0, t1)}${body}</g>`;
-  const mono = (x, y, t, c, sz, anc) => `<text x="${x}" y="${y}" style="font:700 ${sz || 12}px ui-monospace,Menlo,Consolas,monospace;fill:${c};text-anchor:${anc || "start"};direction:ltr">${esc(t)}</text>`;
-  const T = (x, y, t, o) => stT(x, y, t, o);
-  const editor = (lang, col, lines, x = SX + 8, w = 176) => `<rect x="${x}" y="${SY + 8}" width="${w}" height="132" rx="8" fill="#1e1e2e"/><rect x="${x + 6}" y="${SY + 14}" width="${lang.length * 8 + 12}" height="16" rx="8" fill="${col}"/>${mono(x + 12, SY + 26, lang, "#fff", 10)}` + lines.map((l, j) => mono(x + 10, SY + 54 + j * 24, l, "#e5c07b", 13)).join("");
-  const runBtn = (x, y) => `<g><rect x="${x}" y="${y}" width="84" height="28" rx="14" fill="#1E9E5A"/>${T(x + 42, y + 19, "▶ تشغيل", { s: 13, c: "#fff" })}<circle cx="${x + 64}" cy="${y + 16}" r="7" fill="#fff" opacity="0"><animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" keyTimes="0;.02;.1;1" values="0;.9;0;0"/><animate attributeName="r" dur="${D}s" repeatCount="indefinite" keyTimes="0;.1;1" values="5;16;16"/></circle></g>`;
-  const outBox = (x, y, w, body) => `<rect x="${x}" y="${y}" width="${w}" height="60" rx="8" fill="#0b0f14"/>${T(x + w - 8, y + 16, "الناتج", { s: 10, c: "#9aa4b2", a: "start" })}${body}`;
-  if (v === "comp") {
-    const lines = ["int a = 5;", "int b = 3;", "printf(a + b);"];
-    return editor("C", "#5c6bc0", lines) + runBtn(SX + 52, SY + 148) +
-      `<rect x="${SX + 192}" y="${SY + 8}" width="96" height="132" rx="8" fill="#24324a"/>${T(SX + 240, SY + 30, "المترجم", { s: 14, c: "#F2B705" })}` +
-      on(0.8, 3, lines.map((_, j) => T(SX + 240, SY + 60 + j * 24, "⟶ ⟶", { s: 15, c: "#F2B705", ltr: 1 })).join("") + T(SX + 240, SY + 132, "كله مرة واحدة", { s: 10, c: "#fff" })) +
-      `<rect x="${SX + 296}" y="${SY + 8}" width="132" height="132" rx="8" fill="#0b0f14"/>${T(SX + 362, SY + 26, "لغة الآلة", { s: 11, c: "#9aa4b2" })}` +
-      on(1.6, D, ["10110000 0101", "10111011 0011", "00000001 1101"].map((b, j) => mono(SX + 362, SY + 58 + j * 24, b, "#7CFC9A", 12, "middle")).join("")) +
-      on(3, D, `<g><rect x="${SX + 196}" y="${SY + 150}" width="92" height="84" rx="10" fill="#fff"/><path d="M${SX + 228} ${SY + 160}h22l10 10v32h-32z" fill="#dfe7f3" stroke="#2b579a" stroke-width="2"/>${T(SX + 242, SY + 192, "EXE", { s: 10, c: "#2b579a", ltr: 1 })}${T(SX + 242, SY + 222, "program.exe", { s: 10, ltr: 1 })}</g>`) +
-      on(3.2, D, T(SX + 168, SY + 196, "⟶", { s: 20, c: "#F2B705", ltr: 1 })) +
-      outBox(SX + 296, SY + 160, 132, on(4.6, D, T(SX + 362, SY + 204, "8", { s: 26, c: "#7CFC9A" }))) + on(4.2, D, T(SX + 282, SY + 196, "⟶", { s: 20, c: "#F2B705", ltr: 1 }));
-  }
-  if (v === "interp") {
-    const lines = ["a = 5", "print(a + 3)", "print(b)"];
-    const t = [[0.8, 2.6], [2.6, 4.4], [4.4, D]];
-    return editor("Python", "#3776ab", lines) + runBtn(SX + 52, SY + 148) +
-      t.map(([a, b], j) => on(a, j === 2 ? D : b, `<rect x="${SX + 12}" y="${SY + 38 + j * 24}" width="168" height="22" rx="5" fill="${j === 2 ? "#E05252" : "#F2B705"}" opacity=".35"/>`)).join("") +
-      `<rect x="${SX + 192}" y="${SY + 8}" width="96" height="132" rx="8" fill="#24324a"/>${T(SX + 240, SY + 30, "المفسّر", { s: 14, c: "#F2B705" })}` +
-      on(0.8, 2.6, mono(SX + 240, SY + 76, "MOV AX, 5", "#61afef", 12, "middle") + T(SX + 240, SY + 104, "⟶ 0101", { s: 12, c: "#7CFC9A", ltr: 1 })) +
-      on(2.6, 4.4, mono(SX + 240, SY + 76, "ADD AX, 3", "#61afef", 12, "middle") + T(SX + 240, SY + 104, "⟶ 0011", { s: 12, c: "#7CFC9A", ltr: 1 })) +
-      on(4.4, D, T(SX + 240, SY + 88, "✕", { s: 30, c: "#E05252" }) + T(SX + 240, SY + 120, "توقف هنا", { s: 12, c: "#fff" })) +
-      `<rect x="${SX + 296}" y="${SY + 8}" width="132" height="132" rx="8" fill="#0b0f14"/>${T(SX + 362, SY + 26, "ما تنفّذ", { s: 11, c: "#9aa4b2" })}` +
-      on(1.6, D, T(SX + 362, SY + 60, "سطر 1 ✓", { s: 13, c: "#7CFC9A" })) + on(3.4, D, T(SX + 362, SY + 86, "سطر 2 ✓", { s: 13, c: "#7CFC9A" })) + on(5.2, D, T(SX + 362, SY + 112, "سطر 3 ✕", { s: 13, c: "#E05252" })) +
-      outBox(SX + 192, SY + 160, 236, on(3.4, D, T(SX + 380, SY + 204, "8", { s: 26, c: "#7CFC9A" })) + on(5.2, D, T(SX + 290, SY + 204, "خطأ: b غير معرّف", { s: 13, c: "#E05252" })));
-  }
-  // hybrid (Java): compile once to bytecode, then the JVM runs it on any device
-  const dev = [["💻", "Windows"], ["🍏", "Mac"], ["📱", "Android"]];
-  return editor("Java", "#e76f00", ["int a = 5;", "int b = 3;", "print(a + b);"], SX + 8, 150) + runBtn(SX + 40, SY + 148) +
-    `<rect x="${SX + 166}" y="${SY + 8}" width="86" height="132" rx="8" fill="#24324a"/>${T(SX + 209, SY + 30, "المترجم", { s: 13, c: "#F2B705" })}` +
-    on(0.8, 2.4, T(SX + 209, SY + 76, "⟶ ⟶", { s: 15, c: "#F2B705", ltr: 1 }) + T(SX + 209, SY + 100, "كله مرة", { s: 10, c: "#fff" })) +
-    on(2, D, `<rect x="${SX + 172}" y="${SY + 150}" width="76" height="84" rx="10" fill="#fff"/><path d="M${SX + 196} ${SY + 160}h20l9 9v30h-29z" fill="#fde7d2" stroke="#e76f00" stroke-width="2"/>${T(SX + 210, SY + 214, "Bytecode", { s: 11, ltr: 1 })}${T(SX + 210, SY + 228, "app.class", { s: 9, c: "#5b6b82", ltr: 1 })}`) +
-    dev.map(([ic, n], j) => { const y = SY + 8 + j * 76; return `<rect x="${SX + 262}" y="${y}" width="166" height="68" rx="10" fill="#0b0f14"/>${T(SX + 290, y + 42, ic, { s: 22 })}${T(SX + 350, y + 26, n, { s: 12, c: "#fff", ltr: 1 })}` +
-      on(3 + j * 0.5, D, `<rect x="${SX + 318}" y="${y + 34}" width="62" height="20" rx="10" fill="#e76f00"/>${T(SX + 349, y + 48, "JVM", { s: 11, c: "#fff", ltr: 1 })}`) +
-      on(4.4 + j * 0.4, D, T(SX + 406, y + 46, "8", { s: 22, c: "#7CFC9A" })) + on(2.6 + j * 0.4, D, T(SX + 256, y + 40, "⟶", { s: 14, c: "#F2B705", ltr: 1 })); }).join("");
+// 3 rows (compiler / interpreter / hybrid) x 4 columns (high level, low level, machine code, result on the device)
+function langGrid(m) {
+  const D = 10, f = (t) => (Math.min(t, D) / D).toFixed(3);
+  const vis = (t0, t1) => `<animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${f(t0)};${t1 ? f(t1) + ";" : ""}1" values="0;1;${t1 ? "0;0" : "1"}"/>`;
+  const A = (live, t0, t1, body) => live ? `<g opacity="0">${vis(t0, t1)}${body}</g>` : t1 ? "" : body; // static rows show only the final state // animated only in the active row
+  const mono = (x, y, t, c, sz, anc) => `<text x="${x}" y="${y}" style="font:700 ${sz || 9.5}px ui-monospace,Menlo,Consolas,monospace;fill:${c};text-anchor:${anc || "start"};direction:ltr">${esc(t)}</text>`;
+  const CW = [50, 120, 88, 80, 78], gap = 5, xs = [SX + 4]; for (let j = 1; j < 5; j++) xs.push(xs[j - 1] + CW[j - 1] + gap);
+  const top = SY + 28, RH = 68;
+  let h = [["", ""], ["عالية المستوى", "يكتب المبرمج"], ["متدنية المستوى", "وسيطة"], ["لغة الآلة", "0 و 1"], ["النتيجة", "على الجهاز"]].map(([a, b], j) => j ? stT(xs[j] + CW[j] / 2, SY + 13, a, { s: 10.5, c: "#fff" }) + stT(xs[j] + CW[j] / 2, SY + 24, b, { s: 8, c: "#9aa4b2" }) : "").join("");
+  const rows = [
+    { k: "comp", n: "مترجم", c: "#5c6bc0", lang: "C", code: ["printf(5+3);", "printf(9-2);", "printf(b);"], fix: "printf(4*2);" },
+    { k: "interp", n: "مفسّر", c: "#3776ab", lang: "Python", code: ["print(5+3)", "print(9-2)", "print(b)"] },
+    { k: "mix", n: "مدموج", c: "#e76f00", lang: "Java", code: ["print(5+3);", "print(9-2);", "print(4*2);"] },
+  ];
+  rows.forEach((r, ri) => {
+    const y = top + ri * (RH + 4), act = m === r.k, show = act || m === "all", L = act; // L: animate
+    h += `<g opacity="${show ? 1 : 0.3}">${act ? `<rect x="${SX + 1}" y="${y - 2}" width="${SW - 2}" height="${RH + 4}" rx="9" fill="none" stroke="#F2B705" stroke-width="3" class="st-on"/>` : ""}`;
+    h += `<rect x="${xs[0]}" y="${y}" width="${CW[0]}" height="${RH}" rx="7" fill="${r.c}"/>${stT(xs[0] + CW[0] / 2, y + RH / 2 + 5, r.n, { s: 12.5, c: "#fff" })}`;
+    [1, 2, 3, 4].forEach((j) => (h += `<rect x="${xs[j]}" y="${y}" width="${CW[j]}" height="${RH}" rx="7" fill="${j === 4 ? "#f4f6f9" : j === 3 ? "#0b0f14" : "#1e1e2e"}"/>`));
+    [1, 2, 3].forEach((j) => (h += stT(xs[j] + CW[j] + gap / 2, y + RH / 2 + 4, "›", { s: 13, c: "#F2B705", ltr: 1 })));
+    // column 1: code typed, then Run
+    const X1 = xs[1] + 5, ly = (j) => y + 20 + j * 14;
+    h += `<rect x="${xs[1] + 3}" y="${y + 3}" width="${r.lang.length * 6 + 8}" height="11" rx="5" fill="${r.c}"/>${mono(xs[1] + 7, y + 11.5, r.lang, "#fff", 7.5)}`;
+    r.code.forEach((ln, j) => {
+      if (r.fix && j === 2) h += A(L, 0.3 + j * 0.3, 5, mono(X1, ly(j) + 6, ln, "#ff8a8a")) + (L ? A(L, 5, 0, mono(X1, ly(j) + 6, r.fix, "#e5c07b")) : mono(X1, ly(j) + 6, r.fix, "#e5c07b"));
+      else h += A(L, 0.3 + j * 0.3, 0, mono(X1, ly(j) + 6, ln, r.k === "interp" && j === 2 ? "#ff8a8a" : "#e5c07b"));
+    });
+    const btn = (t) => `<g><rect x="${xs[1] + CW[1] - 34}" y="${y + 3}" width="30" height="12" rx="6" fill="#1E9E5A"/>${stT(xs[1] + CW[1] - 19, y + 12, "▶ Run", { s: 7, c: "#fff", ltr: 1 })}${L ? `<circle cx="${xs[1] + CW[1] - 12}" cy="${y + 9}" r="9" fill="none" stroke="#fff" stroke-width="2" opacity="0"><animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${f(t)};${f(t + 0.4)};1" values="0;1;0;0"/></circle>` : ""}</g>`;
+    h += btn(1.3) + (r.fix && L ? `<circle cx="${xs[1] + CW[1] - 12}" cy="${y + 9}" r="9" fill="none" stroke="#fff" stroke-width="2" opacity="0"><animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${f(5.4)};${f(5.8)};1" values="0;1;0;0"/></circle>` : "");
+    const lo = ["MOV AX,5+3", "MOV AX,9-2", "MOV AX,4*2"], bin = ["1011 0101", "1011 0011", "1011 1000"], out = ["8", "7", "8"];
+    const X2 = xs[2] + CW[2] / 2, X3 = xs[3] + CW[3] / 2, X4 = xs[4] + 8;
+    if (r.k === "comp") {
+      // try 1: compile all at once -> error found on line 3 -> nothing runs
+      h += A(L, 1.6, 4.9, `<rect x="${X1 - 3}" y="${ly(2) - 4}" width="${CW[1] - 6}" height="13" rx="3" fill="#E05252" opacity=".35"/>` + stT(X2, y + 30, "✕ خطأ", { s: 11, c: "#ff8a8a" }) + stT(X2, y + 46, "في السطر 3", { s: 9, c: "#ff8a8a" }));
+      h += A(L, 2.2, 4.9, stT(xs[4] + CW[4] / 2, y + 30, "لم يُنفَّذ", { s: 10, c: "#c0392b" }) + stT(xs[4] + CW[4] / 2, y + 46, "أي سطر", { s: 10, c: "#c0392b" }));
+      // try 2 (after fixing): all lines translated together, then all results appear together
+      h += A(L, 6, 0, lo.map((t, j) => mono(X2, ly(j) + 6, t, "#61afef", 8.5, "middle")).join("")) + A(L, 6.8, 0, bin.map((t, j) => mono(X3, ly(j) + 6, t, "#7CFC9A", 9, "middle")).join(""));
+      h += A(L, 7.6, 0, out.map((t, j) => mono(X4, ly(j) + 6, "> " + t, "#14213D", 10)).join("") + stT(xs[4] + CW[4] - 6, y + RH - 5, "دفعة واحدة", { s: 8, c: "#1E7B45", a: "start" }));
+    } else if (r.k === "interp") {
+      [0, 1, 2].forEach((j) => { const t = 1.6 + j * 1.7;
+        h += A(L, t, j < 2 ? t + 1.7 : 0, `<rect x="${X1 - 3}" y="${ly(j) - 4}" width="${CW[1] - 6}" height="13" rx="3" fill="${j === 2 ? "#E05252" : "#F2B705"}" opacity=".35"/>`);
+        if (j < 2) h += A(L, t + 0.3, 0, mono(X2, ly(j) + 6, lo[j], "#61afef", 8.5, "middle")) + A(L, t + 0.8, 0, mono(X3, ly(j) + 6, bin[j], "#7CFC9A", 9, "middle")) + A(L, t + 1.2, 0, mono(X4, ly(j) + 6, "> " + out[j], "#14213D", 10));
+        else h += A(L, t + 0.3, 0, stT(X2, ly(j) + 7, "✕ خطأ", { s: 9.5, c: "#ff8a8a" })) + A(L, t + 0.6, 0, stT(xs[4] + CW[4] - 6, ly(j) + 7, "✕ توقف", { s: 9, c: "#c0392b", a: "start" }));
+      });
+      h += A(L, 6.4, 0, stT(xs[4] + CW[4] - 6, y + RH - 5, "سطراً سطراً", { s: 8, c: "#1E7B45", a: "start" }));
+    } else {
+      h += A(L, 1.6, 0, stT(X2, y + 28, "Bytecode", { s: 10, c: "#61afef", ltr: 1 }) + stT(X2, y + 44, "كله مرة", { s: 8.5, c: "#9aa4b2" }));
+      h += A(L, 3, 0, stT(X3, y + 26, "JVM", { s: 11, c: "#F2B705", ltr: 1 }) + mono(X3, y + 44, "1011 0101", "#7CFC9A", 9, "middle") + stT(X3, y + 60, "💻 🍏 📱", { s: 10 }));
+      h += A(L, 4.4, 0, out.map((t, j) => mono(X4, ly(j) + 6, "> " + t, "#14213D", 10)).join("") + stT(xs[4] + CW[4] - 6, y + RH - 5, "على أي جهاز", { s: 8, c: "#1E7B45", a: "start" }));
+    }
+    h += `</g>`;
+  });
+  return h;
 }
 const STAGES = {
   10: { parts: ["user", "mon", "cpu", "rom", "ram", "ssd", "prn", "kb"], steps: [
@@ -2663,36 +2673,11 @@ const STAGES = {
         s.b.map(([ic, t, c], j) => `<rect x="${SX + 40}" y="${SY + 124 + j * 56}" width="${SW - 80}" height="46" rx="12" fill="#fff"/>${stT(SX + SW / 2, SY + 154 + j * 56, ic + "  " + t, { s: 17, c })}`).join(""); },
     tags: [["cloud", "⬇ يُحمَّل من الإنترنت"], ["ssd", "💾 يُثبَّت على القرص SSD"]] },
   12: { mon: 1, parts: ["user", "kb", "mon", "cpu", "ram"], steps: [
-    { m: "all", p: ["user", "kb"], pk: "كود", t: "ثلاث طرق لتحويل البرنامج إلى لغة الآلة", d: "المبرمج يكتب بلغة عالية المستوى قريبة من الإنسان، والحاسوب لا يفهم إلا 0 و 1. فتُحوَّل اللغة بالمترجم، أو بالمفسّر، أو بالطريقتين معاً." },
-    { m: "comp", v: "comp", t: "المترجم Compiler · لغة C", d: "" },
-    { m: "interp", v: "interp", t: "المفسّر Interpreter · لغة Python", d: "" },
-    { m: "mix", v: "mix", t: "مدموج · لغة Java", d: "" },
-  ], scr: (s) => {
-      if (s.v) return stageLang(s.v);
-      const mono = (x, y, t, c, sz, anc) => `<text x="${x}" y="${y}" style="font:700 ${sz || 10}px ui-monospace,Menlo,Consolas,monospace;fill:${c};text-anchor:${anc || "start"};direction:ltr">${esc(t)}</text>`;
-      const L0 = SX + 6, CW = [70, 128, 104, 104], gap = 8, xs = [L0], top = SY + 26, RH = 66;
-      for (let j = 1; j < 4; j++) xs.push(xs[j - 1] + CW[j - 1] + gap);
-      let h = [["", ""], ["عالية المستوى", "قريبة من الإنسان"], ["متدنية المستوى", "وسيطة"], ["لغة الآلة", "0 و 1"]].map(([a, b2], j) => j ? stT(xs[j] + CW[j] / 2, SY + 13, a, { s: 11, c: "#fff" }) + stT(xs[j] + CW[j] / 2, SY + 24, b2, { s: 8.5, c: "#9aa4b2" }) : "").join("");
-      const ROWS = [
-        { k: "comp", n: "مترجم", sub: "Compiler", c: "#5c6bc0", lang: "C", hi: ["int a = 5;", "printf(a + 3);"], lo: ["MOV AX, 5", "ADD AX, 3"], mc: ["10110000 0101", "00000100 0011"], tag: "كله مرة واحدة" },
-        { k: "interp", n: "مفسّر", sub: "Interpreter", c: "#3776ab", lang: "Python", hi: ["a = 5", "print(a + 3)"], lo: ["MOV AX, 5", "ADD AX, 3"], mc: ["10110000 0101", "00000100 0011"], tag: "سطر ثم سطر" },
-        { k: "mix", n: "مدموج", sub: "مترجم + مفسّر", c: "#e76f00", lang: "Java", hi: ["int a = 5;", "print(a + 3);"], lo: ["Bytecode:", "iload · iadd"], mc: ["JVM ⟶ 1011", "JIT ⟶ 0100"], tag: "Bytecode ثم JVM" },
-      ];
-      ROWS.forEach((r, ri) => { const y = top + ri * (RH + 6), on = s.m === r.k || s.m === "all" || s.m === "run", act = s.m === r.k, op = on ? 1 : 0.35;
-        h += `<g opacity="${op}"><rect x="${L0 - 2}" y="${y - 2}" width="${SW - 8}" height="${RH + 4}" rx="9" fill="none" stroke="${act ? "#F2B705" : "transparent"}" stroke-width="3" ${act ? 'class="st-on"' : ""}/>`;
-        h += `<rect x="${xs[0]}" y="${y}" width="${CW[0]}" height="${RH}" rx="7" fill="${r.c}"/>${stT(xs[0] + CW[0] / 2, y + 28, r.n, { s: 14, c: "#fff" })}${stT(xs[0] + CW[0] / 2, y + 46, r.sub, { s: 8.5, c: "#fff", ltr: r.k !== "mix" })}`;
-        [1, 2, 3].forEach((j) => (h += `<rect x="${xs[j]}" y="${y}" width="${CW[j]}" height="${RH}" rx="7" fill="${j === 3 ? "#0b0f14" : "#1e1e2e"}"/>`));
-        h += `<rect x="${xs[1] + 4}" y="${y + 4}" width="${r.lang.length * 6.5 + 10}" height="13" rx="6" fill="${r.c}"/>${mono(xs[1] + 9, y + 14, r.lang, "#fff", 8.5)}`;
-        r.hi.forEach((t, j) => (h += (act && r.k === "interp" ? `<rect x="${xs[1] + 3}" y="${y + 23 + j * 18}" width="${CW[1] - 6}" height="15" rx="4" fill="#F2B705" opacity="0"><animate attributeName="opacity" dur="4s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${(j / 2).toFixed(2)};${((j + 1) / 2).toFixed(2)};1" values="0;.3;0;0"/></rect>` : "") + mono(xs[1] + 6, y + 34 + j * 18, t, "#e5c07b", 10)));
-        // arrows between columns
-        [1, 2].forEach((j) => (h += stT(xs[j] + CW[j] + gap / 2, y + RH / 2 + 5, "›", { s: 16, c: "#F2B705", ltr: 1 })));
-        const anim = (j, n) => r.k === "interp" ? `<animate attributeName="opacity" dur="4s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;${(j / n).toFixed(2)};1" values="0;1;1"/>` : `<animate attributeName="opacity" dur="3s" repeatCount="indefinite" keyTimes="0;.35;.85;1" values="0;1;1;0"/>`;
-        r.lo.forEach((t, j) => (h += `<g ${act ? 'opacity="0"' : ""}>${act ? anim(j, 2) : ""}${mono(xs[2] + CW[2] / 2, y + 30 + j * 20, t, "#61afef", 10, "middle")}</g>`));
-        r.mc.forEach((t, j) => (h += `<g ${act ? 'opacity="0"' : ""}>${act ? anim(j, 2) : ""}${mono(xs[3] + CW[3] / 2, y + 30 + j * 20, t, "#7CFC9A", 10, "middle")}</g>`));
-        h += stT(xs[2] + CW[2] / 2, y + RH - 4, r.tag, { s: 8.5, c: "#F2B705" }) + `</g>`; });
-      const out = s.m === "run" ? "الناتج على الشاشة: 8 ✓" : s.m === "comp" ? "المترجم: أسرع · حيز أقل" : s.m === "interp" ? "المفسّر: أبطأ · حيز أكبر في RAM" : s.m === "mix" ? "مدموج: يعمل على أي جهاز" : "";
-      if (out) h += `<rect x="${SX + 80}" y="${SY + SH - 12}" width="${SW - 160}" height="0"/>`;
-      return h; } },
+    { m: "all", t: "ثلاث طرق لتحويل البرنامج إلى لغة الآلة", d: "" },
+    { m: "comp", t: "المترجم · لغة C", d: "" },
+    { m: "interp", t: "المفسّر · لغة Python", d: "" },
+    { m: "mix", t: "مدموج · لغة Java", d: "" },
+  ], scr: (s) => langGrid(s.m) },
   13: { parts: ["rom", "ssd", "ram", "cpu", "mon", "mouse", "kb", "prn", "user"], steps: [
     { m: "boot", p: ["ssd", "ram"], pk: "Windows", t: "أول برنامج يعمل", d: "عند تشغيل الجهاز يبدأ BIOS من ROM، ثم يُحمَّل نظام التشغيل من SSD إلى RAM. وهو الوسيط بين المستخدم والعتاد." },
     { m: "ui", p: ["mouse", "mon"], pk: "نقرة", t: "1. واجهة المستخدم", d: "تربط المستخدم مع البرمجيات الأخرى: سطح المكتب، والنوافذ، والأيقونات." },
@@ -2746,7 +2731,7 @@ function scLesson(i) {
   { const L = document.getElementById("lensRing"); if (L) L.style.opacity = 0; }
   SC.i = i; cur = i; markVisited(i); document.getElementById("sc").classList.add("lesson");
   const T = LT[i] || { t: ["all"] }, els = setFocus(T.t, T.s); document.getElementById("scene").classList.remove("home"); showFlow(T); cpuX(i === 3); stage(i);
-  requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : i === 3 ? 25 : 70));
+  if (!STAGES[i]) requestAnimationFrame(() => zoomTo(bboxOf(els), T.t.includes("all") ? 10 : i === 3 ? 25 : 70));
   document.querySelectorAll("#scStrip .stops button").forEach((b) => { const k = +b.dataset.i; b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
   const on = document.querySelector("#scStrip .stops button.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   SC.tab = SC.pendTab || "map"; SC.pendTab = null; if (window.speechSynthesis) speechSynthesis.cancel(); scPanel();
