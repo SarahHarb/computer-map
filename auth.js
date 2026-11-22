@@ -58,7 +58,7 @@
   const AR = (e) => "حدث خطأ: " + ((e && e.message) || String(e));
 
   async function start(u) {
-    user = u;
+    user = u; window.ME_EMAIL = u.email;
     const { data } = await sb.from("profiles").select("*").eq("id", u.id).maybeSingle();
     profile = data || { full_name: (u.user_metadata || {}).full_name || u.email, role: "student" };
     // only students listed in the course sections (شعب) may use the site

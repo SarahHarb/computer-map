@@ -738,6 +738,22 @@ body.ui5 .stage{display:flex;flex-direction:column}
 .ai-btns{display:flex;gap:6px;align-items:center}
 .ai-btns a{text-decoration:none;font-weight:700;font-size:14px;padding:7px 12px;border-radius:10px;background:var(--ink);color:#fff}
 .ai-btns a:nth-child(2){background:#10a37f}.ai-btns a:nth-child(3){background:#1f7a8c}
+.ai-sec{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:#fff;display:grid;gap:10px}
+.ai-sec h4{margin:0;font-size:17px;display:flex;align-items:center;gap:8px}.ai-sec h4 i{font-style:normal;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#F2B705;font-size:14px}
+.ai-cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ai-cmp>div{background:#F7F9FC;border-radius:12px;padding:10px 12px;display:grid;gap:6px;align-content:start}.ai-cmp b{display:flex;gap:6px;align-items:center}.ai-cmp b .ic{width:16px;height:16px}.ai-cmp p{margin:0;font-size:14px;line-height:1.7}.ai-cmp small{color:var(--muted);font-size:12px}
+.ai-btns a.g{background:#4285F4}
+.ai-copy.wide{display:inline-flex;gap:6px;align-items:center;font-weight:800;padding:7px 12px;justify-self:start}
+.ai-tip{margin:0;font-size:13.5px;color:#7a5b00;background:#FFF8DD;border-radius:10px;padding:8px 10px;display:flex;gap:6px;align-items:center}.ai-tip .ic{width:16px;height:16px;flex:none}
+.pe-vs{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}.pe-vs>div{border-radius:12px;padding:10px 12px;display:grid;gap:6px;align-content:start}.pe-vs .weak{background:#FDECEC}.pe-vs .good{background:#E8F6EE}.pe-vs b{display:flex;gap:6px;align-items:center}.pe-vs b .ic{width:15px;height:15px}.pe-vs .wq{font-weight:700}.pe-vs small{color:var(--muted);font-size:12.5px}
+.pe-parts{display:flex;gap:5px;flex-wrap:wrap}.pe-parts span{font-size:12.5px;font-weight:800;padding:2px 10px;border-radius:999px;color:#fff}.pe-parts .r{background:#8E44AD}.pe-parts .c{background:#2E86DE}.pe-parts .t{background:#1E9E5A}.pe-parts .f{background:#E67E22}.pe-parts .k{background:#C0392B}
+.pb{display:grid;gap:7px;background:#F7F9FC;border-radius:12px;padding:10px 12px}.pb-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.pb-row>span{font-weight:800;min-width:58px;font-size:14px}
+.pb-chip{font-family:inherit;font-weight:700;font-size:13px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:3px 12px;cursor:pointer}.pb-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pb-out{background:#fff;border:1.5px dashed #9fb0c6;border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.8}
+.ai-more summary{cursor:pointer;font-weight:800;color:var(--muted);font-size:14px}.ai-more .ai-row{margin-top:8px}
+.ai-sec.nb{background:linear-gradient(135deg,#F2F6FF,#fff)}.ai-sec.nb p{margin:0;line-height:1.8}
+.nb-open{justify-self:start;display:inline-flex;gap:8px;align-items:center;text-decoration:none;font-weight:900;font-size:15px;background:#1a73e8;color:#fff;border-radius:999px;padding:9px 18px}.nb-open .ic{width:18px;height:18px}
+.nb-how{margin:0;padding-inline-start:20px;display:grid;gap:4px;font-size:14px;line-height:1.7}
+@media (max-width:700px){.ai-cmp,.pe-vs{grid-template-columns:1fr}}
 .ai-copy{padding:6px 8px}.ai-copy .ic{width:16px;height:16px}.ai-copy.ok{background:#E8F6EE;border-color:var(--done)}
 .ai-note{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:4px 0 0}.ai-note .ic{width:16px;height:16px}
 
@@ -2594,14 +2610,47 @@ function scPanel() {
     b = `<div id="doBox"></div>`;
   }
   else if (SC.tab === "ai") {
-    const P = [
-      ["اشرح لي ببساطة", "FaLightbulb", `اشرح لي درس «${L[4]}» من مادة مقدمة في الحاسوب بطريقة بسيطة وبأمثلة من الحياة، لطالب جامعي في السنة الأولى. الفكرة الأساسية: ${C.idea || ""}`],
-      ["اصنع لي جدولاً ومخططاً", "FaTable", `لخّص لي درس «${L[4]}» (مقدمة في الحاسوب) بجدول مقارنة وخارطة مفاهيمية مكتوبة نصياً، مع أيقونات إيموجي.`],
-      ["اسألني أسئلة امتحان", "FaClipboardCheck", `أعطني 5 أسئلة اختيار من متعدد عن درس «${L[4]}» (مقدمة في الحاسوب)، سؤالاً سؤالاً، وصحّح إجابتي بعد كل سؤال.`],
-      ["طريقة لحفظه", "FaBrain", `أعطني طريقة ذكية لحفظ درس «${L[4]}» (مقدمة في الحاسوب): كلمات مفتاحية، اختصارات، وقصة قصيرة.`],
-    ];
+    const T = L[4], idea = C.idea || "";
+    const NB = "https://notebook.google.com/notebook/7d5b0d3a-5567-447f-bd9c-7e734bc91d4c" + (window.ME_EMAIL ? "?authuser=" + encodeURIComponent(window.ME_EMAIL) : "");
     const AIS = [["Claude", "https://claude.ai/new?q="], ["ChatGPT", "https://chatgpt.com/?q="], ["Perplexity", "https://www.perplexity.ai/search?q="]];
-    b = `<div class="ai-box"><p class="muted">اختر ما تريده من الذكاء الاصطناعي، ثم اختر الموقع. سيكون السؤال جاهزاً ومكتوباً عن هذا الدرس.</p>${P.map(([t, ic, q], k) => `<div class="ai-row"><b>${svgI(ic)}${t}</b><div class="ai-btns">${AIS.map(([n, u]) => `<a href="${u}${encodeURIComponent(q)}" target="_blank" rel="noopener">${n}</a>`).join("")}<button class="ai-copy" data-k="${k}" title="انسخ السؤال">${svgI("FaCopy")}</button></div></div>`).join("")}<p class="ai-note">${svgI("FaInfoCircle")} قد يخطئ الذكاء الاصطناعي أحياناً، فارجع إلى الدوسية وتأكّد من المعلومة.</p></div>`;
+    const P = [];
+    const btns = (q) => { const k = P.push(q) - 1; return `<div class="ai-btns">${AIS.map(([n, u]) => `<a href="${u}${encodeURIComponent(q)}" target="_blank" rel="noopener">${n}</a>`).join("")}<button class="ai-copy" data-k="${k}" title="انسخ الأمر">${svgI("FaCopy")}</button></div>`; };
+    const cp = (q) => { const k = P.push(q) - 1; return `<button class="ai-copy wide" data-k="${k}">${svgI("FaCopy")} انسخ الأمر</button>`; };
+    // 1) normal search vs deep research
+    const deepQ = `أجرِ بحثاً عميقاً عن موضوع «${T}» في علم الحاسوب: عرّف المفهوم، واشرح أنواعه أو مكوّناته، وأعطِ أمثلة حديثة من الواقع، وقارن بين الآراء أو التقنيات المختلفة، واذكر مصادر موثوقة لكل معلومة. اكتب التقرير بالعربية الفصحى في عناوين واضحة.`;
+    const s1 = `<section class="ai-sec"><h4><i>1</i>البحث بالذكاء الاصطناعي: عادي أم عميق؟</h4>
+      <div class="ai-cmp"><div><b>${svgI("FaSearch")} البحث العادي</b><p>سؤال واحد وجواب سريع خلال ثوانٍ، من عدد قليل من المصادر. مناسب لتعريف أو معلومة محدّدة.</p>
+        <div class="ai-btns"><a href="https://www.google.com/search?q=${encodeURIComponent(T)}" target="_blank" rel="noopener" class="g">Google</a><a href="https://www.perplexity.ai/search?q=${encodeURIComponent("ما هو " + T + " في الحاسوب؟ أجب باختصار مع المصادر")}" target="_blank" rel="noopener">Perplexity</a></div></div>
+      <div><b>${svgI("FaSearchPlus")} البحث العميق Deep Research</b><p>يخطّط الذكاء الاصطناعي للبحث بنفسه، ويقرأ عشرات المصادر خلال دقائق، ثم يكتب تقريراً منظّماً مع المراجع. مناسب لموضوع كامل أو مقارنة.</p>
+        ${cp(deepQ)}<small>انسخ الأمر، ثم الصقه في Gemini أو ChatGPT أو Perplexity بعد تفعيل خيار «Deep Research / بحث عميق».</small></div></div>
+      <p class="ai-tip">${svgI("FaInfoCircle")} جرّب الطريقتين على الموضوع نفسه وقارن: كم مصدراً في كل نتيجة؟ وما الفرق في العمق والدقة والوقت؟</p></section>`;
+    // 2) prompt engineering: weak vs engineered prompt, with a builder
+    const pb = (SC.pb ||= { role: 0, fmt: 0, lvl: 0 });
+    const ROLES = [["مدرّس صبور", "أنت مدرّس جامعي صبور لمادة مقدمة في الحاسوب"], ["ممتحن", "أنت ممتحن جامعي يضع أسئلة دقيقة لمادة مقدمة في الحاسوب"], ["زميل دراسة", "أنت زميل دراسة متفوّق تشرح لصديقك قبل الامتحان"]];
+    const FMTS = [["جدول", "في جدول مقارنة واضح، ثم ثلاث نقاط للخلاصة"], ["نقاط", "في نقاط مرقّمة قصيرة، كل نقطة سطر واحد"], ["قصة ومثال", "من خلال قصة قصيرة أو مثال من الحياة اليومية"]];
+    const LVLS = [["مبتدئ", "طالب سنة أولى لم أدرس الحاسوب من قبل"], ["متوسط", "طالب درست الأساسيات وأريد التعمّق قليلاً"]];
+    const strong = `${ROLES[pb.role][1]}. السياق: أنا ${LVLS[pb.lvl][1]}، وأدرس درس «${T}». الفكرة الأساسية للدرس: ${idea} المهمة: اشرح لي هذا الدرس ${FMTS[pb.fmt][1]}. القيود: استخدم العربية الفصحى، ولا تتجاوز 200 كلمة، ولا تخرج عن محتوى الدرس، وإن لم تكن متأكداً من معلومة فقل ذلك.`;
+    const chips = (key, arr) => arr.map(([t], k) => `<button class="pb-chip ${pb[key] === k ? "on" : ""}" data-pb="${key}" data-v="${k}">${t}</button>`).join("");
+    const s2 = `<section class="ai-sec"><h4><i>2</i>هندسة الأوامر: كيف تحصل على نتيجة دقيقة؟</h4>
+      <div class="pe-vs"><div class="weak"><b>${svgI("FaTimes")} أمر ضعيف</b><span class="wq">«اشرح ${T}»</span><small>نتيجة عامة وطويلة، وقد تكون بمستوى لا يناسبك.</small></div>
+      <div class="good"><b>${svgI("FaCheck")} أمر مُهندَس</b><div class="pe-parts"><span class="r">الدور</span><span class="c">السياق</span><span class="t">المهمة</span><span class="f">الشكل</span><span class="k">القيود</span></div><small>كل عنصر يقرّب النتيجة مما تريده بالضبط.</small></div></div>
+      <div class="pb"><div class="pb-row"><span>الدور:</span>${chips("role", ROLES)}</div><div class="pb-row"><span>الشكل:</span>${chips("fmt", FMTS)}</div><div class="pb-row"><span>المستوى:</span>${chips("lvl", LVLS)}</div>
+      <div class="pb-out">${esc(strong)}</div>${btns(strong)}</div>
+      <details class="ai-more"><summary>أوامر جاهزة أخرى لهذا الدرس</summary>${[
+        ["اصنع لي جدولاً ومخططاً", `لخّص لي درس «${T}» (مقدمة في الحاسوب) بجدول مقارنة وخارطة مفاهيمية مكتوبة نصياً.`],
+        ["اسألني أسئلة امتحان", `أنت ممتحن. أعطني 5 أسئلة اختيار من متعدد عن درس «${T}» (مقدمة في الحاسوب)، سؤالاً سؤالاً، وصحّح إجابتي بعد كل سؤال واشرح الخطأ.`],
+        ["طريقة لحفظه", `أعطني طريقة ذكية لحفظ درس «${T}» (مقدمة في الحاسوب): كلمات مفتاحية، واختصارات، وقصة قصيرة.`],
+      ].map(([t, q]) => `<div class="ai-row"><b>${t}</b>${btns(q)}</div>`).join("")}</details></section>`;
+    // 3) NotebookLM: organise notes from the course file
+    const nq = [["خريطة ذهنية للدرس", `من الدوسية فقط: اعمل لي ملخّصاً منظّماً لدرس «${T}» بعناوين رئيسية وفرعية، واذكر رقم الصفحة أو المقطع لكل معلومة.`],
+      ["جدول مقارنة من المصدر", `استخرج من الدوسية كل المقارنات المتعلقة بـ «${T}» وضعها في جدول واحد، مع الإشارة إلى مكانها في المصدر.`],
+      ["أسئلة مراجعة", `من الدوسية: اكتب 5 أسئلة مراجعة عن «${T}» مع إجاباتها، واذكر المقطع الذي أخذت منه كل إجابة.`]];
+    const s3 = `<section class="ai-sec nb"><h4><i>3</i>NotebookLM: نظّم ملاحظاتك من الدوسية</h4>
+      <p>دفتر المادة فيه الدوسية كمصدر. الذكاء الاصطناعي هنا يجيب <b>من الدوسية فقط</b> ويضع رقم المصدر بجانب كل معلومة، فتعرف من أين جاءت.</p>
+      <a class="nb-open" href="${NB}" target="_blank" rel="noopener">${svgI("FaBookOpen")} افتح دفتر المادة في NotebookLM</a><small class="muted">ادخل بحساب الجامعة ppu.edu.ps</small>
+      <ul class="nb-how"><li><b>اسأل</b> في خانة المحادثة، واضغط على رقم المصدر لترى النص الأصلي.</li><li><b>احفظ</b> الإجابة المفيدة كملاحظة (زر «حفظ في ملاحظة»)، فتصير عندك ملاحظات مرتّبة.</li><li><b>استوديو:</b> اصنع خريطة ذهنية أو بطاقات تعليمية أو اختباراً أو ملخّصاً صوتياً من الدوسية بضغطة.</li></ul>
+      ${nq.map(([t, q]) => `<div class="ai-row"><b>${t}</b>${cp(q)}</div>`).join("")}</section>`;
+    b = `<div class="ai-box">${s1}${s2}${s3}<p class="ai-note">${svgI("FaInfoCircle")} قد يخطئ الذكاء الاصطناعي أحياناً، فارجع إلى الدوسية وتأكّد من المعلومة.</p></div>`;
     SC.aiP = P;
   }
   else b = `<div class="vid"><div style="font-size:19px;font-weight:700">فيديوهات عن «${esc(L[4])}»</div><a href="https://www.youtube.com/results?search_query=${encodeURIComponent("شرح " + L[4] + " مقدمة في الحاسوب")}" target="_blank" rel="noopener">▶ افتح على يوتيوب</a></div>`;
@@ -2634,7 +2683,8 @@ function scPanel() {
   if (SC.tab === "listen") bindListen(panel, i);
   if (SC.tab === "read") { const ta = panel.querySelector("#rdNote"), key = "note_" + i; try { ta.value = localStorage.getItem(key) || ""; } catch (e) {} ta.oninput = () => { try { localStorage.setItem(key, ta.value); } catch (e) {} panel.querySelector("#rdSaved").textContent = "✓ حُفظ"; }; ta.onchange = () => window.track && track.view("درس: " + L[4], "كتب ملخص"); }
   if (SC.tab === "do") { const box = panel.querySelector("#doBox"); const pc = PC_LESSONS.has(i); box.innerHTML = `<div class="games do-pick">${pc ? `<button data-d="pc">${svgI("FaDesktop")} ادخل إلى داخل الحاسوب</button>` : ""}<button data-d="play" class="on">${svgI("FaGamepad")} ألعاب: صنّف، وصِّل، رتّب، صحيح أم خطأ</button>${STORIES[i] ? `<button data-d="story">${svgI("FaBookOpen")} قصة تفاعلية</button>` : ""}</div><div id="doIn"></div>`; const run = (d) => { box.querySelectorAll(".do-pick button").forEach((x) => x.classList.toggle("on", x.dataset.d === d)); const inb = box.querySelector("#doIn"); if (d === "pc") pcMode(inb, i); else if (d === "story") storyMode(inb, i, 0); else playMode(inb, i); }; box.querySelectorAll(".do-pick button").forEach((x) => (x.onclick = () => run(x.dataset.d))); run(pc ? "pc" : "play"); }
-  panel.querySelectorAll(".ai-copy").forEach((x) => (x.onclick = () => { const q = SC.aiP[+x.dataset.k][2]; (navigator.clipboard ? navigator.clipboard.writeText(q) : Promise.reject()).then(() => { x.classList.add("ok"); setTimeout(() => x.classList.remove("ok"), 1200); }).catch(() => prompt("انسخ السؤال:", q)); }));
+  panel.querySelectorAll(".pb-chip").forEach((x) => (x.onclick = () => { SC.pb[x.dataset.pb] = +x.dataset.v; const st = panel.scrollTop; scPanel(); requestAnimationFrame(() => (panel.scrollTop = st)); }));
+  panel.querySelectorAll(".ai-copy").forEach((x) => (x.onclick = () => { const q = SC.aiP[+x.dataset.k]; (navigator.clipboard ? navigator.clipboard.writeText(q) : Promise.reject()).then(() => { x.classList.add("ok"); setTimeout(() => x.classList.remove("ok"), 1200); }).catch(() => prompt("انسخ السؤال:", q)); }));
   panel.querySelectorAll(".ai-btns a").forEach((a) => (a.onclick = () => window.track && track.view("درس: " + L[4], "AI: " + a.textContent)));
   const mq = panel.querySelector("#moreQs"); if (mq) mq.onclick = () => { SC.tab = "qs"; scPanel(); };
 }
@@ -2872,5 +2922,5 @@ window.addEventListener("resize", () => { if (view === "map" && cur < 0) fitAll(
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js?v=1794777556"></script>
-<script src="auth.js?v=1795339248"></script>
+<script src="auth.js?v=1795342266"></script>
 </body></html>
