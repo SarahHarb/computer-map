@@ -2670,13 +2670,14 @@ const STAGES = {
       else b = [["برمجيات النظام", "#16213e", ["BIOS", "Windows", "تعريف الطابعة", "مكافح الفيروسات"]], ["البرامج التطبيقية", "#2b579a", ["Word", "Chrome", "Photoshop"]], ["لغات البرمجة", "#e67e22", ["C++", "Python", "Java"]]].map(([n, c, ex], j) => { const w = 132, x = SX + SW - 12 - (j + 1) * w - j * 10; return `<rect x="${x}" y="${SY + 12}" width="${w}" height="220" rx="14" fill="${c}"/>${stT(x + w / 2, SY + 44, n, { s: 15, c: "#fff" })}<path d="M${x + 14} ${SY + 58}H${x + w - 14}" stroke="#ffffff55"/>` + ex.map((e, k) => `<rect x="${x + 12}" y="${SY + 70 + k * 38}" width="${w - 24}" height="30" rx="8" fill="#ffffff22"/>${stT(x + w / 2, SY + 90 + k * 38, e, { s: 12.5, c: "#fff", ltr: /^[A-Za-z]/.test(e) })}`).join(""); }).join("");
       return b + badge; } },
   11: { parts: ["mon", "cloud", "ssd"], steps: [
-    { c: ["A", "Adobe Reader", "#e2231a", "مجاني Freeware"], b: [["💲", "مجاناً مدى الحياة", "#1E7B45"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "مجاني Freeware", d: "تحمّله من الإنترنت وتثبّته على القرص، وتستخدمه مجاناً مدى الحياة. لكن الكود المصدري غير متاح." },
-    { c: ["Ps", "Photoshop", "#31a8ff", "تجريبي Shareware"], b: [["⏳", "مجاناً 30 يوماً فقط ثم تدفع", "#e67e22"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "تجريبي Shareware", d: "مجاني لفترة محدودة فقط، ثم تدفع لتكمل استخدامه. الكود غير متاح." },
-    { c: ["S", "Scratch", "#ff8c1a", "مفتوح المصدر Open-Source"], b: [["💲", "مجاناً", "#1E7B45"], ["</>", "الكود المصدري: متاح ✓", "#1E7B45"]], t: "مفتوح المصدر Open-Source", d: "مجاني، والكود المصدري متاح معه، فيستطيع المبرمجون قراءته وتعديله." },
+    { route: "net", c: ["A", "Adobe Reader", "#e2231a", "مجاني Freeware"], b: [["💲", "مجاناً مدى الحياة", "#1E7B45"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "مجاني Freeware", d: "تحمّله من الإنترنت وتثبّته على القرص، وتستخدمه مجاناً مدى الحياة. لكن الكود المصدري غير متاح." },
+    { route: "net", c: ["Ps", "Photoshop", "#31a8ff", "تجريبي Shareware"], b: [["⏳", "مجاناً 30 يوماً فقط ثم تدفع", "#e67e22"], ["</>", "الكود المصدري: غير متاح", "#c0392b"]], t: "تجريبي Shareware", d: "مجاني لفترة محدودة فقط، ثم تدفع لتكمل استخدامه. الكود غير متاح." },
+    { route: "net", c: ["S", "Scratch", "#ff8c1a", "مفتوح المصدر Open-Source"], b: [["💲", "مجاناً", "#1E7B45"], ["</>", "الكود المصدري: متاح ✓", "#1E7B45"]], t: "مفتوح المصدر Open-Source", d: "مجاني، والكود المصدري متاح معه، فيستطيع المبرمجون قراءته وتعديله." },
   ], scr: (s) => { const [l, n, col, kind] = s.c;
       return `<rect x="${SX + SW / 2 - 34}" y="${SY + 14}" width="68" height="68" rx="16" fill="${col}"/>${stT(SX + SW / 2, SY + 60, l, { s: 28, c: "#fff", ltr: 1 })}${stT(SX + SW / 2, SY + 108, n + " · " + kind, { s: 18, c: "#fff" })}` +
-        s.b.map(([ic, t, c], j) => `<rect x="${SX + 40}" y="${SY + 124 + j * 56}" width="${SW - 80}" height="46" rx="12" fill="#fff"/>${stT(SX + SW / 2, SY + 154 + j * 56, ic + "  " + t, { s: 17, c })}`).join(""); },
-    tags: [["cloud", "⬇ يُحمَّل من الإنترنت"], ["ssd", "💾 يُثبَّت على القرص SSD"]] },
+        s.b.map(([ic, t, c], j) => `<rect x="${SX + 40}" y="${SY + 118 + j * 44}" width="${SW - 80}" height="38" rx="10" fill="#fff"/>${stT(SX + SW / 2, SY + 143 + j * 44, ic + "  " + t, { s: 15, c })}`).join("") +
+        `<rect x="${SX + 40}" y="${SY + 210}" width="${SW - 80}" height="26" rx="13" fill="#0b0f14"/><rect x="${SX + 40}" y="${SY + 210}" width="0" height="26" rx="13" fill="#1E9E5A"><animate attributeName="width" dur="4s" repeatCount="indefinite" values="0;${SW - 80};${SW - 80}" keyTimes="0;.8;1"/></rect>${stT(SX + SW / 2, SY + 228, "⬇ تحميل من الإنترنت… ثم 💾 تثبيت", { s: 12.5, c: "#fff" })}`; },
+    tags: [["cloud", "⬇ البرنامج على الإنترنت"], ["router", "عبر الراوتر والكابل"], ["ssd", "💾 يُثبَّت على القرص SSD"]] },
   12: { mon: 1, parts: ["user", "kb", "mon", "cpu", "ram"], steps: [
     { m: "all", t: "ثلاث طرق لتحويل البرنامج إلى لغة الآلة", d: "المبرمج يكتب بلغة عالية المستوى قريبة من الإنسان، والحاسوب لا يفهم إلا 0 و 1. فتُحوَّل اللغة بالمترجم، أو بالمفسّر، أو بالطريقتين معاً." },
     { m: "comp", t: "المترجم · لغة C", d: "يحوّل البرنامج كله مرة واحدة قبل التشغيل؛ فإن وجد خطأ لا يُنفَّذ أي سطر. وبعد التصحيح تظهر النتائج كلها دفعة واحدة. أسرع، ويحتاج حيزاً أقل في الذاكرة." },
@@ -2700,7 +2701,7 @@ const STAGES = {
 };
 function stage(i) {
   const svg = document.getElementById("scene"), old = svg && svg.querySelector("#stage"); if (old) old.remove();
-  const cap = document.getElementById("stCap"); if (cap) cap.remove(); clearTimeout(ST.tm);
+  const cap = document.getElementById("stCap"); if (cap) cap.remove(); clearTimeout(ST.tm); const nt = document.getElementById("stageNet"); if (nt) nt.remove();
   if (!STAGES[i] || !svg) { ST.i = -1; return; }
   ST.i = i; ST.k = 0; ST.play = !matchMedia("(prefers-reduced-motion: reduce)").matches;
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.id = "stage"; svg.appendChild(g);
@@ -2722,6 +2723,12 @@ function stageDraw() {
     const w = Math.max(56, (s.pk || "").length * 11 + 30), dur = 1.4 + 1.3 * (P.length - 1);
     h += `<path d="${d}" class="st-glow"/><path d="${d}" class="st-path"/>` + P.map((q, k) => `<circle cx="${q[0]}" cy="${q[1]}" r="${k === P.length - 1 ? 20 : 15}" class="st-end ${k === P.length - 1 ? "b" : ""}"/>`).join("") +
       (s.pk ? `<g class="st-pk"><animateMotion dur="${dur}s" repeatCount="indefinite" path="${d}" keyPoints="0;1;1" keyTimes="0;.8;1" calcMode="linear"/><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text y="7">${esc(s.pk)}</text></g>` : ""); }
+  const oldNet = document.getElementById("stageNet"); if (oldNet) oldNet.remove();
+  if (s.route === "net") { const svg0 = document.getElementById("scene"), mon = svg0.querySelector('g[data-p="mon"]'), cl = centerOf("cloud"), sd = centerOf("ssd");
+    const d = `M${cl[0]} ${cl[1]} L1330 330 C1280 420 1180 300 1060 300 S620 240 466 262 L${sd[0]} ${sd[1]}`;
+    const net = document.createElementNS("http://www.w3.org/2000/svg", "g"); net.id = "stageNet"; net.setAttribute("pointer-events", "none");
+    net.innerHTML = `<path d="${d}" class="st-glow"/><path d="${d}" class="st-path"/><g class="st-pk"><animateMotion dur="4s" repeatCount="indefinite" path="${d}" keyPoints="0;1;1" keyTimes="0;.85;1" calcMode="linear"/><rect x="-46" y="-17" width="92" height="34" rx="17"/><text y="7">⬇ ${esc(s.c[1].split(" ")[0])}</text></g>`;
+    if (mon && mon.parentNode === svg0) svg0.insertBefore(net, mon); else svg0.appendChild(net); }
   [...(S.tags || []), ...(s.tg || [])].forEach(([pt, txt], k) => { const [x, y] = centerOf(pt), w = txt.length * 9.5 + 30, up = k % 2 ? 1 : -1, ty = up < 0 ? y - 70 : y + 38; h += `<g class="st-tag"><rect x="${x - w / 2}" y="${ty}" width="${w}" height="32" rx="16"/><text x="${x}" y="${ty + 22}">${txt}</text><path d="M${x} ${up < 0 ? y - 38 : y + 38} V${up < 0 ? y - 18 : y + 18}"/></g>`; });
   g.innerHTML = h; try { document.getElementById("scene").setCurrentTime(0); } catch (e) {}
   // camera: frame the screen and the two ends of this step's path, leaving room for the caption at the bottom
